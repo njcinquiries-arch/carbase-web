@@ -1,0 +1,27 @@
+# Force HTTPS
+[[redirects]]
+  from = "http://*"
+  to   = "https://:splat"
+  status = 301
+  force  = true
+
+# Block common attack paths
+[[redirects]]
+  from   = "/.env"
+  to     = "/404"
+  status = 404
+
+[[redirects]]
+  from   = "/wp-admin/*"
+  to     = "/404"
+  status = 404
+
+[[redirects]]
+  from   = "/admin/*"
+  to     = "/404"
+  status = 404
+
+[[redirects]]
+  from   = "/*.php"
+  to     = "/404"
+  status = 404
