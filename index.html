@@ -87,15 +87,32 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   pointer-events: none;
 }
 
+/* BLURRED PHOTO BACKFILL (EXACT CARCARD.TSX ARCHITECTURE) */
+.blurred-backfill {
+  position: absolute; bottom: 0; left: 0; right: 0; top: 68%;
+  overflow: hidden; border-radius: 0 0 18px 18px;
+  pointer-events: none; z-index: 2;
+}
+.blurred-img {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: blur(14px); transform: scale(1.2); opacity: 0.85;
+}
+.blur-glass-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(14, 12, 24, 0.60) 0%, rgba(10, 8, 18, 0.92) 100%);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+
 .card-top-badges {
   position: absolute; top: 12px; left: 12px; right: 12px;
   display: flex; justify-content: space-between; align-items: center;
-  z-index: 5; pointer-events: none;
+  z-index: 10; pointer-events: none;
 }
 .rank-badge-pill {
   display: flex; align-items: center; gap: 5px;
   background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%); color: #ffffff;
-  padding: 3px 8px 3px 5px; border-radius: 8px;
+  padding: 4px 9px 4px 6px; border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 0 14px rgba(212, 175, 84, 0.5);
 }
@@ -108,31 +125,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 .ovr-badge {
-  display: flex; align-items: center; gap: 3px;
+  display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
   background: rgba(0, 0, 0, 0.75);
-  border: 1px solid rgba(212, 175, 84, 0.6);
-  padding: 3px 8px; border-radius: 8px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(212, 175, 84, 0.65);
+  padding: 3px 10px; border-radius: 10px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
 }
 .ovr-val {
-  font-family: 'Exo 2', sans-serif; font-weight: 900; font-size: 0.95rem;
-  color: #ffffff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  font-family: 'Exo 2', sans-serif; font-weight: 900; font-size: 1.1rem;
+  color: #ffffff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); line-height: 1.0;
 }
 .ovr-label {
-  font-family: 'Exo 2', sans-serif; font-weight: 700; font-size: 0.52rem;
-  color: rgba(212, 175, 84, 0.9); text-transform: uppercase; letter-spacing: 0.05em;
+  font-family: 'Exo 2', sans-serif; font-weight: 700; font-size: 0.45rem;
+  color: rgba(212, 175, 84, 0.9); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1px;
 }
 
 /* SIGNATURE DEFAULT FROSTED GLASS BACKFILL PANEL */
 .card-info-panel {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 38%;
-  padding: 14px 16px 24px 16px;
+  position: absolute; bottom: 0; left: 0; right: 0; height: 32%;
+  padding: 12px 16px 20px 16px;
   display: flex; flex-direction: column; justify-content: flex-end;
-  background: linear-gradient(135deg, rgba(24, 21, 38, 0.95) 0%, rgba(12, 11, 20, 0.98) 100%);
   border-top: 1px solid rgba(212, 175, 84, 0.25);
   border-radius: 0 0 18px 18px;
-  pointer-events: none;
+  pointer-events: none; z-index: 5;
 }
 .card-custom-name {
   font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 1.05rem; color: #ffffff;
@@ -589,12 +605,20 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
             <img id="card-img" class="card-img" src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80" alt="Car">
             <div class="card-photo-gradient"></div>
           </div>
+
+          <!-- Blurred Photo Backfill Overlay (matching CarCard.tsx) -->
+          <div class="blurred-backfill">
+            <img id="blurred-bg-img" class="blurred-img" src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80" alt="">
+            <div class="blur-glass-overlay"></div>
+          </div>
+
           <div class="card-top-badges">
             <div class="rank-badge-pill" id="card-rank-pill">
               <img id="card-rank-icon" class="card-rank-icon-img" src="ranks/rank_signature_native.png" alt="Rank">
               <span id="card-rank-badge" class="card-badge-text">SIGNATURE</span>
             </div>
             <div class="ovr-badge" id="card-ovr-badge">
+              <span class="ovr-label">OVERALL</span>
               <span id="card-ovr-val" class="ovr-val">98</span>
             </div>
           </div>
@@ -1369,6 +1393,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   };
 
   document.getElementById('card-img').src = car.photo;
+  if (document.getElementById('blurred-bg-img')) {
+    document.getElementById('blurred-bg-img').src = car.photo;
+  }
   document.getElementById('card-rank-badge').textContent = car.rank;
   document.getElementById('card-rank-pill').style.backgroundColor = car.rankColor;
   document.getElementById('card-rank-pill').style.boxShadow = '0 0 14px ' + car.rankColor + '70';
