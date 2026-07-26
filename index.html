@@ -1013,7 +1013,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     if (isInteracting) {
       var dx = Math.abs(e.clientX - startX);
       var dy = Math.abs(e.clientY - startY);
-      if (dx > 6 || dy > 6) hasDragged = true;
+      if (dx > 18 || dy > 18) hasDragged = true;
       handleMove(e.clientX, e.clientY);
     }
   });
@@ -1031,12 +1031,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }
   });
 
-  // Direct Mouse Click Flip
+  // Direct Mouse Click Flip — always flips on click
   scene.addEventListener('click', function(e) {
     e.stopPropagation();
-    if (!hasDragged) {
-      flipCard();
-    }
+    flipCard();
   });
 
   // Touch Events (Phones / Tablets)
