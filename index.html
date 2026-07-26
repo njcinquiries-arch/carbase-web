@@ -237,59 +237,83 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 
 /* ── MOBILE RESPONSIVE ── */
-@media(max-width:430px){
+@media(max-width:480px){
+  /* brand — tighter, higher */
   .brand{
-    font-size:clamp(1.1rem,6.5vw,1.8rem);
-    letter-spacing:.30em;text-indent:.30em;
+    top:5%;
+    font-size:clamp(1rem,5.8vw,1.6rem);
+    letter-spacing:.28em;text-indent:.28em;
   }
   .brand-rule{
-    width:clamp(60px,18vw,110px);
-    top:calc(7% + clamp(1.8rem,9vw,3.2rem));
+    top:calc(5% + clamp(1.5rem,8.5vw,2.8rem));
+    width:clamp(50px,16vw,100px);
   }
-  .scene{width:252px;height:353px;}
-  .base{width:252px;}
-  .contact-shadow{width:185px;}
-  .step-1{width:197px;}
-  .step-2{width:222px;}
-  .step-3{width:245px;}
-  .floor-pool{width:300px;}
+
+  /* card — much smaller so it clears brand text */
+  .scene{width:200px;height:280px;}
+  .card{border-radius:14px;}
+  .face{border-radius:14px;}
+
+  /* base — scale to match card */
+  .base{width:200px;}
+  .contact-shadow{width:148px;}
+  .step-1{width:156px;}
+  .step-2{width:176px;}
+  .step-3{width:194px;}
+  .floor-pool{width:240px;}
+
+  /* shift floater slightly downward so brand has air */
+  .floater{margin-top:32px;}
+
+  /* info + cta panels */
   .info-wrap{
-    top:calc(50% + 200px);
+    top:calc(50% + 175px);
     width:94vw;
   }
   .flip-cta{
-    top:calc(50% + 200px);
+    top:calc(50% + 175px);
     width:90vw;
   }
-  .flip-cta p{font-size:.74rem;}
-  .info-title{font-size:.95rem;}
-  .info-list li{font-size:.68rem;}
+  .flip-cta p{font-size:.72rem;line-height:1.5;}
+  .info-cat{font-size:.40rem;}
+  .info-title{font-size:.88rem;}
+  .info-list{gap:5px 18px;}
+  .info-list li{font-size:.64rem;}
+
+  /* corners */
   .cn{width:44px;height:44px;}
-  #cn1{top:14px;left:14px;}
-  #cn2{top:14px;right:14px;}
-  #cn3{bottom:14px;left:14px;}
-  #cn4{bottom:14px;right:14px;}
-  .cn-ring{width:34px;height:34px;font-size:.70rem;}
-  #wcur{display:none;} /* no cursor on touch devices */
+  #cn1{top:12px;left:12px;}
+  #cn2{top:12px;right:12px;}
+  #cn3{bottom:12px;left:12px;}
+  #cn4{bottom:12px;right:12px;}
+  .cn-ring{width:34px;height:34px;font-size:.68rem;}
+
+  /* scroll hint closer to bottom */
+  .scroll-hint{padding-bottom:10px;}
 }
+
+/* very small phones (SE etc) */
 @media(max-width:375px){
-  .scene{width:228px;height:320px;}
-  .base{width:228px;}
-  .contact-shadow{width:168px;}
-  .step-1{width:178px;}
-  .step-2{width:200px;}
-  .step-3{width:222px;}
-  .floor-pool{width:272px;}
-  .info-wrap{top:calc(50% + 183px);width:96vw;}
-  .flip-cta{top:calc(50% + 183px);width:92vw;}
+  .scene{width:178px;height:249px;}
+  .base{width:178px;}
+  .contact-shadow{width:132px;}
+  .step-1{width:139px;}
+  .step-2{width:157px;}
+  .step-3{width:173px;}
+  .floor-pool{width:214px;}
+  .floater{margin-top:24px;}
+  .info-wrap{top:calc(50% + 158px);width:96vw;}
+  .flip-cta{top:calc(50% + 158px);}
 }
-@media(max-height:680px) and (max-width:430px){
-  .info-wrap{top:calc(50% + 185px);}
-  .flip-cta{top:calc(50% + 185px);}
-  .brand{top:4%;}
-  .brand-rule{top:calc(4% + clamp(1.8rem,9vw,3.2rem));}
+
+/* short phones (landscape or small height) */
+@media(max-height:680px) and (max-width:480px){
+  .brand{top:3%;}
+  .brand-rule{top:calc(3% + clamp(1.5rem,8.5vw,2.8rem));}
+  .floater{margin-top:16px;}
 }
-/* hide wheel cursor on touch devices */
+
+/* hide wheel cursor on any touch device */
 @media(hover:none){
   #wcur{display:none;}
 }
