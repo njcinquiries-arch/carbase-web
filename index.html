@@ -9,12 +9,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-*{cursor:none!important;}
 html,body{width:100%;height:100%;overflow:hidden;background:#0d0d12;}
 html{overflow-y:scroll;scrollbar-width:none;}
 html::-webkit-scrollbar{display:none;}
 body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png') center/cover no-repeat;}
 #bg{position:fixed;inset:0;z-index:1;pointer-events:none}
+#wcur{display:none!important;}
 .stage{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;}
 
 /* FLOATER — card bobs, base stays planted */
@@ -22,7 +22,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 
 /* CARD */
-.scene{width:300px;height:420px;perspective:1100px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.scene{width:300px;height:420px;perspective:1100px;cursor:pointer!important;user-select:none;-webkit-user-select:none;touch-action:none;}
 .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:18px;will-change:transform;}
 .face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
 .front{background:#1c1c1f;border:1px solid rgba(255,255,255,0.07);box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 50px 130px rgba(0,0,0,0.95);}
@@ -844,98 +844,168 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
    CARD TILT + FLIP
    ============================================= */
 (function(){
-  var scene=document.getElementById('scene');
-  var card=document.getElementById('card');
-  var hl=document.getElementById('hl');
-  var flipCta=document.getElementById('flip-cta');
-  var flipped=false, raf=0;
-  card.style.transition='none';
+  var scene = document.getElementById('scene');
+  var card = document.getElementById('card');
+  var hlFront = document.getElementById('hl');
+  var hlBack = document.getElementById('hl-back');
+  var flipCta = document.getElementById('flip-cta');
 
-  function tilt(rx,ry){
-    var b=flipped?180:0;
-    card.style.transform='rotateX('+(flipped?-rx:rx)+'deg) rotateY('+(b+ry)+'deg)';
-  }
-  function snap(){
-    card.style.transition='transform .68s cubic-bezier(.22,1,.36,1)';
-    card.style.transform=flipped?'rotateY(180deg)':'rotateY(0deg)';
-    setTimeout(function(){card.style.transition='none';},720);
-  }
-  function playFlip(toBack){
-    try{
-      var ac=new(window.AudioContext||window.webkitAudioContext)();
-      /* click transient */
-      var o=ac.createOscillator(),g=ac.createGain();
-      o.connect(g);g.connect(ac.destination);
-      o.type='sine';
-      o.frequency.setValueAtTime(toBack?720:520,ac.currentTime);
-      o.frequency.exponentialRampToValueAtTime(toBack?180:280,ac.currentTime+0.09);
-      g.gain.setValueAtTime(0.10,ac.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.10);
-      o.start(ac.currentTime);o.stop(ac.currentTime+0.10);
-      /* soft whoosh */
-      var buf=ac.createBuffer(1,ac.sampleRate*0.28,ac.sampleRate);
-      var dat=buf.getChannelData(0);
-      for(var i=0;i<dat.length;i++)dat[i]=Math.random()*2-1;
-      var ns=ac.createBufferSource(),flt=ac.createBiquadFilter(),ng=ac.createGain();
-      ns.buffer=buf;flt.type='bandpass';flt.frequency.value=1100;flt.Q.value=0.6;
-      ns.connect(flt);flt.connect(ng);ng.connect(ac.destination);
-      ng.gain.setValueAtTime(0.055,ac.currentTime+0.02);
-      ng.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.28);
-      ns.start(ac.currentTime+0.02);ns.stop(ac.currentTime+0.30);
-      setTimeout(function(){ac.close();},600);
-    }catch(e){}
+  var flipped = false;
+  var isInteracting = false;
+  var startX = 0, startY = 0;
+  var hasDragged = false;
+  var lastFlipTime = 0;
+
+  function updateCardTransform(rx, ry, animate) {
+    if (animate) {
+      card.style.transition = 'transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)';
+    } else {
+      card.style.transition = 'none';
+    }
+    var baseRotY = flipped ? 180 : 0;
+    var finalRotX = flipped ? -rx : rx;
+    var finalRotY = baseRotY + ry;
+    card.style.transform = 'rotateX(' + finalRotX.toFixed(2) + 'deg) rotateY(' + finalRotY.toFixed(2) + 'deg)';
   }
 
-  function flip(){
-    flipped=!flipped;
-    playFlip(flipped);
-    card.style.transition='transform .82s cubic-bezier(.4,0,.2,1)';
-    card.style.transform=flipped?'rotateY(180deg)':'rotateY(0deg)';
-    setTimeout(function(){card.style.transition='none';},880);
-    /* track flip state with a class so corners can read it */
+  function updateHologramLight(xPct, yPct) {
+    if (hlFront) {
+      hlFront.style.setProperty('--hx', xPct + '%');
+      hlFront.style.setProperty('--hy', yPct + '%');
+      hlFront.style.opacity = '1';
+    }
+    if (hlBack) {
+      hlBack.style.setProperty('--hx', xPct + '%');
+      hlBack.style.setProperty('--hy', yPct + '%');
+      hlBack.style.opacity = '1';
+    }
+  }
+
+  function playFlipSound(toBack) {
+    try {
+      var ac = new (window.AudioContext || window.webkitAudioContext)();
+      var o = ac.createOscillator(), g = ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(toBack ? 680 : 480, ac.currentTime);
+      o.frequency.exponentialRampToValueAtTime(toBack ? 160 : 260, ac.currentTime + 0.12);
+      g.gain.setValueAtTime(0.12, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.12);
+      o.start(ac.currentTime); o.stop(ac.currentTime + 0.12);
+      setTimeout(function(){ ac.close(); }, 300);
+    } catch(e) {}
+  }
+
+  function flipCard() {
+    var now = Date.now();
+    if (now - lastFlipTime < 400) return; // Prevent double-triggering
+    lastFlipTime = now;
+
+    flipped = !flipped;
+    playFlipSound(flipped);
+
+    updateCardTransform(0, 0, true);
+
     scene.classList.toggle('is-flipped', flipped);
-    if(flipped){
+    if (flipped) {
       setTimeout(function(){
-        /* only show CTA if no corner panel is currently open */
-        if(!document.getElementById('info-wrap').classList.contains('open')){
+        if (!document.getElementById('info-wrap').classList.contains('open')) {
           flipCta.classList.add('show');
         }
-      },520);
+      }, 500);
     } else {
       flipCta.classList.remove('show');
     }
   }
-  scene.addEventListener('mousemove',function(e){
-    cancelAnimationFrame(raf);
-    raf=requestAnimationFrame(function(){
-      var rc=scene.getBoundingClientRect();
-      var x=(e.clientX-rc.left)/rc.width, y=(e.clientY-rc.top)/rc.height;
-      tilt(-(y-0.5)*9,(x-0.5)*9);
-      hl.style.setProperty('--hx',(x*100)+'%');
-      hl.style.setProperty('--hy',(y*100)+'%');
-    });
-  });
-  scene.addEventListener('mouseleave',function(){cancelAnimationFrame(raf);snap();});
-  scene.addEventListener('click',flip);
 
-  /* touch tilt for mobile */
-  var touchMoved=false;
-  scene.addEventListener('touchstart',function(e){
-    touchMoved=false;
-  },{passive:true});
-  scene.addEventListener('touchmove',function(e){
-    touchMoved=true;
-    var t=e.touches[0];
-    var rc=scene.getBoundingClientRect();
-    var x=(t.clientX-rc.left)/rc.width, y=(t.clientY-rc.top)/rc.height;
-    tilt(-(y-0.5)*9,(x-0.5)*9);
-    hl.style.setProperty('--hx',(x*100)+'%');
-    hl.style.setProperty('--hy',(y*100)+'%');
-  },{passive:true});
-  scene.addEventListener('touchend',function(e){
-    snap();
-    if(!touchMoved) flip();
-  },{passive:true});
+  // Pointer / Mouse / Touch Movement Handler
+  function handleMove(clientX, clientY) {
+    var rect = scene.getBoundingClientRect();
+    var x = (clientX - rect.left) / rect.width;
+    var y = (clientY - rect.top) / rect.height;
+
+    // Clamp coordinates
+    x = Math.max(0, Math.min(1, x));
+    y = Math.max(0, Math.min(1, y));
+
+    // Dynamic Tilt: ±18 deg
+    var maxTilt = 18;
+    var rx = -(y - 0.5) * maxTilt;
+    var ry = (x - 0.5) * maxTilt;
+
+    updateCardTransform(rx, ry, false);
+    updateHologramLight(x * 100, y * 100);
+  }
+
+  // Mouse Events
+  scene.addEventListener('mousemove', function(e) {
+    if (!isInteracting) {
+      handleMove(e.clientX, e.clientY);
+    }
+  });
+
+  scene.addEventListener('mousedown', function(e) {
+    isInteracting = true;
+    hasDragged = false;
+    startX = e.clientX;
+    startY = e.clientY;
+  });
+
+  window.addEventListener('mousemove', function(e) {
+    if (isInteracting) {
+      var dx = Math.abs(e.clientX - startX);
+      var dy = Math.abs(e.clientY - startY);
+      if (dx > 5 || dy > 5) hasDragged = true;
+      handleMove(e.clientX, e.clientY);
+    }
+  });
+
+  window.addEventListener('mouseup', function(e) {
+    if (isInteracting) {
+      isInteracting = false;
+      updateCardTransform(0, 0, true);
+    }
+  });
+
+  scene.addEventListener('mouseleave', function() {
+    if (!isInteracting) {
+      updateCardTransform(0, 0, true);
+    }
+  });
+
+  scene.addEventListener('click', function(e) {
+    if (!hasDragged) {
+      flipCard();
+    }
+  });
+
+  // Touch Events (Phones / Tablets)
+  scene.addEventListener('touchstart', function(e) {
+    isInteracting = true;
+    hasDragged = false;
+    var t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    handleMove(t.clientX, t.clientY);
+  }, { passive: true });
+
+  scene.addEventListener('touchmove', function(e) {
+    if (isInteracting && e.touches.length > 0) {
+      var t = e.touches[0];
+      var dx = Math.abs(t.clientX - startX);
+      var dy = Math.abs(t.clientY - startY);
+      if (dx > 6 || dy > 6) hasDragged = true;
+      handleMove(t.clientX, t.clientY);
+    }
+  }, { passive: true });
+
+  scene.addEventListener('touchend', function(e) {
+    isInteracting = false;
+    updateCardTransform(0, 0, true);
+    if (!hasDragged) {
+      flipCard();
+    }
+  }, { passive: true });
 })();
 
 /* =============================================
