@@ -1,1343 +1,793 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Carbase AI — Your Car Has an Identity</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;cursor:none!important}
-    @media(hover:none),(pointer:coarse){*,*::before,*::after{cursor:auto!important}#cursor-dot,#cursor-ring{display:none!important}}
-    html{scroll-behavior:auto}
-    body{background:#0d0d0d;color:#fff;font-family:'Inter',-apple-system,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-    :root{
-      --gold:#c8a84b;--gold-l:#f0d060;
-      --bg:#0d0d0d;--card:#141414;--card2:#1a1a1a;
-      --border:rgba(255,255,255,.06);--muted:#6b7280;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Carbase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+*{cursor:none!important;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0d0d12;}
+html{overflow-y:scroll;scrollbar-width:none;}
+html::-webkit-scrollbar{display:none;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png') center/cover no-repeat;}
+#bg{position:fixed;inset:0;z-index:1;pointer-events:none}
+.stage{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;}
 
-    /* ── fixed layers ── */
-    #canvas-wrap{position:fixed;inset:0;z-index:0}
-    #vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.55) 100%),linear-gradient(180deg,rgba(13,13,13,.45) 0%,transparent 22%,transparent 75%,rgba(13,13,13,.65) 100%)}
-    #rain-canvas{position:fixed;inset:0;z-index:15;pointer-events:none;width:100%;height:100%}
-    #spacer{height:500vh}
+/* FLOATER — card + base + info as one bobbing column */
+.floater{display:flex;flex-direction:column;align-items:center;animation:bob 7s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 
-    /* ════ SCROLL ANNOTATION CARDS ════ */
-    .sc-card{
-      position:fixed;z-index:17;width:min(224px,calc(44vw - 1rem));
-      background:rgba(10,12,26,.68);
-      backdrop-filter:blur(44px) saturate(160%) brightness(1.08);
-      -webkit-backdrop-filter:blur(44px) saturate(160%) brightness(1.08);
-      border:1px solid rgba(255,255,255,.1);
-      border-top:1px solid rgba(255,255,255,.18);
-      border-radius:18px;
-      padding:1.1rem 1.2rem;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 64px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.18);
-      opacity:0;pointer-events:none;
-      will-change:opacity,transform;
-      transform-style:preserve-3d;
-      transition:box-shadow .35s cubic-bezier(.16,1,.3,1);
-    }
-    .sc-card.vis{pointer-events:all}
-    /* QR identity card */
-    .sc-card--qr{text-align:center}
-    .sc-qr-wrap{margin:.55rem 0 .7rem;padding:.65rem;background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.2);border-radius:10px}
-    .sc-qr-svg{width:100%;height:auto;color:var(--gold);display:block}
-    .sc-qr-msg{font-size:.82rem;font-weight:700;color:#fff;line-height:1.25;margin-bottom:.28rem}
-    .sc-qr-cta{font-size:.58rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);opacity:.9}
-    /* rain toggle */
-    #rain-btn{
-      position:fixed;bottom:1.8rem;left:1.8rem;z-index:150;
-      display:flex;align-items:center;gap:.5rem;
-      background:rgba(10,10,12,.72);border:1px solid rgba(255,255,255,.1);
-      border-radius:100px;padding:.38rem .9rem .38rem .72rem;
-      font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-      color:rgba(255,255,255,.38);backdrop-filter:blur(14px);cursor:pointer;
-      transition:all .35s cubic-bezier(.16,1,.3,1);
-    }
-    #rain-btn:hover{border-color:rgba(200,168,75,.4);color:rgba(200,168,75,.85);background:rgba(10,10,12,.9)}
-    #rain-btn.muted{opacity:.45}
-    /* Speaker icon */
-    #rain-btn .rbi{display:flex;align-items:center;width:15px;height:15px;flex-shrink:0}
-    #rain-btn .rbi svg{width:15px;height:15px;display:block;overflow:visible}
-    .spk-body{fill:rgba(200,168,75,.7);transition:fill .3s}
-    .spk-wave{stroke:rgba(200,168,75,.7);stroke-width:1.6;fill:none;stroke-linecap:round;transition:opacity .3s,stroke .3s}
-    .spk-mute{stroke:rgba(255,255,255,.32);stroke-width:1.6;stroke-linecap:round;opacity:0;transition:opacity .3s}
-    /* Active — waves pulse */
-    #rain-btn:not(.muted) .spk-wave{animation:wpulse 2.2s ease-in-out infinite}
-    #rain-btn:not(.muted) .spk-wave.w2{animation-delay:.45s}
-    #rain-btn:not(.muted) .spk-mute{opacity:0}
-    /* Muted — waves gone, X appears */
-    #rain-btn.muted .spk-wave{opacity:0;animation:none}
-    #rain-btn.muted .spk-mute{opacity:1}
-    #rain-btn.muted .spk-body{fill:rgba(255,255,255,.22)}
-    /* Hover overrides */
-    #rain-btn:hover .spk-body{fill:rgba(200,168,75,1)}
-    #rain-btn:hover .spk-wave{stroke:rgba(200,168,75,1)}
-    @keyframes wpulse{0%,100%{opacity:.5}50%{opacity:1}}
-    .sc-eyebrow{font-size:.58rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
-    .sc-title{font-size:.92rem;font-weight:800;color:#fff;margin-bottom:.6rem;line-height:1.15}
-    .sc-rows{display:flex;flex-direction:column;gap:.32rem}
-    .sc-row{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
-    .sc-label{font-size:.63rem;color:rgba(255,255,255,.5);font-weight:500}
-    .sc-val{font-size:.7rem;font-weight:700;color:#fff;text-align:right}
-    .sc-val.gold{color:var(--gold-l)}
-    .sc-val.green{color:#6ee7a0}
-    .sc-divider{height:1px;background:rgba(255,255,255,.08);margin:.38rem 0}
+/* CARD */
+.scene{width:300px;height:420px;perspective:1100px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.card{width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:18px;will-change:transform;}
+.face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
+.front{background:#1c1c1f;border:1px solid rgba(255,255,255,0.07);box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 50px 130px rgba(0,0,0,0.95);}
+.front::after{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.22) 50%,transparent);}
+.front-hl{position:absolute;inset:0;border-radius:18px;pointer-events:none;background:radial-gradient(ellipse 55% 45% at var(--hx,50%) var(--hy,30%),rgba(255,255,255,0.07) 0%,transparent 65%);opacity:0;transition:opacity .15s;}
+.scene:hover .front-hl{opacity:1}
+.back{background:#161619;border:1px solid rgba(255,255,255,0.05);transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;box-shadow:0 50px 130px rgba(0,0,0,0.95);}
+.back-inner{width:72%;height:74%;border:1px solid rgba(255,255,255,0.05);border-radius:8px;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.008) 10px,rgba(255,255,255,0.008) 11px);display:flex;align-items:center;justify-content:center;}
+.back-word{font-family:-apple-system,sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,0.10);}
 
-    /* ════ NAVBAR ════ */
-    #navbar{position:fixed;top:0;left:0;right:0;height:72px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 4rem;background:rgba(13,13,13,0);backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:background .5s,backdrop-filter .5s,border-color .5s}
-    #navbar.scrolled{background:rgba(13,13,13,.88);backdrop-filter:blur(22px);border-bottom-color:var(--border)}
-    #nav-logo{display:flex;align-items:center;text-decoration:none;opacity:0;transform:translateY(-10px);animation:fadeup .7s ease .1s forwards}
-    #nav-logo img{height:40px;width:auto;filter:drop-shadow(0 0 8px rgba(200,168,75,.25));transition:filter .3s}
-    #nav-logo:hover img{filter:drop-shadow(0 0 18px rgba(200,168,75,.6))}
-    #nav-links{display:flex;align-items:center;gap:.2rem;list-style:none}
-    #nav-links li{opacity:0;transform:translateY(-8px)}
-    #nav-links li:nth-child(1){animation:fadeup .6s ease .15s forwards}
-    #nav-links li:nth-child(2){animation:fadeup .6s ease .22s forwards}
-    #nav-links li:nth-child(3){animation:fadeup .6s ease .29s forwards}
-    #nav-links li:nth-child(4){animation:fadeup .6s ease .36s forwards}
-    #nav-links li:nth-child(5){animation:fadeup .6s ease .43s forwards}
-    #nav-links a{display:inline-block;padding:.5rem 1rem;font-size:.82rem;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,.6);text-decoration:none;position:relative;transition:color .25s}
-    #nav-links a::after{content:'';position:absolute;bottom:2px;left:1rem;width:calc(100% - 2rem);height:1.5px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.16,1,.3,1)}
-    #nav-links a:hover,#nav-links a.active{color:#fff}
-    #nav-links a:hover::after,#nav-links a.active::after{transform:scaleX(1)}
-    #nav-right{display:flex;align-items:center;gap:1.5rem;opacity:0;animation:fadeup .6s ease .5s forwards}
-    .nav-social{display:flex;align-items:center;gap:1rem}
-    .nav-social a{color:rgba(255,255,255,.35);font-size:1rem;text-decoration:none;transition:color .2s}
-    .nav-social a:hover{color:#fff}
-    .nav-cta-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.3rem;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-decoration:none;color:var(--gold);border:1px solid rgba(200,168,75,.4);border-radius:100px;background:rgba(200,168,75,.05);transition:all .3s;position:relative;overflow:hidden}
-    .nav-cta-btn:hover{color:#0a0800;background:var(--gold);border-color:var(--gold);box-shadow:0 0 24px rgba(200,168,75,.4)}
-    #nav-hamburger{display:none;flex-direction:column;gap:5px;padding:4px;z-index:110}
-    #nav-hamburger span{display:block;width:24px;height:1.5px;background:rgba(255,255,255,.75);transition:transform .3s,opacity .25s;transform-origin:left}
-    #nav-hamburger.open span:nth-child(1){transform:rotate(38deg) translateY(-1px)}
-    #nav-hamburger.open span:nth-child(2){opacity:0;width:0}
-    #nav-hamburger.open span:nth-child(3){transform:rotate(-38deg) translateY(1px)}
-    #nav-drawer{display:none;position:fixed;top:72px;inset-inline:0;background:rgba(13,13,13,.97);backdrop-filter:blur(20px);z-index:99;padding:2rem 4rem;flex-direction:column;gap:1.5rem;border-bottom:1px solid var(--border);opacity:0;transform:translateY(-8px);transition:opacity .3s,transform .35s cubic-bezier(.16,1,.3,1)}
-    #nav-drawer.open{display:flex;opacity:1;transform:translateY(0)}
-    #nav-drawer a{font-size:1rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s}
-    #nav-drawer a:hover{color:var(--gold)}
-    @media(max-width:900px){#nav-links,#nav-right{display:none}#nav-hamburger{display:flex}#navbar{padding:0 1.8rem}}
+/* BASE */
+.base{width:300px;display:flex;flex-direction:column;align-items:center;}
+.contact-shadow{width:220px;height:5px;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(0,0,0,0.60) 0%,transparent 80%);filter:blur(4px);}
+.step{border-radius:1px;}
+.step-1{width:234px;height:9px;background:linear-gradient(to bottom,rgba(255,255,255,0.13) 0%,rgba(0,0,0,0.60) 8%,rgba(0,0,0,0.80) 100%);border-top:1px solid rgba(255,255,255,0.18);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
+.step-2{width:262px;height:9px;background:linear-gradient(to bottom,rgba(255,255,255,0.07) 0%,rgba(0,0,0,0.65) 8%,rgba(0,0,0,0.85) 100%);border-top:1px solid rgba(255,255,255,0.10);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
+.step-3{width:290px;height:9px;background:linear-gradient(to bottom,rgba(255,255,255,0.04) 0%,rgba(0,0,0,0.70) 8%,rgba(0,0,0,0.90) 100%);border-top:1px solid rgba(255,255,255,0.06);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
+.floor-pool{width:360px;height:32px;background:radial-gradient(ellipse 60% 100% at 50% 0%,rgba(210,208,215,0.08) 0%,transparent 70%);}
 
-    /* ════ HERO ════ */
-    #hero{position:fixed;top:50%;left:8vw;transform:translateY(-50%);z-index:10;pointer-events:none;will-change:transform,opacity}
-    .hero-eyebrow{font-size:.68rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;opacity:0;transform:translateY(10px);animation:fadeup .8s ease .6s forwards;display:block}
-    #hero h1{font-size:clamp(2.5rem,5.5vw,5.5rem);font-weight:900;line-height:1.02;letter-spacing:-.04em;max-width:13ch;opacity:0;transform:translateY(14px);animation:fadeup .9s ease .75s forwards}
-    #hero h1 .gold{color:var(--gold)}
-    .hero-sub{margin-top:1.2rem;font-size:clamp(.95rem,1.5vw,1.1rem);font-weight:300;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);opacity:0;animation:fadeup .8s ease .95s forwards}
-    #hero-cta{margin-top:2.2rem;display:flex;flex-direction:column;align-items:flex-start;gap:.85rem;pointer-events:all;opacity:0;animation:fadeup .8s ease 1.1s forwards}
+/* INFO PANEL — absolute below the base, never shifts card up */
+.info-wrap{
+  position:absolute;
+  left:50%;
+  top:calc(50% + 242px); /* just below the base steps */
+  transform:translateX(-50%) translateY(10px);
+  width:min(580px, 90vw);
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .45s cubic-bezier(.22,1,.36,1),
+             transform .45s cubic-bezier(.22,1,.36,1),
+             visibility 0s .45s;
+}
+.info-wrap.open{
+  opacity:1;
+  visibility:visible;
+  transform:translateX(-50%) translateY(0);
+  transition:opacity .45s cubic-bezier(.22,1,.36,1),
+             transform .45s cubic-bezier(.22,1,.36,1),
+             visibility 0s 0s;
+}
+.info-inner{
+  padding:14px 0 4px;
+  text-align:center;
+}
+.info-cat{
+  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.46rem;
+  letter-spacing:.40em;text-transform:uppercase;
+  color:rgba(255,255,255,0.30);
+  margin-bottom:7px;
+}
+.info-title{
+  font-family:'Exo 2',sans-serif;font-weight:200;font-size:1.10rem;
+  letter-spacing:.10em;line-height:1.1;
+  color:#fff;
+  text-shadow:0 0 8px rgba(255,255,255,1),0 0 22px rgba(255,255,255,0.7),0 0 55px rgba(255,255,255,0.35);
+  margin-bottom:13px;
+}
+.info-title strong{font-weight:600;}
+.info-line{
+  height:1px;width:120px;margin:0 auto 13px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.50) 50%,transparent);
+}
+.info-list{
+  list-style:none;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px 28px;
+  text-align:left;
+}
+.info-list li{
+  font-family:'Exo 2',sans-serif;font-weight:300;font-size:.73rem;
+  letter-spacing:.03em;line-height:1.35;
+  color:rgba(255,255,255,0.92);
+  text-shadow:0 0 5px rgba(255,255,255,0.85),0 0 14px rgba(255,255,255,0.45),0 0 32px rgba(255,255,255,0.18);
+  padding-left:14px;position:relative;
+}
+.info-list li::before{
+  content:'';position:absolute;left:0;top:7px;
+  width:3px;height:3px;border-radius:50%;
+  background:#fff;box-shadow:0 0 4px #fff,0 0 10px rgba(255,255,255,0.6);
+}
 
-    /* ════ BUTTONS ════ */
-    .btn-primary{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 2rem;font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:100px;background:linear-gradient(135deg,var(--gold) 0%,var(--gold-l) 50%,var(--gold) 100%);background-size:200%;background-position:left;color:#0a0800;border:none;box-shadow:0 4px 24px rgba(200,168,75,.3);transition:background-position .4s,box-shadow .3s,transform .2s;position:relative;overflow:hidden}
-    .btn-primary:hover{background-position:right;box-shadow:0 6px 36px rgba(200,168,75,.5);transform:translateY(-2px)}
-    .btn-primary:active{transform:scale(.97)}
-    .btn-ghost{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 2rem;font-size:.82rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:100px;background:transparent;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.2);transition:all .3s}
-    .btn-ghost:hover{color:#fff;border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.05);transform:translateY(-2px)}
-    .ripple{position:absolute;border-radius:50%;transform:scale(0);animation:ripple-anim .55s cubic-bezier(.16,1,.3,1) forwards;pointer-events:none;background:rgba(255,255,255,.2)}
-    @keyframes ripple-anim{to{transform:scale(4);opacity:0}}
+/* BRAND */
+.brand{
+  position:absolute;top:7%;left:50%;transform:translateX(-50%);
+  font-family:'Exo 2',sans-serif;font-weight:200;
+  font-size:clamp(1.6rem,3.8vw,3.4rem);
+  letter-spacing:.55em;text-indent:.55em;text-transform:uppercase;white-space:nowrap;
+  color:rgba(255,255,255,0.82);
+  text-shadow:0 0 12px rgba(255,255,255,0.18),0 0 35px rgba(255,255,255,0.08);
+  user-select:none;cursor:default;
+  transition:color .4s, text-shadow .4s;
+}
+.brand:hover{
+  color:#fff;
+  text-shadow:0 0 8px rgba(255,255,255,0.95),0 0 22px rgba(255,255,255,0.60),0 0 60px rgba(220,215,255,0.35),0 0 120px rgba(200,210,255,0.18);
+}
+.brand span{font-weight:600;}
+.brand-rule{
+  position:absolute;top:calc(7% + clamp(2.4rem,5.2vw,4.8rem));left:50%;transform:translateX(-50%);
+  width:clamp(80px,12vw,160px);height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.40) 30%,rgba(255,255,255,0.65) 50%,rgba(255,255,255,0.40) 70%,transparent);
+  pointer-events:none;
+}
 
-    /* ════ SCROLL UI ════ */
-    #scroll-cue{position:fixed;bottom:2.5rem;left:8vw;z-index:10;pointer-events:none;display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;opacity:0;animation:fadeup 1s ease 1.4s forwards}
-    #scroll-cue .line{width:1px;height:42px;background:rgba(255,255,255,.2);animation:pulse-line 1.9s ease-in-out infinite;transform-origin:top}
-    #scroll-cue span{font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.28)}
-    @keyframes pulse-line{0%,100%{transform:scaleY(.15);opacity:.2}50%{transform:scaleY(1);opacity:.65}}
-    #stats-bar{position:fixed;bottom:2.5rem;right:4vw;z-index:10;pointer-events:none;display:flex;flex-direction:column;align-items:flex-end;gap:1.2rem;opacity:0;transform:translateX(20px);transition:opacity .6s,transform .6s}
-    #stats-bar.visible{opacity:1;transform:translateX(0)}
-    .stat-number{font-size:clamp(1.4rem,2.5vw,2rem);font-weight:900;line-height:1;background:linear-gradient(135deg,var(--gold-l),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .stat-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:.2rem;text-align:right}
-    #progress{position:fixed;top:0;left:0;height:1px;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-l));z-index:200;pointer-events:none;transition:width .08s linear}
+/* FLIP CTA — appears below base after card flip */
+.flip-cta{
+  position:absolute;
+  left:50%;
+  top:calc(50% + 242px);
+  transform:translateX(-50%) translateY(8px);
+  width:min(420px,88vw);
+  text-align:center;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .50s cubic-bezier(.22,1,.36,1),
+             transform .50s cubic-bezier(.22,1,.36,1),
+             visibility 0s .50s;
+  pointer-events:none;
+}
+.flip-cta.show{
+  opacity:1;visibility:visible;
+  transform:translateX(-50%) translateY(0);
+  transition:opacity .50s cubic-bezier(.22,1,.36,1),
+             transform .50s cubic-bezier(.22,1,.36,1),
+             visibility 0s 0s;
+}
+.flip-cta-line{
+  height:1px;width:80px;margin:0 auto 12px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45) 50%,transparent);
+}
+.flip-cta p{
+  font-family:'Exo 2',sans-serif;font-weight:300;font-size:.80rem;
+  letter-spacing:.06em;line-height:1.55;
+  color:rgba(255,255,255,0.88);
+  text-shadow:0 0 6px rgba(255,255,255,0.90),0 0 18px rgba(255,255,255,0.50),0 0 40px rgba(255,255,255,0.20);
+}
+.flip-cta p strong{
+  font-weight:600;color:#fff;
+  text-shadow:0 0 8px #fff,0 0 24px rgba(255,255,255,0.65);
+}
+.flip-cta-badge{
+  display:inline-block;
+  margin-top:11px;
+  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.55rem;
+  letter-spacing:.30em;text-transform:uppercase;
+  color:rgba(255,255,255,0.50);
+  border:1px solid rgba(255,255,255,0.22);
+  border-radius:20px;
+  padding:6px 18px;
+  text-decoration:none;
+  text-shadow:none;
+  transition:color .22s,border-color .22s,box-shadow .22s;
+  pointer-events:auto;
+  cursor:pointer;
+}
+.flip-cta-badge:hover{
+  color:#fff;
+  border-color:rgba(255,255,255,0.70);
+  box-shadow:0 0 12px rgba(255,255,255,0.25),0 0 28px rgba(255,255,255,0.10);
+  text-shadow:0 0 8px rgba(255,255,255,0.80);
+}
 
-    /* ════ LANDING ════ */
-    .landing{position:relative;z-index:20;background:var(--bg)}
-    .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1)}
-    .reveal.in{opacity:1;transform:translateY(0)}
-    .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
-    .eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;display:block}
-    .section-title{font-size:clamp(2rem,4vw,3.5rem);font-weight:900;letter-spacing:-.03em;line-height:1.05;color:#fff}
-    .section-sub{font-size:clamp(.9rem,1.5vw,1.05rem);color:var(--muted);line-height:1.7;max-width:60ch}
+/* second page */
+#page2{
+  position:fixed;inset:0;z-index:50;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity .7s cubic-bezier(.4,0,.2,1);
+}
+#page2.visible{opacity:1;pointer-events:auto;}
+.p2-label{
+  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.52rem;
+  letter-spacing:.45em;text-transform:uppercase;
+  color:rgba(255,255,255,0.28);margin-bottom:18px;
+}
+.p2-title{
+  font-family:'Exo 2',sans-serif;font-weight:200;font-size:clamp(2rem,6vw,4.5rem);
+  letter-spacing:.20em;text-indent:.20em;text-transform:uppercase;
+  color:rgba(255,255,255,0.08);
+  text-shadow:none;
+  margin-bottom:28px;
+}
+.p2-wip{
+  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.60rem;
+  letter-spacing:.50em;text-transform:uppercase;
+  color:rgba(255,255,255,0.18);
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:20px;padding:7px 22px;
+}
 
-    /* ── PARTNERS ── */
-    #partners{padding:5rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;overflow:hidden}
-    .backed-label{font-size:.72rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:2.5rem;display:block}
-    .marquee-wrap{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent)}
-    .marquee-track{display:flex;gap:4rem;align-items:center;width:max-content;animation:marquee 22s linear infinite}
-    .marquee-item{font-size:1rem;font-weight:700;letter-spacing:.05em;color:rgba(255,255,255,.22);white-space:nowrap;transition:color .3s}
-    .marquee-item:hover{color:rgba(255,255,255,.6)}
-    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* SCROLL HINT */
+.scroll-hint{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  z-index:3;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding-bottom:14px;
+}
+.scroll-hint-line{
+  width:1px;height:28px;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.30));
+  animation:shintpulse 2.6s ease-in-out infinite;
+}
+.scroll-hint-dot{
+  width:3px;height:3px;border-radius:50%;
+  background:rgba(255,255,255,0.40);
+  animation:shintpulse 2.6s ease-in-out infinite .3s;
+}
+@keyframes shintpulse{
+  0%,100%{opacity:.15}50%{opacity:.65}
+}
 
-    /* ── HOW IT WORKS ── */
-    #how-it-works{padding:8rem 4rem;max-width:1280px;margin:0 auto;text-align:center}
-    #how-it-works .section-sub{margin:1rem auto 4rem}
-    .cards-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-    @media(max-width:900px){.cards-row{grid-template-columns:1fr}}
-    .how-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.5rem 2rem 0;text-align:center;position:relative;overflow:hidden;transition:box-shadow .3s;transform-style:preserve-3d;will-change:transform;min-height:420px;display:flex;flex-direction:column}
-    .how-card::before{content:'';position:absolute;inset:0;border-radius:20px;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none}
-    .how-card:hover{box-shadow:0 0 0 1px rgba(99,102,241,.5),0 20px 60px rgba(0,0,0,.4)}
-    .how-card-num{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:.6rem}
-    .how-card-title{font-size:2rem;font-weight:800;color:#fff;margin-bottom:1rem}
-    .how-card-desc{font-size:.9rem;color:var(--muted);line-height:1.7;max-width:26ch;margin:0 auto}
-    .how-card-art{flex:1;display:flex;align-items:flex-end;justify-content:center;margin-top:2rem;min-height:160px}
-    .mini-phone{width:110px;height:200px;background:var(--card2);border-radius:22px;border:2px solid rgba(255,255,255,.1);overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.07);position:relative}
-    .mini-notch{width:50px;height:14px;background:var(--bg);border-radius:0 0 10px 10px;margin:0 auto 8px}
-    .mini-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.07);margin:4px 12px}
-    .mini-bar.g{background:rgba(200,168,75,.45)}
-    .mini-bar.s{width:55%}.mini-bar.m{width:75%}
-    .mini-art{height:64px;margin:8px 12px;border-radius:8px;background:linear-gradient(135deg,rgba(200,168,75,.12),rgba(99,102,241,.12));display:flex;align-items:center;justify-content:center;font-size:1.8rem}
-    .mini-price{font-size:.62rem;font-weight:700;color:var(--gold);padding:0 12px;margin-top:6px}
+/* SPINNING WHEEL CURSOR */
+#wcur{
+  position:fixed;z-index:99999;pointer-events:none;
+  width:34px;height:34px;
+  opacity:0;
+  transition:opacity .18s;
+  will-change:transform;
+}
 
-    /* ── FEATURES GRID ── */
-    #features-grid{padding:8rem 4rem;max-width:1280px;margin:0 auto}
-    .grid-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4rem;gap:2rem;flex-wrap:wrap}
-    .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden}
-    @media(max-width:900px){.feat-grid{grid-template-columns:1fr}}
-    .feat-card{background:var(--card);padding:2.2rem 2rem;transition:background .3s;position:relative;overflow:hidden}
-    .feat-card:hover{background:var(--card2)}
-    .feat-card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 0%,rgba(200,168,75,.05),transparent 60%);opacity:0;transition:opacity .3s}
-    .feat-card:hover::after{opacity:1}
-    .feat-icon{font-size:1.8rem;margin-bottom:1rem;display:block}
-    .feat-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:.5rem}
-    .feat-desc{font-size:.85rem;color:var(--muted);line-height:1.65}
-
-    /* ── VISION ── */
-    #vision{padding:8rem 0;background:#1c1c1f}
-    .vision-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;max-width:1280px;margin:0 auto;padding:0 4rem}
-    @media(max-width:900px){.vision-grid{grid-template-columns:1fr;padding:0 1.5rem}}
-    .vision-text p{font-size:.95rem;color:rgba(255,255,255,.72);line-height:1.9;margin-top:1rem;max-width:44ch;text-shadow:0 0 28px rgba(255,255,255,.06)}
-    .vision-text p strong{color:#fff;font-weight:700;text-shadow:0 0 20px rgba(200,168,75,.35)}
-    .vision-text p+p{margin-top:.8rem}
-    .vision-btns{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap}
-    /* ── VISION LEFT TEXT ── */
-    .vision-story{margin:1.4rem 0 .8rem;padding:1.1rem 1.2rem 1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;display:flex;flex-direction:column;gap:.45rem}
-    .story-line{font-size:.88rem;color:rgba(255,255,255,.52);line-height:1.55}
-    .story-line strong{color:#fff;font-weight:700}
-    .story-co{font-size:.67rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-right:.55rem}
-    .story-tag{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.04em;margin-top:.35rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.07)}
-    /* ── VISION STATS ── */
-    .vision-stats{display:flex;flex-direction:column;gap:1.4rem}
-    .vstat-trio{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding-bottom:1.4rem;border-bottom:1px solid rgba(255,255,255,.08)}
-    .vstat-block-num{font-size:clamp(1.65rem,2.8vw,2.2rem);font-weight:900;letter-spacing:-.04em;line-height:1;color:#fff;font-feature-settings:'tnum'}
-    .vstat-block-num .unit{color:var(--gold);font-size:.75em;font-weight:800}
-    .vstat-block-label{font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:.5rem;line-height:1.55}
-    .vstat-divider{height:1px;background:rgba(255,255,255,.08)}
-    /* Infrastructure comparison */
-    .vstat-infra-label{font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.22)}
-    .vstat-infra{display:flex;flex-direction:column;gap:.18rem}
-    .vstat-infra-row{display:grid;grid-template-columns:58px 1fr auto;align-items:start;gap:.75rem;padding:.9rem 1rem;border-radius:12px;border:1px solid transparent;transition:background .22s,border-color .22s;cursor:default}
-    .vstat-infra-row:hover{background:rgba(255,255,255,.03)}
-    .vstat-infra-row.hl{background:rgba(200,168,75,.06);border-color:rgba(200,168,75,.18)}
-    .vstat-infra-row.hl:hover{background:rgba(200,168,75,.1)}
-    .vstat-co{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.33);padding-top:.12rem}
-    .vstat-infra-row.hl .vstat-co{color:var(--gold)}
-    .vstat-infra-detail{display:flex;flex-direction:column}
-    .vstat-asset{font-size:.84rem;font-weight:600;color:rgba(255,255,255,.62)}
-    .vstat-infra-row.hl .vstat-asset{color:#fff}
-    .vstat-infra-tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.38rem;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none}
-    .vstat-infra-row:hover .vstat-infra-tags,.vstat-infra-row.hl .vstat-infra-tags{opacity:1;transform:translateY(0)}
-    .itag{font-size:.57rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.2rem .55rem;border-radius:100px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.1)}
-    .itag.gold{background:rgba(200,168,75,.12);color:var(--gold);border-color:rgba(200,168,75,.28)}
-    .vstat-val{font-size:.84rem;font-weight:800;color:rgba(255,255,255,.65);font-feature-settings:'tnum';white-space:nowrap;text-align:right;padding-top:.12rem}
-    .vstat-infra-row.hl .vstat-val{color:var(--gold)}
-
-    /* ════ TEAM ════ */
-    #team{padding:8rem 4rem;max-width:1280px;margin:0 auto}
-    #team .section-sub{margin:1rem 0 4rem;max-width:52ch}
-    .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
-    @media(max-width:900px){.team-grid{grid-template-columns:1fr}}
-    .team-card{
-      background:var(--card);border:1px solid var(--border);border-radius:28px;padding:2.8rem;
-      position:relative;overflow:hidden;
-      transition:border-color .5s cubic-bezier(.16,1,.3,1),box-shadow .5s cubic-bezier(.16,1,.3,1),transform .4s cubic-bezier(.16,1,.3,1);
-      transform-style:preserve-3d;will-change:transform;
-    }
-    .team-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% -10%,rgba(200,168,75,.07),transparent 55%);pointer-events:none;transition:opacity .5s}
-    .team-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .5s}
-    .team-card:hover{border-color:rgba(200,168,75,.38);box-shadow:0 0 80px rgba(200,168,75,.07),0 40px 80px rgba(0,0,0,.5);transform:translateY(-4px)}
-    .team-card:hover::after{opacity:.7}
-    .team-avatar{
-      width:80px;height:80px;border-radius:50%;
-      background:linear-gradient(135deg,#1c1a0e,#2e280a);
-      border:2px solid rgba(200,168,75,.45);
-      display:flex;align-items:center;justify-content:center;
-      font-size:1.6rem;font-weight:900;color:var(--gold);
-      margin-bottom:1.6rem;
-      box-shadow:0 0 0 4px rgba(200,168,75,.05),0 0 30px rgba(200,168,75,.12);
-      transition:box-shadow .5s,border-color .5s;
-      letter-spacing:-.02em;user-select:none;
-    }
-    .team-card:hover .team-avatar{box-shadow:0 0 0 6px rgba(200,168,75,.08),0 0 50px rgba(200,168,75,.28);border-color:rgba(200,168,75,.75)}
-    .team-name{font-size:1.65rem;font-weight:900;color:#fff;letter-spacing:-.03em;margin-bottom:.25rem}
-    .team-role{font-size:.72rem;font-weight:700;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.3rem;line-height:1.5}
-    .team-badges{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.6rem}
-    .tbadge{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.28rem .8rem;border-radius:100px;border:1px solid}
-    .tbadge.gold{color:var(--gold);border-color:rgba(200,168,75,.32);background:rgba(200,168,75,.06)}
-    .tbadge.dim{color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
-    .team-bio{font-size:.88rem;color:var(--muted);line-height:1.8;max-width:40ch}
-    .team-divider{width:32px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:1.6rem 0}
-    .team-links{display:flex;gap:1.2rem;align-items:center}
-    .team-link{font-size:.7rem;font-weight:600;color:rgba(255,255,255,.28);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:color .25s;display:flex;align-items:center;gap:.3rem}
-    .team-link:hover{color:var(--gold)}
-    .team-spark{position:absolute;top:2rem;right:2rem;opacity:.12;font-size:3rem;user-select:none;pointer-events:none;transition:opacity .5s}
-    .team-card:hover .team-spark{opacity:.22}
-
-    /* ── CTA ── */
-    #cta-section{padding:6rem 4rem;text-align:center;border-top:1px solid var(--border);max-width:100%}
-    .email-form{display:flex;max-width:500px;margin:0 auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:6px 6px 6px 1.5rem;transition:border-color .3s,box-shadow .3s}
-    .email-form:focus-within{border-color:rgba(200,168,75,.5);box-shadow:0 0 0 4px rgba(200,168,75,.07)}
-    .email-form input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:.9rem;font-family:inherit}
-    .email-form input::placeholder{color:rgba(255,255,255,.22)}
-    .email-form button{background:linear-gradient(135deg,var(--gold),var(--gold-l));color:#0a0800;border:none;border-radius:100px;padding:.7rem 1.6rem;font-size:.78rem;font-weight:700;letter-spacing:.08em;white-space:nowrap;transition:box-shadow .3s,transform .2s;position:relative;overflow:hidden}
-    .email-form button:hover{box-shadow:0 4px 20px rgba(200,168,75,.4);transform:scale(1.02)}
-    .cta-note{font-size:.7rem;color:rgba(255,255,255,.18);margin-top:1.2rem;font-style:italic}
-
-    /* ── FOOTER ── */
-    footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
-    .footer-logo{height:30px;opacity:.6}
-    .footer-links{display:flex;gap:2rem;flex-wrap:wrap}
-    .footer-links a{font-size:.78rem;color:rgba(255,255,255,.28);text-decoration:none;transition:color .2s}
-    .footer-links a:hover{color:rgba(255,255,255,.65)}
-    .footer-copy{font-size:.72rem;color:rgba(255,255,255,.18)}
-    /* ── LEGAL MODAL ── */
-    #legal-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.65);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .38s cubic-bezier(.16,1,.3,1)}
-    #legal-overlay.open{opacity:1;pointer-events:all}
-    #legal-modal{position:relative;background:#0e0e11;border:1px solid rgba(255,255,255,.1);border-radius:20px;width:100%;max-width:660px;max-height:82vh;display:flex;flex-direction:column;transform:translateY(18px) scale(.97);transition:transform .38s cubic-bezier(.16,1,.3,1)}
-    #legal-overlay.open #legal-modal{transform:translateY(0) scale(1)}
-    #legal-modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.4rem 1.8rem 1rem;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
-    #legal-title{font-size:1rem;font-weight:800;color:#fff;letter-spacing:-.01em}
-    #legal-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-size:.95rem;cursor:pointer;transition:all .25s;flex-shrink:0}
-    #legal-close:hover{background:rgba(255,255,255,.14);color:#fff;transform:rotate(90deg)}
-    #legal-body{overflow-y:auto;padding:1.6rem 1.8rem 2rem;scroll-behavior:smooth}
-    #legal-body::-webkit-scrollbar{width:4px}
-    #legal-body::-webkit-scrollbar-track{background:transparent}
-    #legal-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px}
-    #legal-body h3{font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:1.8rem 0 .55rem}
-    #legal-body h3:first-child{margin-top:0}
-    #legal-body p{font-size:.82rem;color:rgba(255,255,255,.48);line-height:1.8;margin-bottom:.7rem}
-    #legal-body strong{color:rgba(255,255,255,.75);font-weight:700}
-    #legal-body .legal-updated{font-size:.68rem;color:rgba(255,255,255,.22);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.5rem}
-
-    /* ════ CURSOR ════ */
-    #cursor-dot{position:fixed;width:6px;height:6px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;will-change:transform}
-    #cursor-ring{position:fixed;width:34px;height:34px;border:1px solid rgba(200,168,75,.45);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .35s cubic-bezier(.16,1,.3,1),height .35s cubic-bezier(.16,1,.3,1),border-color .3s;will-change:transform}
-    body.ch #cursor-dot{width:10px;height:10px}
-    body.ch #cursor-ring{width:52px;height:52px;border-color:rgba(200,168,75,.8)}
-    body.cc #cursor-dot{width:4px;height:4px;background:#fff}
-    body.cc #cursor-ring{width:22px;height:22px}
-
-    /* ════ MODAL ════ */
-    #modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.52);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .45s cubic-bezier(.16,1,.3,1)}
-    #modal-overlay.open{opacity:1;pointer-events:all}
-    #modal{background:rgba(10,12,26,.78);backdrop-filter:blur(52px) saturate(170%) brightness(1.1);-webkit-backdrop-filter:blur(52px) saturate(170%) brightness(1.1);border:1px solid rgba(255,255,255,.1);border-top:1px solid rgba(255,255,255,.22);border-radius:26px;padding:2.8rem 3rem;width:min(460px,92vw);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 48px 120px rgba(0,0,0,.65);transform:translateY(36px) scale(.95);transition:transform .55s cubic-bezier(.16,1,.3,1);position:relative;transform-style:preserve-3d}
-    #modal-overlay.open #modal{transform:translateY(0) scale(1)}
-    #modal-deco{text-align:center;margin-bottom:1.3rem}
-    #modal-deco img{height:52px;width:auto;filter:drop-shadow(0 0 16px rgba(200,168,75,.45));animation:pulse-glow 3s ease-in-out infinite}
-    @keyframes pulse-glow{0%,100%{opacity:.7;text-shadow:0 0 18px rgba(200,168,75,.4)}50%{opacity:1;text-shadow:0 0 32px rgba(200,168,75,.75)}}
-    #modal-close{position:absolute;top:1.1rem;right:1.2rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-size:.95rem;line-height:1;transition:all .28s cubic-bezier(.16,1,.3,1)}
-    #modal-close:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22);color:#fff;transform:rotate(90deg) scale(1.1)}
-    #modal h2{font-size:1.75rem;font-weight:900;letter-spacing:-.03em;text-align:center;margin-bottom:.5rem;background:linear-gradient(135deg,#fff 40%,rgba(255,255,255,.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    #modal p{font-size:.83rem;color:rgba(255,255,255,.42);line-height:1.65;margin:0 0 2rem;text-align:center}
-    #modal-form{display:flex;flex-direction:column;gap:.85rem}
-    #modal-form input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:.92rem 1.2rem;font-size:.88rem;color:#fff;outline:none;font-family:inherit;transition:border-color .3s,box-shadow .3s,background .3s}
-    #modal-form input::placeholder{color:rgba(255,255,255,.24)}
-    #modal-form input:focus{background:rgba(255,255,255,.09);border-color:rgba(200,168,75,.65);box-shadow:0 0 0 4px rgba(200,168,75,.08)}
-    #modal-submit{background:linear-gradient(135deg,var(--gold) 0%,var(--gold-l) 50%,var(--gold) 100%);background-size:200%;background-position:left;color:#0a0800;border:none;border-radius:13px;padding:1rem;font-size:.78rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;transition:background-position .45s,box-shadow .3s,transform .25s;position:relative;overflow:hidden;margin-top:.15rem}
-    #modal-submit:hover{background-position:right;box-shadow:0 10px 36px rgba(200,168,75,.42);transform:translateY(-2px)}
-    #modal-tag{font-size:.58rem;color:rgba(200,168,75,.3);text-align:center;letter-spacing:.16em;text-transform:uppercase;margin-top:1.5rem}
-
-    @keyframes fadeup{to{opacity:1;transform:translateY(0)}}
-
-    /* ════ MOBILE ════ */
-    @media(max-width:768px){
-      /* hide desktop-only chrome */
-      .sc-card,#progress,#stats-bar,#rain-canvas,#rain-btn{display:none!important}
-
-      /* hero — make CTAs tappable, tighten sizing */
-      #hero{left:1.2rem;right:1.2rem;max-width:100%;pointer-events:auto}
-      #hero h1{font-size:clamp(2.1rem,9vw,3rem)}
-      #hero p{font-size:.88rem;max-width:100%}
-      #hero-cta{margin-top:1.6rem;pointer-events:auto;flex-wrap:wrap;gap:.75rem}
-      #scroll-cue{bottom:1.5rem;font-size:.62rem}
-
-      /* sections */
-      #how-it-works,#features-grid,#vision,#team{padding:4rem 1.2rem}
-      #cta-section{padding:3.5rem 1.2rem}
-      .grid-header{flex-direction:column;gap:1rem;align-items:flex-start;padding:0 1.2rem}
-
-      /* how it works */
-      .cards-row{grid-template-columns:1fr;gap:1.2rem}
-      .how-card{min-height:auto;padding:1.8rem 1.4rem}
-      .how-card-art{min-height:90px;margin-top:1.2rem}
-
-      /* features */
-      .feat-grid{grid-template-columns:1fr}
-      .feat-card{padding:1.4rem}
-
-      /* vision */
-      .vision-grid{grid-template-columns:1fr;gap:2rem;padding:0}
-      .vision-text p{max-width:100%}
-      .vision-story{padding:.85rem .95rem}
-      .story-line{font-size:.82rem}
-      /* stats trio — compact 3-col */
-      .vstat-trio{gap:.5rem;padding-bottom:1.2rem}
-      .vstat-block-num{font-size:1.4rem}
-      .vstat-block-label{font-size:.5rem;letter-spacing:.06em;line-height:1.45}
-      /* infra rows — tighter */
-      .vstat-infra-label{font-size:.55rem}
-      .vstat-infra-row{grid-template-columns:42px 1fr auto;gap:.5rem;padding:.65rem .75rem}
-      .vstat-co{font-size:.6rem}
-      .vstat-asset{font-size:.76rem}
-      .vstat-val{font-size:.76rem}
-      /* only show hover tags on highlighted row (no hover on mobile) */
-      .vstat-infra-tags{display:none!important}
-      .vstat-infra-row.hl .vstat-infra-tags{display:flex!important;opacity:1;transform:none}
-
-      /* team */
-      .team-grid{grid-template-columns:1fr}
-      .team-card{padding:1.8rem}
-      .team-bio{max-width:100%}
-
-      /* footer */
-      footer{padding:2rem 1.2rem;flex-direction:column;align-items:flex-start;gap:1.2rem}
-      .footer-links{gap:1rem;flex-wrap:wrap}
-      .footer-copy{font-size:.68rem}
-
-      /* legal modal */
-      #legal-modal{max-height:88vh;border-radius:16px}
-      #legal-modal-header{padding:1.1rem 1.2rem .85rem}
-      #legal-body{padding:1.2rem 1.2rem 1.8rem}
-
-      /* main modal */
-      #modal{padding:2rem 1.4rem;border-radius:20px}
-      #modal h2{font-size:1.4rem}
-
-      /* email form */
-      .email-form{flex-direction:column;border-radius:14px;padding:10px}
-      .email-form input{padding:.75rem 1rem}
-      .email-form button{border-radius:10px;width:100%;justify-content:center}
-
-      /* section titles */
-      .section-title{font-size:clamp(1.7rem,8vw,2.5rem)}
-    }
-
-  </style>
+/* CORNER BUTTONS + BRACKET LINES */
+.cn{
+  position:fixed;z-index:999;
+  width:50px;height:50px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#cn1{top:20px;left:20px;}
+#cn2{top:20px;right:20px;}
+#cn3{bottom:20px;left:20px;}
+#cn4{bottom:20px;right:20px;}
+.cn-ring{
+  width:38px;height:38px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.22);
+  background:rgba(0,0,0,0.55);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.76rem;letter-spacing:.03em;
+  color:rgba(255,255,255,0.50);
+  transition:all .22s;user-select:none;
+}
+.cn:hover .cn-ring,.cn.on .cn-ring{
+  border-color:#fff;color:#fff;
+  box-shadow:0 0 10px rgba(255,255,255,0.40),0 0 26px rgba(255,255,255,0.18);
+  text-shadow:0 0 7px #fff,0 0 18px rgba(255,255,255,0.55);
+}
+</style>
 </head>
 <body>
+<!-- SPINNING WHEEL CURSOR -->
+<div id="wcur">
+  <svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg" width="34" height="34">
+    <!-- outer tire -->
+    <circle cx="17" cy="17" r="16" fill="#111" stroke="#5a5a5a" stroke-width="2"/>
+    <!-- tire wall highlight -->
+    <circle cx="17" cy="17" r="13" fill="none" stroke="#333" stroke-width="0.6"/>
+    <!-- rim dish -->
+    <circle cx="17" cy="17" r="12" fill="#1e1e1e" stroke="#6a6a6a" stroke-width="1.2"/>
+    <!-- 5 spokes -->
+    <line x1="17" y1="17" x2="17"   y2="5.5"  stroke="#aaa" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="17" y1="17" x2="28"   y2="13.2" stroke="#aaa" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="17" y1="17" x2="23.9" y2="26.3" stroke="#aaa" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="17" y1="17" x2="10.1" y2="26.3" stroke="#aaa" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="17" y1="17" x2="6"    y2="13.2" stroke="#aaa" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- center hub -->
+    <circle cx="17" cy="17" r="3.2" fill="#333" stroke="#888" stroke-width="1"/>
+    <circle cx="17" cy="17" r="1.3" fill="#bbb"/>
+  </svg>
+</div>
 
-  <div id="cursor-dot"></div>
-  <div id="cursor-ring"></div>
+<canvas id="bg"></canvas>
+<div class="scroll-hint"><div class="scroll-hint-line"></div><div class="scroll-hint-dot"></div></div>
 
-  <!-- LEGAL MODAL -->
-  <div id="legal-overlay">
-    <div id="legal-modal">
-      <div id="legal-modal-header">
-        <span id="legal-title">Legal</span>
-        <button id="legal-close">&times;</button>
-      </div>
-      <div id="legal-body"></div>
-    </div>
-  </div>
+<!-- PAGE 2 — fades in on scroll -->
+<div id="page2">
+  <div class="p2-label">Coming soon</div>
+  <div class="p2-title">Carbase</div>
+  <div class="p2-wip">Work in progress</div>
+</div>
 
-  <div id="modal-overlay">
-    <div id="modal">
-      <button id="modal-close">&times;</button>
-      <div id="modal-deco"><img src="./logo.png" alt="Carbase AI"/></div>
-      <h2>Join Carbase AI</h2>
-      <p>Be first to experience the future of car identity.<br>Early access is limited.</p>
-      <form id="modal-form" name="waitlist" netlify netlify-honeypot="bot-field" novalidate>
-        <input type="hidden" name="form-name" value="waitlist"/>
-        <p style="display:none"><input name="bot-field" tabindex="-1" autocomplete="off"/></p>
-        <input type="text"  name="name"  placeholder="Full name" autocomplete="name" maxlength="80"/>
-        <input type="email" name="email" placeholder="Email address" autocomplete="email" maxlength="120"/>
-        <button id="modal-submit" type="submit">Request Early Access →</button>
-      </form>
-      <div id="modal-tag">Carbase AI · Your car. Your identity.</div>
-    </div>
-  </div>
+<!-- CORNERS -->
+<div class="cn" id="cn1"><div class="cn-ring">1</div></div>
+<div class="cn" id="cn2"><div class="cn-ring">2</div></div>
+<div class="cn" id="cn3"><div class="cn-ring">3</div></div>
+<div class="cn" id="cn4"><div class="cn-ring">4</div></div>
 
-  <nav id="navbar">
-    <a id="nav-logo" href="#"><img src="./logo.png" alt="Carbase AI"/></a>
-    <ul id="nav-links">
-      <li><a href="#" data-scroll="0">Home</a></li>
-      <li><a href="#" data-anchor="how-it-works">How It Works</a></li>
-      <li><a href="#" data-anchor="features-grid">Features</a></li>
-      <li><a href="#" data-anchor="team">Team</a></li>
-      <li><a href="#" data-anchor="cta-section">Early Access</a></li>
-    </ul>
-    <div id="nav-right">
-      <div class="nav-social">
-        <a href="#" title="Discord">⬡</a>
-        <a href="#" title="Twitter">𝕏</a>
-        <a href="#" title="Instagram">◎</a>
-      </div>
-      <a href="#" class="nav-cta-btn" data-modal="open">Get Started →</a>
-    </div>
-    <div id="nav-hamburger"><span></span><span></span><span></span></div>
-  </nav>
+<div class="stage">
+  <div class="brand"><span>Car</span>base</div>
+  <div class="brand-rule"></div>
+  <div class="floater">
 
-  <div id="nav-drawer">
-    <a href="#" data-scroll="0">Home</a>
-    <a href="#" data-anchor="how-it-works">How It Works</a>
-    <a href="#" data-anchor="features-grid">Features</a>
-    <a href="#" data-anchor="team">Team</a>
-    <a href="#" data-modal="open" style="color:var(--gold)">Get Started →</a>
-  </div>
-
-  <!-- VIDEO + RAIN -->
-  <div id="canvas-wrap"></div>
-  <div id="vignette"></div>
-  <canvas id="rain-canvas"></canvas>
-
-  <!-- SCROLL ANNOTATION CARDS — sequential, one at a time -->
-
-  <!-- Card 0: OVR — TOP RIGHT -->
-  <div class="sc-card" id="sc0" style="top:max(90px,15vh);right:14vw">
-    <div class="sc-eyebrow">Carbase Overall</div>
-    <div class="sc-title">AMG GLE 53</div>
-    <div class="sc-rows">
-      <div class="sc-row"><span class="sc-label">Engine</span><span class="sc-val green">87</span></div>
-      <div class="sc-row"><span class="sc-label">Torque</span><span class="sc-val">82</span></div>
-      <div class="sc-row"><span class="sc-label">Stability</span><span class="sc-val green">91</span></div>
-      <div class="sc-row"><span class="sc-label">Braking</span><span class="sc-val">85</span></div>
-      <div class="sc-row"><span class="sc-label">Aero</span><span class="sc-val">66</span></div>
-      <div class="sc-divider"></div>
-      <div class="sc-row"><span class="sc-label">OVR Score</span><span class="sc-val gold">84 / 100</span></div>
-    </div>
-  </div>
-
-  <!-- Card 1: AI Advisor — BOTTOM RIGHT -->
-  <div class="sc-card" id="sc1" style="bottom:max(90px,15vh);right:14vw">
-    <div class="sc-eyebrow">AI Advisor</div>
-    <div class="sc-title">Vehicle Health</div>
-    <div class="sc-rows">
-      <div class="sc-row"><span class="sc-label">Oil Life</span><span class="sc-val green">73% · Watch</span></div>
-      <div class="sc-row"><span class="sc-label">Next Service</span><span class="sc-val gold">2,200 mi</span></div>
-      <div class="sc-row"><span class="sc-label">Brake Pads</span><span class="sc-val">68% Remaining</span></div>
-      <div class="sc-divider"></div>
-      <div class="sc-row"><span class="sc-label">Drive Score</span><span class="sc-val gold">87 / 100</span></div>
-      <div class="sc-row"><span class="sc-label">AI Alert</span><span class="sc-val green">Air Filter Due Soon</span></div>
-    </div>
-  </div>
-
-  <!-- Card 2: Mod Helper — BOTTOM LEFT -->
-  <div class="sc-card" id="sc2" style="bottom:max(90px,15vh);left:14vw">
-    <div class="sc-eyebrow">Mod Helper</div>
-    <div class="sc-title">Stage 2 Unlocked</div>
-    <div class="sc-rows">
-      <div class="sc-row"><span class="sc-label">Current Stage</span><span class="sc-val">Stage 1</span></div>
-      <div class="sc-row"><span class="sc-label">Suggested</span><span class="sc-val gold">Eurocharged ECU</span></div>
-      <div class="sc-row"><span class="sc-label">HP Unlock</span><span class="sc-val green">+91 hp</span></div>
-      <div class="sc-divider"></div>
-      <div class="sc-row"><span class="sc-label">OVR Gain</span><span class="sc-val gold">85 → 91 ↑</span></div>
-      <div class="sc-row"><span class="sc-label">Value Impact</span><span class="sc-val green">+$3,800</span></div>
-    </div>
-  </div>
-
-  <!-- Card 3: Parts Advisor — TOP LEFT -->
-  <div class="sc-card" id="sc3" style="top:max(90px,15vh);left:14vw">
-    <div class="sc-eyebrow">Parts Advisor</div>
-    <div class="sc-title">Brake System</div>
-    <div class="sc-rows">
-      <div class="sc-row"><span class="sc-label">Front Rotors (OEM)</span><span class="sc-val gold">$380 – $520</span></div>
-      <div class="sc-row"><span class="sc-label">Perf. Brake Pads</span><span class="sc-val">$180 – $240</span></div>
-      <div class="sc-row"><span class="sc-label">Labor (Both Axles)</span><span class="sc-val">$280 – $380</span></div>
-      <div class="sc-divider"></div>
-      <div class="sc-row"><span class="sc-label">AI Verdict</span><span class="sc-val green">Dealer Overpriced</span></div>
-      <div class="sc-row"><span class="sc-label">Aftermarket Save</span><span class="sc-val gold">~$340 Est.</span></div>
-    </div>
-  </div>
-
-  <!-- Card 4: Car Code QR — CENTER LEFT -->
-  <div class="sc-card sc-card--qr" id="sc4" style="top:38%;left:14vw">
-    <div class="sc-eyebrow">Car Code</div>
-    <div class="sc-qr-wrap">
-      <svg class="sc-qr-svg" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-        <!-- TL finder -->
-        <path fill-rule="evenodd" fill="currentColor" d="M0,0H7V7H0ZM1,1H6V6H1Z"/>
-        <rect x="2" y="2" width="3" height="3" fill="currentColor"/>
-        <!-- TR finder -->
-        <path fill-rule="evenodd" fill="currentColor" d="M14,0H21V7H14ZM15,1H20V6H15Z"/>
-        <rect x="16" y="2" width="3" height="3" fill="currentColor"/>
-        <!-- BL finder -->
-        <path fill-rule="evenodd" fill="currentColor" d="M0,14H7V21H0ZM1,15H6V20H1Z"/>
-        <rect x="2" y="16" width="3" height="3" fill="currentColor"/>
-        <!-- Timing patterns -->
-        <rect x="8" y="6" width="1" height="1" fill="currentColor"/><rect x="10" y="6" width="1" height="1" fill="currentColor"/><rect x="12" y="6" width="1" height="1" fill="currentColor"/>
-        <rect x="6" y="8" width="1" height="1" fill="currentColor"/><rect x="6" y="10" width="1" height="1" fill="currentColor"/><rect x="6" y="12" width="1" height="1" fill="currentColor"/>
-        <!-- Format info -->
-        <rect x="8" y="0" width="1" height="1" fill="currentColor"/><rect x="8" y="1" width="1" height="1" fill="currentColor"/><rect x="8" y="3" width="1" height="1" fill="currentColor"/>
-        <rect x="0" y="8" width="1" height="1" fill="currentColor"/><rect x="2" y="8" width="1" height="1" fill="currentColor"/><rect x="4" y="8" width="1" height="1" fill="currentColor"/>
-        <rect x="13" y="8" width="1" height="1" fill="currentColor"/><rect x="15" y="8" width="1" height="1" fill="currentColor"/><rect x="18" y="8" width="1" height="1" fill="currentColor"/><rect x="20" y="8" width="1" height="1" fill="currentColor"/>
-        <rect x="8" y="13" width="1" height="1" fill="currentColor"/>
-        <!-- Data modules -->
-        <rect x="9" y="9" width="1" height="1" fill="currentColor"/><rect x="11" y="9" width="1" height="1" fill="currentColor"/><rect x="14" y="9" width="1" height="1" fill="currentColor"/><rect x="16" y="9" width="1" height="1" fill="currentColor"/><rect x="19" y="9" width="1" height="1" fill="currentColor"/>
-        <rect x="10" y="10" width="1" height="1" fill="currentColor"/><rect x="12" y="10" width="1" height="1" fill="currentColor"/><rect x="15" y="10" width="1" height="1" fill="currentColor"/><rect x="17" y="10" width="1" height="1" fill="currentColor"/><rect x="20" y="10" width="1" height="1" fill="currentColor"/>
-        <rect x="9" y="11" width="1" height="1" fill="currentColor"/><rect x="13" y="11" width="1" height="1" fill="currentColor"/><rect x="16" y="11" width="1" height="1" fill="currentColor"/><rect x="18" y="11" width="1" height="1" fill="currentColor"/>
-        <rect x="10" y="12" width="1" height="1" fill="currentColor"/><rect x="14" y="12" width="1" height="1" fill="currentColor"/><rect x="17" y="12" width="1" height="1" fill="currentColor"/><rect x="19" y="12" width="1" height="1" fill="currentColor"/>
-        <rect x="9" y="13" width="1" height="1" fill="currentColor"/><rect x="11" y="13" width="1" height="1" fill="currentColor"/><rect x="15" y="13" width="1" height="1" fill="currentColor"/><rect x="20" y="13" width="1" height="1" fill="currentColor"/>
-        <rect x="8" y="14" width="1" height="1" fill="currentColor"/><rect x="12" y="14" width="1" height="1" fill="currentColor"/><rect x="14" y="14" width="1" height="1" fill="currentColor"/><rect x="17" y="14" width="1" height="1" fill="currentColor"/><rect x="19" y="14" width="1" height="1" fill="currentColor"/>
-        <rect x="9" y="15" width="1" height="1" fill="currentColor"/><rect x="11" y="15" width="1" height="1" fill="currentColor"/><rect x="16" y="15" width="1" height="1" fill="currentColor"/><rect x="18" y="15" width="1" height="1" fill="currentColor"/>
-        <rect x="8" y="16" width="1" height="1" fill="currentColor"/><rect x="13" y="16" width="1" height="1" fill="currentColor"/><rect x="15" y="16" width="1" height="1" fill="currentColor"/><rect x="20" y="16" width="1" height="1" fill="currentColor"/>
-        <rect x="10" y="17" width="1" height="1" fill="currentColor"/><rect x="12" y="17" width="1" height="1" fill="currentColor"/><rect x="14" y="17" width="1" height="1" fill="currentColor"/><rect x="17" y="17" width="1" height="1" fill="currentColor"/><rect x="19" y="17" width="1" height="1" fill="currentColor"/>
-        <rect x="9" y="18" width="1" height="1" fill="currentColor"/><rect x="11" y="18" width="1" height="1" fill="currentColor"/><rect x="13" y="18" width="1" height="1" fill="currentColor"/><rect x="16" y="18" width="1" height="1" fill="currentColor"/><rect x="20" y="18" width="1" height="1" fill="currentColor"/>
-        <rect x="8" y="19" width="1" height="1" fill="currentColor"/><rect x="12" y="19" width="1" height="1" fill="currentColor"/><rect x="15" y="19" width="1" height="1" fill="currentColor"/><rect x="18" y="19" width="1" height="1" fill="currentColor"/>
-        <rect x="10" y="20" width="1" height="1" fill="currentColor"/><rect x="13" y="20" width="1" height="1" fill="currentColor"/><rect x="16" y="20" width="1" height="1" fill="currentColor"/><rect x="19" y="20" width="1" height="1" fill="currentColor"/>
-      </svg>
-    </div>
-    <div class="sc-qr-msg">Give your car an identity.</div>
-    <div class="sc-qr-cta">Order a Car Code →</div>
-  </div>
-
-  <div id="spacer"></div>
-
-  <div id="hero">
-    <span class="hero-eyebrow">The Future of Car Culture</span>
-    <h1>Your car.<br><span class="gold">Your identity.</span></h1>
-    <div class="hero-sub">Scroll to explore</div>
-    <div id="hero-cta">
-      <a href="#" class="btn-primary" data-modal="open">Join the Movement</a>
-    </div>
-  </div>
-
-  <div id="stats-bar">
-    <div><div class="stat-number">50K+</div><div class="stat-label">Cars Listed</div></div>
-    <div><div class="stat-number">120+</div><div class="stat-label">Countries</div></div>
-    <div><div class="stat-number">AI</div><div class="stat-label">Powered</div></div>
-  </div>
-  <div id="scroll-cue"><div class="line"></div><span>Scroll</span></div>
-  <div id="progress"></div>
-
-  <!-- ═══════ LANDING ═══════ -->
-  <div class="landing">
-
-    <!-- PARTNERS -->
-    <div id="partners">
-      <span class="backed-label reveal">Backed by the Community</span>
-      <div class="marquee-wrap">
-        <div class="marquee-track">
-          <span class="marquee-item">Bring a Trailer</span><span class="marquee-item">Cars &amp; Bids</span><span class="marquee-item">Barrett-Jackson</span><span class="marquee-item">Hagerty</span><span class="marquee-item">Mecum Auctions</span><span class="marquee-item">RM Sotheby's</span><span class="marquee-item">Goodwood</span><span class="marquee-item">SEMA</span>
-          <span class="marquee-item">Bring a Trailer</span><span class="marquee-item">Cars &amp; Bids</span><span class="marquee-item">Barrett-Jackson</span><span class="marquee-item">Hagerty</span><span class="marquee-item">Mecum Auctions</span><span class="marquee-item">RM Sotheby's</span><span class="marquee-item">Goodwood</span><span class="marquee-item">SEMA</span>
-        </div>
+    <div class="scene" id="scene">
+      <div class="card" id="card">
+        <div class="face front"><div class="front-hl" id="hl"></div></div>
+        <div class="face back"><div class="back-inner"><div class="back-word">Carbase</div></div></div>
       </div>
     </div>
 
-    <!-- HOW IT WORKS -->
-    <section id="how-it-works">
-      <span class="eyebrow reveal">How It Works</span>
-      <h2 class="section-title reveal d1">Elevating your car experience.</h2>
-      <p class="section-sub reveal d2" style="margin:1rem auto 4rem">From the moment you list your car to owning a verified digital identity — every step secured to the highest standard.</p>
-      <div class="cards-row">
-        <div class="how-card reveal d1">
-          <div class="how-card-num">1.</div><div class="how-card-title">Upload</div>
-          <p class="how-card-desc">Drop your VIN or snap your plates — Carbase AI instantly builds your car's full identity. OVR score, mods, market value, history chain. All live.</p>
-          <div class="how-card-art"><div class="mini-phone"><div class="mini-notch"></div><div class="mini-art">📡</div><div class="mini-bar g" style="width:80%"></div><div class="mini-bar s"></div><div class="mini-bar m"></div><div class="mini-price">Building Identity...</div></div></div>
-        </div>
-        <div class="how-card reveal d2">
-          <div class="how-card-num">2.</div><div class="how-card-title">Modify</div>
-          <p class="how-card-desc">Use Mod Helper to plan your build stage by stage. Every upgrade you log pushes your OVR higher and your market value up with it.</p>
-          <div class="how-card-art"><div class="mini-phone"><div class="mini-notch"></div><div class="mini-art">⚙️</div><div class="mini-bar g" style="width:90%"></div><div class="mini-bar m"></div><div class="mini-price">OVR 94 → 98 ↑</div></div></div>
-        </div>
-        <div class="how-card reveal d3">
-          <div class="how-card-num">3.</div><div class="how-card-title">Join a Crew</div>
-          <p class="how-card-desc">Find your community. Purchase a car code, join a crew, trade with verified members. Your car has a place in the ecosystem.</p>
-          <div class="how-card-art"><div class="mini-phone"><div class="mini-notch"></div><div class="mini-art">🔑</div><div class="mini-bar g" style="width:70%"></div><div class="mini-bar s"></div><div class="mini-price">Code #CB-0042 ✓</div></div></div>
-        </div>
-      </div>
-    </section>
+    <div class="base">
+      <div class="contact-shadow"></div>
+      <div class="step step-1"></div>
+      <div class="step step-2"></div>
+      <div class="step step-3"></div>
+      <div class="floor-pool"></div>
+    </div>
 
-    <!-- FEATURES GRID -->
-    <section id="features-grid">
-      <div class="grid-header">
-        <div>
-          <span class="eyebrow reveal">Platform</span>
-          <h2 class="section-title reveal d1">The Infrastructure<br>Cars Have Never Had</h2>
-        </div>
-        <a href="#" class="btn-ghost reveal d2" data-modal="open" style="flex-shrink:0;align-self:center">Learn More →</a>
-      </div>
-      <div class="feat-grid">
-        <div class="feat-card reveal"><span class="feat-icon">⚡</span><div class="feat-title">Car Identity, Defined</div><p class="feat-desc">Every vehicle gets a structured digital identity — specs, baseline performance, build intent, and ownership history — unified into a single, permanent record.</p></div>
-        <div class="feat-card reveal d1"><span class="feat-icon">🧠</span><div class="feat-title">Constraint-Aware AI Advisor</div><p class="feat-desc">Not generic advice. A system that synthesizes manufacturer data, aftermarket compatibility, and real build outcomes to deliver fitment-accurate, sequence-aware recommendations — calibrated to your exact car, goals, and current setup.</p></div>
-        <div class="feat-card reveal d2"><span class="feat-icon">📈</span><div class="feat-title">Verified Build Evolution</div><p class="feat-desc">Your car's progression, documented in real time. Real modifications, real proof, measurable performance impact — no guesswork, no fabricated builds.</p></div>
-        <div class="feat-card reveal"><span class="feat-icon">🧾</span><div class="feat-title">Proof-Backed Mod Logging</div><p class="feat-desc">Every modification requires product links and install verification — creating a credible, traceable record of what was done, how it was done, and what it changed.</p></div>
-        <div class="feat-card reveal d1"><span class="feat-icon">🏁</span><div class="feat-title">Structured Performance Ranking</div><p class="feat-desc">A coherent tier system — Stock through Signature Build — that reflects genuine build quality and intent. Not vanity metrics. Not unverified claims.</p></div>
-        <div class="feat-card reveal d2"><span class="feat-icon">🔍</span><div class="feat-title">Real Builds, Real Comparison</div><p class="feat-desc">Browse verified builds from owners with your exact car and goals. See precisely what works, what doesn't, and how every modification compounds — filtered by make, model, and stage.</p></div>
-      </div>
-    </section>
+  </div>
 
-    <!-- VISION -->
-    <section id="vision">
-      <div class="vision-grid">
-        <div class="vision-text reveal">
-          <span class="eyebrow">The Case for Carbase</span>
-          <h2 class="section-title">The Largest Asset Class.<br>No System Behind It.</h2>
-          <div class="vision-story">
-            <p class="story-line"><span class="story-co">PSA</span>Sports cards weren't always valuable. PSA made them <strong>measurable.</strong></p>
-            <p class="story-line"><span class="story-co">StockX</span>Sneakers weren't always liquid. StockX made them <strong>tradable.</strong></p>
-            <p class="story-tag">Structure creates value.</p>
-          </div>
-          <p>Over <strong>290 million Americans</strong> own a vehicle. Together they spend over <strong>$1.4 trillion</strong> a year keeping them — an average of <strong>$12,000 annually</strong> per car.</p>
-          <p>Yet once you buy one — its history disappears, its upgrades are unverified, its value fragments, its identity is lost.</p>
-          <p>CarBase AI brings <strong>identity, verification, and intelligence</strong> to the most expensive everyday asset people own.</p>
-          <div class="vision-btns">
-            <a href="#" class="btn-primary" data-modal="open">Join the Movement</a>
-            <a href="#" class="btn-ghost" data-modal="open">Learn More →</a>
-          </div>
-        </div>
-        <div class="vision-stats reveal d2">
-          <!-- Three key stats -->
-          <div class="vstat-trio">
-            <div>
-              <div class="vstat-block-num">$<span class="vcount" data-target="1.4" data-decimals="1">0</span><span class="unit">T</span></div>
-              <div class="vstat-block-label">Annual U.S. Vehicle Spending</div>
-            </div>
-            <div>
-              <div class="vstat-block-num">$<span class="vcount" data-target="12">0</span><span class="unit">K+</span></div>
-              <div class="vstat-block-label">Avg. Yearly Ownership Cost</div>
-            </div>
-            <div>
-              <div class="vstat-block-num"><span class="vcount" data-target="90">0</span><span class="unit">%+</span></div>
-              <div class="vstat-block-label">Households Own a Car</div>
-            </div>
-          </div>
-          <div class="vstat-divider"></div>
-          <!-- Asset infrastructure — hover to reveal what each built -->
-          <div class="vstat-infra-label">Asset Infrastructure</div>
-          <div class="vstat-infra">
-            <div class="vstat-infra-row">
-              <span class="vstat-co">PSA</span>
-              <div class="vstat-infra-detail">
-                <span class="vstat-asset">Sports Cards</span>
-                <div class="vstat-infra-tags">
-                  <span class="itag">Standardized</span>
-                  <span class="itag">Graded</span>
-                  <span class="itag">Permanent</span>
-                </div>
-              </div>
-              <span class="vstat-val">$853M</span>
-            </div>
-            <div class="vstat-infra-row">
-              <span class="vstat-co">StockX</span>
-              <div class="vstat-infra-detail">
-                <span class="vstat-asset">Sneakers</span>
-                <div class="vstat-infra-tags">
-                  <span class="itag">Verified</span>
-                  <span class="itag">Priced</span>
-                  <span class="itag">Liquid</span>
-                </div>
-              </div>
-              <span class="vstat-val">$3.8B</span>
-            </div>
-            <div class="vstat-infra-row hl">
-              <span class="vstat-co">CarBase</span>
-              <div class="vstat-infra-detail">
-                <span class="vstat-asset">Automobiles</span>
-                <div class="vstat-infra-tags">
-                  <span class="itag gold">Identity</span>
-                  <span class="itag gold">Evolution</span>
-                  <span class="itag gold">Intelligence</span>
-                </div>
-              </div>
-              <span class="vstat-val">∞</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  <!-- FLIP CTA — shows after card flip -->
+  <div class="flip-cta" id="flip-cta">
+    <div class="flip-cta-line"></div>
+    <p>For more features, smarter buying tools, and full vehicle intelligence — <strong>download the Carbase app.</strong></p>
+    <a class="flip-cta-badge" href="#" target="_blank" id="cta-link">↗ carbaseapp.com</a>
+  </div>
 
-    <!-- TEAM -->
-    <section id="team">
-      <span class="eyebrow reveal">Behind the Curtain</span>
-      <h2 class="section-title reveal d1">The team.</h2>
-      <p class="section-sub reveal d2">Two founders. One mission. Building the infrastructure for a new standard of vehicle ownership.</p>
-      <div class="team-grid">
+  <!-- INFO — positioned below base, outside floater so card never shifts -->
+  <div class="info-wrap" id="info-wrap">
+    <div class="info-inner">
+      <div class="info-cat" id="info-cat"></div>
+      <div class="info-title" id="info-title"></div>
+      <div class="info-line"></div>
+      <ul class="info-list" id="info-list"></ul>
+    </div>
+  </div>
 
-        <!-- Nico Reis -->
-        <div class="team-card reveal d1">
+</div>
 
-          <div class="team-avatar">NR</div>
-          <div class="team-name">Nico Reis</div>
-          <div class="team-role">Co-Founder, Carbase AI<br>Founder, Velto Enterprises</div>
-          <div class="team-badges">
-            <span class="tbadge gold">Carbase AI</span>
-            <span class="tbadge gold">Velto Enterprises</span>
-            <span class="tbadge dim">Founder</span>
-          </div>
-          <p class="team-bio">Nico leads product vision and company direction at Carbase AI. As founder of Velto Enterprises, he's built the strategic foundation that Carbase operates within — from concept to execution.</p>
-          <div class="team-divider"></div>
-          <div class="team-links">
-            <a href="#" class="team-link">Twitter / X →</a>
-            <a href="#" class="team-link">LinkedIn →</a>
-          </div>
-        </div>
+<script>
+/* =============================================
+   CANVAS — subtle warm dust motes like
+   an old bulb. No sparkle. No glow rings.
+   ============================================= */
+(function(){
+  var cv  = document.getElementById('bg');
+  var ctx = cv.getContext('2d');
+  var W, H, dust = [], smoke = [], mist = [];
+  var t = 0;
+  var mouseX = -9999, mouseY = -9999, mouseSmX = -9999, mouseSmY = -9999, mouseIn = false;
+  document.addEventListener('mousemove',function(e){
+    if(!mouseIn){ mouseSmX=e.clientX; mouseSmY=e.clientY; mouseIn=true; } /* snap on first entry */
+    mouseX=e.clientX; mouseY=e.clientY;
+  });
+  document.addEventListener('mouseleave',function(){ mouseIn=false; });
 
-        <!-- Sebi Reis -->
-        <div class="team-card reveal d2">
+  function r(a,b){ return a + Math.random()*(b-a); }
 
-          <div class="team-avatar">SR</div>
-          <div class="team-name">Sebi Reis</div>
-          <div class="team-role">Co-Founder &amp; CTO<br>Carbase AI</div>
-          <div class="team-badges">
-            <span class="tbadge gold">Carbase AI</span>
-            <span class="tbadge dim">Co-Founder</span>
-            <span class="tbadge dim">CTO</span>
-          </div>
-          <p class="team-bio">Sebi owns the full technology stack at Carbase AI. He designs and ships the systems behind the AI advisor, mod helper, identity engine and real-time market layer — turning complex problems into clean, scalable products.</p>
-          <div class="team-divider"></div>
-          <div class="team-links">
-            <a href="#" class="team-link">Twitter / X →</a>
-            <a href="#" class="team-link">LinkedIn →</a>
-          </div>
-        </div>
+  /* one dust mote — spawns near brand text area, drifts gently */
+  function mote(){
+    var cx = W*0.5 + r(-W*0.32, W*0.32);
+    var startY = r(-10, H*0.20);
+    return {
+      x: cx,
+      y: startY,
+      vx: r(-0.14, 0.14),
+      vy: r(0.05, 0.26),
+      r:  r(0.3, 1.0),
+      o:  r(0.18, 0.48),
+      flicker: r(0.0006, 0.0022),
+      ph: r(0, Math.PI*2),
+    };
+  }
 
-      </div>
-    </section>
+  function blob(x,y,rx,ry,a,R,G,B){
+    ctx.save();
+    ctx.translate(x,y); ctx.scale(1, ry/rx);
+    var g = ctx.createRadialGradient(0,0,0,0,0,rx);
+    g.addColorStop(0,   'rgba('+R+','+G+','+B+','+Math.min(a,1).toFixed(3)+')');
+    g.addColorStop(0.5, 'rgba('+R+','+G+','+B+','+(a*0.14).toFixed(3)+')');
+    g.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,rx,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
 
-    <!-- CTA -->
-    <section id="cta-section">
-      <span class="eyebrow reveal" style="display:block;text-align:center">Early Access</span>
-      <h2 class="section-title reveal d1" style="max-width:none;margin:0 auto;text-align:center">Your car deserves<br>a platform.</h2>
-      <p class="section-sub reveal d2" style="margin:1rem auto 3rem;text-align:center">We're currently in private alpha. Sign up below to get early access.</p>
-      <div class="reveal d3" style="text-align:center">
-        <form class="email-form" id="cta-form" name="early-access" netlify netlify-honeypot="bot-field" novalidate>
-          <input type="hidden" name="form-name" value="early-access"/>
-          <p style="display:none"><input name="bot-field" tabindex="-1" autocomplete="off"/></p>
-          <input type="email" name="email" placeholder="Enter your email..." autocomplete="email" maxlength="120"/>
-          <button type="submit">Get Access</button>
-        </form>
-        <p class="cta-note">Private alpha — secure your spot before we open to the public.</p>
-      </div>
-    </section>
+  function init(){
+    dust=[]; smoke=[]; mist=[];
 
-    <footer>
-      <img src="./logo.png" alt="Carbase AI" class="footer-logo"/>
-      <div class="footer-links"><a href="#">Home</a><a href="#">How It Works</a><a href="#">Features</a><a href="#" data-anchor="team">Team</a><a href="#" data-legal="privacy">Privacy Policy</a><a href="#" data-legal="terms">Terms of Service</a></div>
-      <div class="footer-copy">© 2026 Carbase AI · Velto Enterprises. All rights reserved.</div>
-    </footer>
+    /* smoke blobs — larger, barely visible */
+    for(var i=0;i<38;i++){
+      smoke.push({
+        x:r(0,W), y:r(-180,H*0.70),
+        rx:r(180,420), ry:r(80,200),
+        vx:(Math.random()>0.5?1:-1)*r(0.04,0.16),
+        vy:r(0.002,0.008),
+        o:r(0.02,0.07), ph:r(0,6.28), sp:r(0.0001,0.0004),
+      });
+    }
+    /* floor mist */
+    for(var j=0;j<16;j++){
+      mist.push({
+        x:r(-W*0.3,W*1.3), y:r(H*0.55,H*0.95),
+        rx:r(200,400), ry:r(25,65),
+        vx:(Math.random()>0.5?1:-1)*r(0.05,0.18),
+        o:r(0.02,0.07), ph:r(0,6.28), sp:r(0.0001,0.0004),
+      });
+    }
+    /* dust — visible but not overwhelming */
+    var n = Math.floor(W*H/420);
+    for(var k=0;k<n;k++){
+      var d = mote();
+      d.y = r(0, H*0.72);
+      dust.push(d);
+    }
+  }
 
-  </div><!-- /landing -->
+  function resize(){
+    W = cv.width  = window.innerWidth;
+    H = cv.height = window.innerHeight;
+    init();
+  }
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  function loop(){
+    t += 0.016;
+    ctx.clearRect(0,0,W,H);
 
-  <!-- VIDEO / BACKGROUND -->
-  <script>
-  // Prevent browser from restoring scroll position — car must always start assembled
-  if('scrollRestoration' in history) history.scrollRestoration='manual';
-  window.scrollTo(0,0);
-  (function(){
-    const V='./hero.mp4',VW=2208,VH=936,VD=5.042;
-    const isMob=('ontouchstart' in window)||window.matchMedia('(pointer:coarse)').matches||window.innerWidth<768;
+    /* ── cursor glow drawn on canvas ── */
+    if(mouseIn){
+      mouseSmX += (mouseX - mouseSmX) * 0.12;
+      mouseSmY += (mouseY - mouseSmY) * 0.12;
+      var cg = ctx.createRadialGradient(mouseSmX,mouseSmY,0, mouseSmX,mouseSmY,260);
+      cg.addColorStop(0,   'rgba(255,250,240,0.22)');
+      cg.addColorStop(0.25,'rgba(245,242,255,0.09)');
+      cg.addColorStop(0.60,'rgba(230,228,248,0.03)');
+      cg.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = cg;
+      ctx.beginPath();
+      ctx.arc(mouseSmX, mouseSmY, 260, 0, Math.PI*2);
+      ctx.fill();
+    }
 
-    const spacerEl=document.getElementById('spacer');
-    const hero=document.getElementById('hero');
-    const cue=document.getElementById('scroll-cue');
-    const pb=document.getElementById('progress');
-    const sb=document.getElementById('stats-bar');
-    const spacerH=()=>spacerEl.offsetHeight;
+    /* soft brand halo on canvas — warm */
+    var bp = Math.sin(t*0.20)*0.5+0.5;
+    ctx.save();
+    ctx.translate(W*0.5, H*0.092); ctx.scale(1, 0.30);
+    var bh = ctx.createRadialGradient(0,0,0,0,0,W*0.20);
+    bh.addColorStop(0,   'rgba(252,245,228,'+(0.16+bp*0.10).toFixed(3)+')');
+    bh.addColorStop(0.35,'rgba(240,232,210,'+(0.05+bp*0.04).toFixed(3)+')');
+    bh.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle=bh; ctx.beginPath(); ctx.arc(0,0,W*0.20,0,Math.PI*2); ctx.fill();
+    ctx.restore();
 
-    if(isMob){
-      spacerEl.style.height='280svh'; // room to scrub full animation
-      document.body.classList.add('is-mobile');
-      const vid=document.createElement('video');
-      vid.src=V;vid.muted=true;vid.playsInline=true;
-      vid.setAttribute('playsinline','');vid.setAttribute('webkit-playsinline','');
-      vid.preload='auto';
-      vid.style.cssText='width:100%;height:100%;object-fit:cover;object-position:center center;';
-      document.getElementById('canvas-wrap').appendChild(vid);
-      vid.load();
-      vid.addEventListener('loadedmetadata',()=>{vid.currentTime=0;},{once:true});
-      // iOS blocks currentTime seeking until video has been "played" — unlock on first touch
-      let unlocked=false;
-      function unlock(){
-        if(unlocked)return;unlocked=true;
-        vid.play().then(()=>{vid.pause();vid.currentTime=0;}).catch(()=>{});
+    /* floor pulse */
+    var br = Math.sin(t*0.26)*0.5+0.5;
+    ctx.save();
+    ctx.translate(W*0.5,H*0.76); ctx.scale(1,0.13);
+    var sg = ctx.createRadialGradient(0,0,0,0,0,W*0.60);
+    sg.addColorStop(0,'rgba(215,212,225,'+(0.14+br*0.12).toFixed(3)+')');
+    sg.addColorStop(0.25,'rgba(192,189,205,'+(0.05+br*0.04).toFixed(3)+')');
+    sg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(0,0,W*0.60,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    /* warm horizon shimmer */
+    blob(W*0.5,H*0.54, W*0.48,H*0.055, 0.055+(Math.sin(t*0.42+1.2)*0.5+0.5)*0.045, 185,50,14);
+
+    /* smoke */
+    for(var i=0;i<smoke.length;i++){
+      var s=smoke[i];
+      var p=Math.sin(t*s.sp*20+s.ph)*0.5+0.5;
+      blob(s.x,s.y,s.rx,s.ry,s.o*(0.30+p*0.70),18,16,24);
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.y-s.ry>H*0.72){s.y=-s.ry;s.x=r(0,W);}
+      if(s.x+s.rx<0)s.x=W+s.rx; if(s.x-s.rx>W)s.x=-s.rx;
+    }
+
+    /* mist */
+    for(var j=0;j<mist.length;j++){
+      var m=mist[j];
+      var mp=Math.sin(t*m.sp*16+m.ph)*0.5+0.5;
+      blob(m.x,m.y,m.rx,m.ry,m.o*(0.30+mp*0.70),30,28,38);
+      m.x+=m.vx;
+      if(m.x+m.rx<0)m.x=W+m.rx; if(m.x-m.rx>W)m.x=-m.rx;
+    }
+
+    /* ── DUST MOTES ──
+       Warm amber/cream, tiny, slow.
+       More visible near brand (top), fade toward edges.
+       No glow, no sparkle — just old-bulb suspended particles. */
+    for(var k=0;k<dust.length;k++){
+      var d=dust[k];
+
+      /* flicker opacity gently */
+      var flick = Math.sin(t*d.flicker*400+d.ph)*0.18+0.82;
+
+      /* fade with distance from brand — visible further down */
+      var dx = (d.x - W*0.5)/(W*0.34);
+      var dy = (d.y - H*0.09)/(H*0.42);
+      var dist2 = dx*dx + dy*dy;
+      var lit = Math.max(0, 1.0 - dist2*0.58);
+
+      var alpha = d.o * flick * lit;
+
+      /* warm amber dust — drawn as tiny elongated fleck, not a circle */
+      ctx.globalAlpha = Math.min(alpha, 0.62);
+      ctx.fillStyle = 'rgb(228,210,172)';
+      ctx.save();
+      ctx.translate(d.x, d.y);
+      ctx.rotate(d.ph); /* each fleck has random orientation */
+      ctx.scale(1, 0.35 + Math.random()*0.25); /* squash vertically → oblong */
+      ctx.beginPath();
+      ctx.arc(0, 0, d.r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+
+      /* move */
+      d.x += d.vx;
+      d.y += d.vy;
+      /* subtle wander */
+      d.vx += (Math.random()-0.5)*0.006;
+      d.vx *= 0.998; /* dampen drift */
+
+      /* respawn when drifts too far down or fully invisible */
+      if(d.y > H*0.80 || alpha < 0.004){
+        dust[k] = mote();
       }
-      document.addEventListener('touchstart',unlock,{once:true,passive:true});
-      // Reset on page restore (same as desktop)
-      window.addEventListener('pageshow',()=>{window.scrollTo(0,0);vid.currentTime=0;});
-      document.addEventListener('visibilitychange',()=>{if(!document.hidden){window.scrollTo(0,0);vid.currentTime=0;}});
-      window.addEventListener('scroll',()=>{
-        unlock();
-        const st=pageYOffset,sh=spacerH(),fr=Math.max(0,Math.min(1,st/sh));
-        if(unlocked) vid.currentTime=st>=sh?0:fr*VD;
-        hero.style.opacity=Math.max(0,1-fr*1.8);
-        document.getElementById('navbar').classList.toggle('scrolled',st>20);
-      },{passive:true});
+    }
+
+    /* bottom vignette — very gentle, matches bg tone */
+    var btm=ctx.createLinearGradient(0,H*0.80,0,H);
+    btm.addColorStop(0,'rgba(0,0,0,0)');
+    btm.addColorStop(1,'rgba(0,0,0,0.32)');
+    ctx.fillStyle=btm;
+    ctx.fillRect(0,H*0.80,W,H*0.20);
+
+    /* grain */
+    ctx.globalAlpha=1;
+    var gn=W*H/380|0;
+    for(var n=0;n<gn;n++){
+      ctx.globalAlpha=Math.random()*0.022;
+      var v=100+Math.random()*130|0;
+      ctx.fillStyle='rgb('+v+','+v+','+v+')';
+      ctx.fillRect(Math.random()*W|0,Math.random()*H|0,1,1);
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize',resize);
+  resize(); loop();
+})();
+
+/* =============================================
+   CARD TILT + FLIP
+   ============================================= */
+(function(){
+  var scene=document.getElementById('scene');
+  var card=document.getElementById('card');
+  var hl=document.getElementById('hl');
+  var flipCta=document.getElementById('flip-cta');
+  var flipped=false, raf=0;
+  card.style.transition='none';
+
+  function tilt(rx,ry){
+    var b=flipped?180:0;
+    card.style.transform='rotateX('+(flipped?-rx:rx)+'deg) rotateY('+(b+ry)+'deg)';
+  }
+  function snap(){
+    card.style.transition='transform .68s cubic-bezier(.22,1,.36,1)';
+    card.style.transform=flipped?'rotateY(180deg)':'rotateY(0deg)';
+    setTimeout(function(){card.style.transition='none';},720);
+  }
+  function playFlip(toBack){
+    try{
+      var ac=new(window.AudioContext||window.webkitAudioContext)();
+      /* click transient */
+      var o=ac.createOscillator(),g=ac.createGain();
+      o.connect(g);g.connect(ac.destination);
+      o.type='sine';
+      o.frequency.setValueAtTime(toBack?720:520,ac.currentTime);
+      o.frequency.exponentialRampToValueAtTime(toBack?180:280,ac.currentTime+0.09);
+      g.gain.setValueAtTime(0.10,ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.10);
+      o.start(ac.currentTime);o.stop(ac.currentTime+0.10);
+      /* soft whoosh */
+      var buf=ac.createBuffer(1,ac.sampleRate*0.28,ac.sampleRate);
+      var dat=buf.getChannelData(0);
+      for(var i=0;i<dat.length;i++)dat[i]=Math.random()*2-1;
+      var ns=ac.createBufferSource(),flt=ac.createBiquadFilter(),ng=ac.createGain();
+      ns.buffer=buf;flt.type='bandpass';flt.frequency.value=1100;flt.Q.value=0.6;
+      ns.connect(flt);flt.connect(ng);ng.connect(ac.destination);
+      ng.gain.setValueAtTime(0.055,ac.currentTime+0.02);
+      ng.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.28);
+      ns.start(ac.currentTime+0.02);ns.stop(ac.currentTime+0.30);
+      setTimeout(function(){ac.close();},600);
+    }catch(e){}
+  }
+
+  function flip(){
+    flipped=!flipped;
+    playFlip(flipped);
+    card.style.transition='transform .82s cubic-bezier(.4,0,.2,1)';
+    card.style.transform=flipped?'rotateY(180deg)':'rotateY(0deg)';
+    setTimeout(function(){card.style.transition='none';},880);
+    if(flipped){
+      setTimeout(function(){flipCta.classList.add('show');},520);
     } else {
-      const r=new THREE.WebGLRenderer({antialias:true});
-      r.setPixelRatio(Math.min(devicePixelRatio,2));r.setSize(innerWidth,innerHeight);
-      document.getElementById('canvas-wrap').appendChild(r.domElement);
-      const sc=new THREE.Scene();sc.background=new THREE.Color(0x0d0d0d);
-      const cam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
-      const vid=document.createElement('video');
-      vid.src=V;vid.muted=true;vid.playsInline=true;vid.setAttribute('playsinline','');vid.preload='auto';
-      vid.load();
-      vid.addEventListener('loadedmetadata',()=>{vid.currentTime=0;},{once:true});
-      // Reset on every page show (bfcache) and tab re-focus
-      window.addEventListener('pageshow',()=>{window.scrollTo(0,0);vid.currentTime=0;});
-      document.addEventListener('visibilitychange',()=>{if(!document.hidden){window.scrollTo(0,0);vid.currentTime=0;}});
-      const vt=new THREE.VideoTexture(vid);
-      vt.minFilter=vt.magFilter=THREE.LinearFilter;vt.format=THREE.RGBAFormat;
-      const mat=new THREE.ShaderMaterial({
-        uniforms:{uTex:{value:vt},uS:{value:new THREE.Vector2(innerWidth,innerHeight)},uV:{value:new THREE.Vector2(VW,VH)}},
-        vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
-        fragmentShader:'uniform sampler2D uTex;uniform vec2 uS,uV;varying vec2 vUv;void main(){float sA=uS.x/uS.y,vA=uV.x/uV.y;vec2 u=vUv;if(sA>vA){float s=sA/vA;u.y=(u.y-.5)/s+.5;}else{float s=vA/sA;u.x=(u.x-.5)/s+.5;}if(u.x<0.||u.x>1.||u.y<0.||u.y>1.){gl_FragColor=vec4(.012,.016,.031,1.);return;}gl_FragColor=texture2D(uTex,u);}',
-        depthTest:false,depthWrite:false
-      });
-      sc.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat));
-      window.addEventListener('scroll',()=>{
-        const st=pageYOffset,sh=spacerH(),fr=Math.max(0,Math.min(1,st/sh));
-        vid.currentTime=st>=sh?0:fr*VD;
-        vt.needsUpdate=true;
-        pb.style.width=(fr*100).toFixed(2)+'%';
-        document.getElementById('navbar').classList.toggle('scrolled',st>20);
-        sb.classList.toggle('visible',fr>0.12&&fr<0.9);
-        const p=st*.13,op=Math.max(0,1-fr/.55);
-        hero.style.transform=`translateY(calc(-50% - ${p}px))`;hero.style.opacity=op;
-        cue.style.opacity=Math.max(0,1-fr/.25);
-      },{passive:true});
-      window.addEventListener('resize',()=>{r.setSize(innerWidth,innerHeight);mat.uniforms.uS.value.set(innerWidth,innerHeight);});
-      (function loop(){requestAnimationFrame(loop);vt.needsUpdate=true;r.render(sc,cam);})();
+      flipCta.classList.remove('show');
     }
-  })();
-  </script>
-
-  <!-- SCROLL CARDS -->
-  <script>
-  (function(){
-    const spacerH=()=>document.getElementById('spacer').offsetHeight;
-    const CONFIG=[
-      [0.14,0.30,'right'],
-      [0.30,0.46,'right'],
-      [0.46,0.62,'left'],
-      [0.62,0.78,'left'],
-      [0.78,0.94,'left'],
-    ];
-    const cards=CONFIG.map((_,i)=>document.getElementById('sc'+i));
-    const FLY=230;
-    const curOffsets=Array(5).fill(230);
-    function easeOut(t){return 1-Math.pow(1-t,4)}
-    window.addEventListener('scroll',()=>{
-      const fr=pageYOffset/spacerH();
-      CONFIG.forEach(([showAt,hideAt,side],i)=>{
-        const card=cards[i];
-        const dur=hideAt-showAt;
-        const fadeLen=0.10;
-        let op=0;
-        if(fr>=showAt&&fr<=hideAt){
-          const pos=fr-showAt;
-          if(pos<fadeLen) op=easeOut(pos/fadeLen);
-          else if(pos>dur-fadeLen) op=easeOut((dur-pos)/fadeLen);
-          else op=1;
-        }
-        card.classList.toggle('vis',op>0.005);
-        const inProg=Math.min(1,Math.max(0,(fr-showAt)/fadeLen));
-        const offset=(1-easeOut(inProg))*(side==='right'?FLY:-FLY);
-        curOffsets[i]=offset;
-        card.style.transform=`translateX(${offset}px)`;
-        card.style.opacity=op;
-      });
-    },{passive:true});
-    cards.forEach((card,i)=>{
-      card.addEventListener('mousemove',e=>{
-        const r=card.getBoundingClientRect();
-        const x=(e.clientX-r.left)/r.width-.5;
-        const y=(e.clientY-r.top)/r.height-.5;
-        card.style.transform=`translateX(${curOffsets[i]}px) perspective(700px) rotateY(${x*22}deg) rotateX(${-y*15}deg) scale(1.045)`;
-        card.style.boxShadow=`${-x*20}px ${y*10}px 40px rgba(200,168,75,.16),inset 0 1px 0 rgba(255,255,255,.13),0 0 0 1px rgba(200,168,75,.2)`;
-      });
-      card.addEventListener('mouseleave',()=>{
-        card.style.transform=`translateX(${curOffsets[i]}px)`;
-        card.style.boxShadow='';
-      });
+  }
+  scene.addEventListener('mousemove',function(e){
+    cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(function(){
+      var rc=scene.getBoundingClientRect();
+      var x=(e.clientX-rc.left)/rc.width, y=(e.clientY-rc.top)/rc.height;
+      tilt(-(y-0.5)*9,(x-0.5)*9);
+      hl.style.setProperty('--hx',(x*100)+'%');
+      hl.style.setProperty('--hy',(y*100)+'%');
     });
-  })();
-  </script>
+  });
+  scene.addEventListener('mouseleave',function(){cancelAnimationFrame(raf);snap();});
+  scene.addEventListener('click',flip);
+})();
 
-  <!-- CARD CLICK SOUNDS -->
-  <script>
-  (function(){
-    const AudioCtx=window.AudioContext||window.webkitAudioContext;
-    if(!AudioCtx)return;
-    let actx;
-    function click(){
-      try{
-        if(!actx)actx=new AudioCtx();
-        // soft tonal pop: sine chirp from 900→160Hz, 55ms
-        const osc=actx.createOscillator(),g=actx.createGain();
-        osc.connect(g);g.connect(actx.destination);
-        osc.type='sine';
-        const t=actx.currentTime;
-        osc.frequency.setValueAtTime(900,t);
-        osc.frequency.exponentialRampToValueAtTime(160,t+0.05);
-        g.gain.setValueAtTime(0.09,t);
-        g.gain.exponentialRampToValueAtTime(0.0001,t+0.055);
-        osc.start(t);osc.stop(t+0.06);
-      }catch(e){}
+/* =============================================
+   CORNER INFO PANELS — expand below base
+   ============================================= */
+(function(){
+  var wrap  = document.getElementById('info-wrap');
+  var elCat = document.getElementById('info-cat');
+  var elTit = document.getElementById('info-title');
+  var elLst = document.getElementById('info-list');
+
+  var DATA = {
+    '1':{
+      cat:'Vehicle Intelligence',
+      title:'<strong>Know</strong> your car',
+      items:[
+        'Instant VIN decode — full history in seconds',
+        'AI maintenance forecasting by mileage & model',
+        'Recall & safety bulletin alerts, updated daily',
+        'Mileage wear prediction across 200+ components',
+        'Pre-purchase inspection scoring',
+        '5-year ownership cost projection',
+      ]
+    },
+    '2':{
+      cat:'Market Intelligence',
+      title:'Data <strong>edge</strong>',
+      items:[
+        'Live valuation across 40M+ active listings',
+        'Dealer invoice & holdback transparency',
+        'Price drop alerts on any saved vehicle',
+        'Buy & sell timing from market momentum',
+        'Private seller vs. dealer cost comparison',
+        'Regional demand heatmaps — sell where it pays',
+      ]
+    },
+    '3':{
+      cat:'Garage & Ownership',
+      title:'<strong>Your</strong> garage',
+      items:[
+        'Unlimited multi-vehicle dashboard',
+        'Live OBD-II diagnostics via Bluetooth',
+        'Service record vault — every repair, forever',
+        'Fuel economy & trip analytics',
+        'Insurance optimizer — cut your premiums',
+        'Side-by-side vehicle comparison',
+      ]
+    },
+    '4':{
+      cat:'Early Access',
+      title:'<strong>Founding</strong> member',
+      items:[
+        'First 1,000 get lifetime Pro — free',
+        'Direct line to the founding team',
+        'Vote on features before roadmap locks',
+        'Exclusive founding-member badge in-app',
+        'Priority onboarding & white-glove setup',
+      ]
+    },
+  };
+
+  var active=null;
+
+  function show(num){
+    var d=DATA[num]; if(!d)return;
+    elCat.textContent=d.cat;
+    elTit.innerHTML=d.title;
+    elLst.innerHTML=d.items.map(function(i){return '<li>'+i+'</li>';}).join('');
+    wrap.classList.add('open');
+    if(active) document.getElementById('cn'+active).classList.remove('on');
+    active=num;
+    document.getElementById('cn'+num).classList.add('on');
+  }
+  function hide(){
+    wrap.classList.remove('open');
+    if(active){document.getElementById('cn'+active).classList.remove('on');active=null;}
+  }
+
+  document.getElementById('cn1').addEventListener('click',function(){active==='1'?hide():show('1');});
+  document.getElementById('cn2').addEventListener('click',function(){active==='2'?hide():show('2');});
+  document.getElementById('cn3').addEventListener('click',function(){active==='3'?hide():show('3');});
+  document.getElementById('cn4').addEventListener('click',function(){active==='4'?hide():show('4');});
+
+  /* click anywhere on stage bg to close */
+  document.querySelector('.stage').addEventListener('click',function(e){
+    if(!e.target.closest('.floater,.cn'))hide();
+  });
+})();
+
+/* =============================================
+   SPINNING WHEEL CURSOR
+   ============================================= */
+(function(){
+  var wcur = document.getElementById('wcur');
+  var wx=-9999, wy=-9999, wSmX=-9999, wSmY=-9999;
+  var prevX=-9999, prevY=-9999;
+  var wIn=false, spinAngle=0;
+
+  document.addEventListener('mousemove',function(e){
+    if(!wIn){
+      wSmX=e.clientX; wSmY=e.clientY;
+      prevX=e.clientX; prevY=e.clientY;
+      wIn=true;
     }
-    document.querySelectorAll('.sc-card').forEach(c=>c.addEventListener('mousedown',click));
-  })();
-  </script>
+    wx=e.clientX; wy=e.clientY;
+  });
+  document.addEventListener('mouseleave',function(){ wIn=false; });
 
-  <!-- ALL INTERACTIONS -->
-  <script>
-  (function(){
-    function scrollToFrac(f){window.scrollTo({top:f*(document.documentElement.scrollHeight-innerHeight),behavior:'smooth'})}
-    function scrollToEl(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
-
-    // ── input sanitiser (strip html tags, trim whitespace)
-    function sanitize(s){return s.replace(/<[^>]*>/g,'').replace(/['"`;]/g,'').trim().slice(0,200)}
-    function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)}
-
-    // ── netlify AJAX submit helper
-    async function submitToNetlify(formEl,btn,successMsg){
-      const data=new FormData(formEl);
-      // sanitise all text fields before sending
-      for(const[k,v] of data.entries()){if(typeof v==='string')data.set(k,sanitize(v));}
-      btn.disabled=true;btn.textContent='Sending…';
-      try{
-        const res=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data).toString()});
-        if(res.ok){btn.textContent=successMsg;btn.style.background='linear-gradient(135deg,#2a5e2a,#3d8b3d)';btn.style.color='#fff';}
-        else{btn.disabled=false;btn.textContent='Try again';}
-      }catch{btn.disabled=false;btn.textContent='Try again';}
-    }
-
-    // modal
-    const ov=document.getElementById('modal-overlay'),cb=document.getElementById('modal-close');
-    const open=()=>ov.classList.add('open'),close=()=>ov.classList.remove('open');
-    ov.addEventListener('click',e=>{if(e.target===ov)close()});
-    cb.addEventListener('click',close);
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
-
-    // modal form — validate then AJAX submit
-    document.getElementById('modal-form').addEventListener('submit',async function(e){
-      e.preventDefault();
-      const nameEl=this.querySelector('[name="name"]');
-      const emailEl=this.querySelector('[name="email"]');
-      const btn=document.getElementById('modal-submit');
-      if(!nameEl.value.trim()){nameEl.focus();return;}
-      if(!validEmail(emailEl.value)){emailEl.focus();return;}
-      await submitToNetlify(this,btn,'You\'re on the list ✓');
-      setTimeout(close,1800);
-    });
-
-    // bottom CTA form
-    const ctaForm=document.getElementById('cta-form');
-    if(ctaForm){
-      ctaForm.addEventListener('submit',async function(e){
-        e.preventDefault();
-        const emailEl=this.querySelector('[name="email"]');
-        const btn=this.querySelector('button[type="submit"]');
-        if(!validEmail(emailEl.value)){emailEl.focus();return;}
-        await submitToNetlify(this,btn,'You\'re in ✓');
-      });
-    }
-
-    document.querySelectorAll('[data-modal="open"]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();open();}));
-    document.querySelectorAll('[data-scroll]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();scrollToFrac(parseFloat(el.dataset.scroll));}));
-    document.querySelectorAll('[data-anchor]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();scrollToEl(el.dataset.anchor);}));
-
-    // hamburger
-    const ham=document.getElementById('nav-hamburger'),dr=document.getElementById('nav-drawer');
-    ham.addEventListener('click',()=>{ham.classList.toggle('open');if(ham.classList.contains('open')){dr.style.display='flex';requestAnimationFrame(()=>dr.classList.add('open'));}else{dr.classList.remove('open');setTimeout(()=>dr.style.display='none',350);}});
-    dr.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ham.classList.remove('open');dr.classList.remove('open');setTimeout(()=>dr.style.display='none',350);}));
-
-    // nav magnetic
-    document.querySelectorAll('#nav-links a').forEach(l=>{
-      l.addEventListener('mousemove',e=>{const r=l.getBoundingClientRect(),dx=(e.clientX-r.left-r.width/2)*.18,dy=(e.clientY-r.top-r.height/2)*.18;l.style.transform=`translate(${dx}px,${dy}px)`;});
-      l.addEventListener('mouseleave',()=>l.style.transform='');
-    });
-
-    // logo shimmer
-    const li=document.querySelector('#nav-logo img');let st;
-    li.addEventListener('mouseenter',()=>{let t=0;clearInterval(st);st=setInterval(()=>{const g=.3+.3*Math.abs(Math.sin(t));li.style.filter=`drop-shadow(0 0 ${10+g*14}px rgba(212,175,55,${.3+g}))`;t+=.15;},30);});
-    li.addEventListener('mouseleave',()=>{clearInterval(st);li.style.filter='drop-shadow(0 0 10px rgba(212,175,55,.3))';});
-
-    // ripple
-    document.querySelectorAll('.btn-primary,.btn-ghost,.nav-cta-btn,.email-form button,#modal-submit').forEach(btn=>{
-      btn.addEventListener('click',function(e){const r=this.getBoundingClientRect(),sz=Math.max(r.width,r.height)*2,x=e.clientX-r.left-sz/2,y=e.clientY-r.top-sz/2;const rp=document.createElement('span');rp.className='ripple';rp.style.cssText=`width:${sz}px;height:${sz}px;left:${x}px;top:${y}px`;this.appendChild(rp);rp.addEventListener('animationend',()=>rp.remove());});
-    });
-
-    // how-card 3D tilt
-    document.querySelectorAll('.how-card').forEach(c=>{
-      c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*14}deg) rotateX(${-y*14}deg) scale(1.02)`;c.style.boxShadow=`${-x*20}px ${-y*20}px 60px rgba(99,102,241,.18),0 0 0 1px rgba(99,102,241,.5)`;});
-      c.addEventListener('mouseleave',()=>{c.style.transform='';c.style.boxShadow='';});
-    });
-
-    // modal 3D tilt
-    const md=document.getElementById('modal');
-    md.addEventListener('mousemove',e=>{
-      const r=md.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
-      md.style.transform=`translateY(0) scale(1) perspective(1000px) rotateY(${x*5}deg) rotateX(${-y*4}deg)`;
-      md.style.boxShadow=`${-x*30}px ${y*15}px 90px rgba(200,168,75,.1),inset 0 1px 0 rgba(255,255,255,.1),0 48px 120px rgba(0,0,0,.65)`;
-    });
-    md.addEventListener('mouseleave',()=>{md.style.transform='translateY(0) scale(1)';md.style.boxShadow='';});
-
-    // team-card 3D tilt
-    document.querySelectorAll('.team-card').forEach(c=>{
-      c.addEventListener('mousemove',e=>{
-        const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
-        c.style.transform=`perspective(1200px) rotateY(${x*8}deg) rotateX(${-y*6}deg) translateY(-4px)`;
-      });
-      c.addEventListener('mouseleave',()=>{c.style.transform='';});
-    });
-
-    // floating items parallax
-    document.querySelectorAll('.float-wrap').forEach(wrap=>{
-      wrap.addEventListener('mousemove',e=>{const r=wrap.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;wrap.querySelectorAll('.fitem').forEach((item,i)=>{const d=(i+1)*.4;item.style.transform=`translate(${x*d*30}px,${y*d*20}px) rotate(var(--r,0deg))`;});});
-      wrap.addEventListener('mouseleave',()=>wrap.querySelectorAll('.fitem').forEach(item=>item.style.transform=''));
-    });
-
-    // scroll reveal
-    const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});},{threshold:.1});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-
-    // cursor — desktop / hover-capable devices only
-    if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
-      const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
-      let mx=-100,my=-100,rx=-100,ry=-100;
-      document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
-      (function track(){rx+=(mx-rx)*.14;ry+=(my-ry)*.14;dot.style.left=mx+'px';dot.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(track);})();
-      document.querySelectorAll('a,button,[data-modal],[data-scroll],[data-anchor],.sc-card,.team-card').forEach(el=>{el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));});
-      document.addEventListener('mousedown',()=>document.body.classList.add('cc'));
-      document.addEventListener('mouseup',()=>document.body.classList.remove('cc'));
-      document.addEventListener('mouseleave',()=>{dot.style.opacity=ring.style.opacity='0';});
-      document.addEventListener('mouseenter',()=>{dot.style.opacity=ring.style.opacity='1';});
-    }
-  })();
-  </script>
-
-  <!-- VISION STATS COUNT-UP -->
-  <script>
-  (function(){
-    const els=document.querySelectorAll('.vcount');
-    if(!els.length) return;
-    const obs=new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if(!e.isIntersecting) return;
-        obs.unobserve(e.target);
-        const el=e.target,target=+el.dataset.target,dec=+(el.dataset.decimals||0),dur=1800,start=performance.now();
-        (function tick(now){
-          const p=Math.min((now-start)/dur,1);
-          const ease=p===1?1:1-Math.pow(2,-10*p);
-          const val=ease*target;
-          el.textContent=dec?val.toFixed(dec):Math.round(val);
-          if(p<1) requestAnimationFrame(tick);
-        })(start);
-      });
-    },{threshold:0.35});
-    els.forEach(el=>obs.observe(el));
-  })();
-  </script>
-
-  <!-- LEGAL MODAL -->
-  <script>
-  (function(){
-    const overlay=document.getElementById('legal-overlay');
-    const body=document.getElementById('legal-body');
-    const title=document.getElementById('legal-title');
-    const closeBtn=document.getElementById('legal-close');
-    if(!overlay) return;
-
-    const TERMS=`
-<p class="legal-updated">Last updated: April 2026</p>
-<h3>1. Acceptance of Terms</h3>
-<p>By accessing or using the Carbase AI platform, website, or any related services (collectively, the "Service") operated by Velto Enterprises LLC ("Carbase AI," "we," "us," or "our"), you agree to be bound by these Terms of Service. If you do not agree, do not access or use the Service.</p>
-
-<h3>2. Pre-Launch Status &amp; No Guarantee of Access</h3>
-<p>Carbase AI is currently in a <strong>pre-launch, pre-product phase.</strong> Joining the waitlist or requesting early access does not constitute a contract, does not guarantee access to any product or service, and does not create any obligation on our part to deliver any feature, timeline, or product. We reserve the right to modify, delay, or discontinue the Service at any time without notice or liability.</p>
-
-<h3>3. Disclaimer of Warranties</h3>
-<p><strong>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED.</strong> To the fullest extent permitted by law, Carbase AI expressly disclaims all warranties, including but not limited to implied warranties of merchantability, fitness for a particular purpose, accuracy, and non-infringement.</p>
-<p>We do not warrant that: (a) any vehicle data, market valuations, authentication records, or platform information is accurate, complete, or current; (b) the Service will be uninterrupted or error-free; (c) any specific results or outcomes will be achieved through use of the Service.</p>
-<p><strong>Nothing on this platform constitutes financial, legal, mechanical, or investment advice.</strong> Vehicle valuations and market data are informational only. Always consult qualified professionals before making decisions based on any information provided.</p>
-
-<h3>4. Limitation of Liability</h3>
-<p><strong>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, CARBASE AI, VELTO ENTERPRISES LLC, AND THEIR OFFICERS, DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES</strong> — including but not limited to loss of profits, data, goodwill, or vehicle value — arising out of or related to your use of or inability to use the Service, even if advised of the possibility of such damages.</p>
-<p>Our total aggregate liability to you for any claims arising from these Terms or the Service shall not exceed <strong>one hundred dollars ($100 USD)</strong>, regardless of the form of action.</p>
-
-<h3>5. Vehicle Data &amp; User Submissions</h3>
-<p>Any vehicle information, build records, modification data, or other content you submit to the Service is provided at your own discretion. You represent that you have the right to submit such information. Carbase AI does not independently verify user-submitted data and makes no warranty as to its accuracy. You remain solely responsible for the accuracy of any information you provide.</p>
-
-<h3>6. Intellectual Property</h3>
-<p>All content, branding, software, designs, and technology on the Service are the exclusive property of Carbase AI / Velto Enterprises LLC and are protected by applicable intellectual property laws. You may not copy, reproduce, distribute, or create derivative works without our express written consent.</p>
-
-<h3>7. Acceptable Use</h3>
-<p>You agree not to: (a) use the Service for any unlawful purpose; (b) attempt to gain unauthorized access to any system or data; (c) submit false, misleading, or fraudulent vehicle information; (d) interfere with the operation of the Service; (e) use automated tools to scrape or harvest data from the Service.</p>
-
-<h3>8. Third-Party Services</h3>
-<p>The Service may integrate with or link to third-party platforms. We are not responsible for the content, practices, or availability of any third-party services, and your use of them is governed by their own terms and policies.</p>
-
-<h3>9. Indemnification</h3>
-<p>You agree to indemnify, defend, and hold harmless Carbase AI, Velto Enterprises LLC, and their affiliates, officers, and employees from any claims, damages, losses, or expenses (including reasonable attorneys' fees) arising from your use of the Service, your violation of these Terms, or your submission of inaccurate or unauthorized data.</p>
-
-<h3>10. Modifications to Terms</h3>
-<p>We reserve the right to update or modify these Terms at any time. Changes will be posted on this page with an updated date. Continued use of the Service after changes constitutes acceptance of the revised Terms.</p>
-
-<h3>11. Governing Law</h3>
-<p>These Terms are governed by the laws of the United States and the State of Delaware, without regard to conflict of law provisions. Any disputes shall be resolved exclusively in the courts of Delaware.</p>
-
-<h3>12. Contact</h3>
-<p>For questions regarding these Terms, contact us at: <strong>legal@carbase.ai</strong></p>`;
-
-    const PRIVACY=`
-<p class="legal-updated">Last updated: April 2026</p>
-<h3>1. Information We Collect</h3>
-<p>When you join our waitlist or request early access, we collect: <strong>your name and email address.</strong> We may also collect basic usage data (page views, browser type, approximate location) through standard web analytics. We do not collect payment information at this stage.</p>
-
-<h3>2. How We Use Your Information</h3>
-<p>We use your information to: (a) notify you of early access availability and platform updates; (b) improve and develop the Service; (c) communicate about Carbase AI products and news. We will not send unsolicited commercial messages unrelated to Carbase AI.</p>
-
-<h3>3. Data Sharing &amp; Sale</h3>
-<p><strong>We do not sell, rent, or trade your personal information to third parties.</strong> We may share data with trusted service providers who assist in operating the Service (such as email delivery and form hosting via Netlify), solely as necessary to provide those services and subject to confidentiality obligations.</p>
-
-<h3>4. Cookies &amp; Tracking</h3>
-<p>Our website may use cookies or similar technologies for basic functionality and analytics. You may disable cookies through your browser settings; however, some features of the Service may not function properly as a result.</p>
-
-<h3>5. Data Retention</h3>
-<p>We retain your personal information for as long as necessary to provide the Service and fulfill the purposes described in this policy, unless a longer retention period is required by law. You may request deletion of your data at any time by contacting us.</p>
-
-<h3>6. Security</h3>
-<p>We implement reasonable technical and organizational measures to protect your information. However, <strong>no method of transmission over the internet is 100% secure.</strong> We cannot guarantee absolute security of your data.</p>
-
-<h3>7. Your Rights</h3>
-<p>Depending on your location, you may have the right to: access the personal data we hold about you; correct inaccurate data; request deletion of your data; opt out of marketing communications at any time by clicking "unsubscribe" in any email we send.</p>
-<p>California residents may have additional rights under the CCPA. EU/UK residents may have rights under GDPR. To exercise any of these rights, contact us at <strong>privacy@carbase.ai</strong>.</p>
-
-<h3>8. Children's Privacy</h3>
-<p>The Service is not directed to individuals under the age of 13. We do not knowingly collect personal information from children. If we become aware that a child under 13 has provided personal information, we will delete it promptly.</p>
-
-<h3>9. Changes to This Policy</h3>
-<p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date. Your continued use of the Service constitutes acceptance of any changes.</p>
-
-<h3>10. Contact</h3>
-<p>For privacy-related inquiries, contact us at: <strong>privacy@carbase.ai</strong></p>`;
-
-    function openLegal(type){
-      const isTerms=type==='terms';
-      title.textContent=isTerms?'Terms of Service':'Privacy Policy';
-      body.innerHTML=isTerms?TERMS:PRIVACY;
-      body.scrollTop=0;
-      overlay.classList.add('open');
-      document.body.style.overflow='hidden';
-    }
-
-    function closeLegal(){
-      overlay.classList.remove('open');
-      document.body.style.overflow='';
-    }
-
-    closeBtn.addEventListener('click',closeLegal);
-    overlay.addEventListener('click',e=>{if(e.target===overlay)closeLegal();});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLegal();});
-
-    document.querySelectorAll('[data-legal]').forEach(el=>{
-      el.addEventListener('click',e=>{
-        e.preventDefault();
-        openLegal(el.dataset.legal);
-      });
-    });
-  })();
-  </script>
-
-  <!-- RAIN AUDIO -->
-  <script>
-  (function(){
-    const AudioCtx=window.AudioContext||window.webkitAudioContext;
-    if(!AudioCtx)return;
-    let actx,src,gainNode,started=false,muted=false;
-
-    function initAudio(){
-      if(started)return;started=true;
-      actx=new AudioCtx();
-      const rate=actx.sampleRate,secs=8;
-      const buf=actx.createBuffer(2,rate*secs,rate);
-      for(let ch=0;ch<2;ch++){
-        const d=buf.getChannelData(ch);
-        let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
-        for(let i=0;i<d.length;i++){
-          const w=Math.random()*2-1;
-          b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;
-          b2=.96900*b2+w*.1538520;b3=.86650*b3+w*.3104856;
-          b4=.55000*b4+w*.5329522;b5=-.7616*b5-w*.0168980;
-          d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*0.11;
-          b6=w*.115926;
-        }
+  (function raf(){
+    if(wIn){
+      var dx=wx-prevX, dy=wy-prevY;
+      var dist=Math.sqrt(dx*dx+dy*dy);
+      /* wheel spins clockwise moving right/down, counter going left/up */
+      if(dist>0.4){
+        var sign = dx>=0 ? 1 : -1;
+        spinAngle += sign * dist * 2.8;
       }
-      src=actx.createBufferSource();src.buffer=buf;src.loop=true;
-      const filter=actx.createBiquadFilter();
-      filter.type='lowpass';filter.frequency.value=800;filter.Q.value=0.3;
-      gainNode=actx.createGain();gainNode.gain.value=0.35;
-      src.connect(filter);filter.connect(gainNode);gainNode.connect(actx.destination);
-      src.start();
+      prevX=wx; prevY=wy;
+
+      wSmX+=(wx-wSmX)*0.22;
+      wSmY+=(wy-wSmY)*0.22;
+
+      wcur.style.left  = wSmX+'px';
+      wcur.style.top   = wSmY+'px';
+      wcur.style.transform='translate(-50%,-50%) rotate('+spinAngle+'deg)';
+      wcur.style.opacity='1';
+    } else {
+      wcur.style.opacity='0';
     }
-
-    // create button
-    const btn=document.createElement('button');
-    btn.id='rain-btn';
-    btn.innerHTML=`<span class="rbi"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <polygon class="spk-body" points="3,9 3,15 7,15 13,21 13,3"/>
-      <path class="spk-wave w1" d="M16.5 9.5 Q19.5 12 16.5 14.5"/>
-      <path class="spk-wave w2" d="M18.5 6.5 Q24 12 18.5 17.5"/>
-      <line class="spk-mute" x1="16" y1="9" x2="22" y2="15"/>
-      <line class="spk-mute" x1="22" y1="9" x2="16" y2="15"/>
-    </svg></span>Rain`;
-    document.body.appendChild(btn);
-
-    // Try immediately — works if browser grants autoplay (e.g. page reached via link click)
-    try{initAudio();}catch(e){}
-
-    // Resume on first REAL user gesture — scroll/mousemove do NOT unlock AudioContext
-    function tryResume(){
-      initAudio();
-      if(actx&&actx.state==='suspended') actx.resume();
-    }
-    // pointerdown fires before click, is valid on mouse + touch
-    document.addEventListener('pointerdown',tryResume,{once:true,passive:true});
-    document.addEventListener('keydown',tryResume,{once:true,passive:true});
-
-    btn.addEventListener('click',e=>{
-      e.stopPropagation();
-      initAudio();
-      if(!gainNode)return;
-      muted=!muted;
-      gainNode.gain.setTargetAtTime(muted?0:0.35,actx.currentTime,0.4);
-      btn.classList.toggle('muted',muted);
-    });
+    requestAnimationFrame(raf);
   })();
-  </script>
+})();
 
-  <!-- RAIN VISUAL -->
-  <script>
-  (function(){
-    const cv=document.getElementById('rain-canvas'),ctx=cv.getContext('2d');
-    const A=12*Math.PI/180,sp=[];let W,H;
-    const rsz=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight;};
-    window.addEventListener('resize',rsz);rsz();
-    const rn=(a,b)=>a+Math.random()*(b-a);
-    const mk=(x,y)=>({x,y,s:rn(14,28),l:rn(14,38),a:rn(.06,.28),w:rn(.4,1.1)});
-    const nd=()=>mk(rn(-W*.1,W*1.1),rn(-H*.4,0));
-    const drops=Array.from({length:280},()=>mk(rn(0,W),rn(0,H)));
-    const dx=Math.sin(A),dy=Math.cos(A);
-    function splash(x,y,a){for(let i=0,n=Math.floor(rn(2,5));i<n;i++)sp.push({x,y,vx:rn(-1.5,1.5),vy:rn(-2.8,-.8),life:1,dec:rn(.06,.14),a:a*.7,r:rn(.8,2.2)});}
-    function draw(){
-      ctx.clearRect(0,0,W,H);
-      drops.forEach(d=>{
-        const x2=d.x-dx*d.l,y2=d.y-dy*d.l,g=ctx.createLinearGradient(d.x,d.y,x2,y2);
-        g.addColorStop(0,'rgba(210,230,255,1)');g.addColorStop(1,'rgba(150,190,255,0)');
-        ctx.save();ctx.globalAlpha=d.a;ctx.strokeStyle=g;ctx.lineWidth=d.w;ctx.lineCap='round';
-        ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();
-        d.x+=dx*d.s;d.y+=dy*d.s;
-        if(d.y>H+d.l||d.x>W+d.l){splash(d.x,H,d.a);const nr=nd();d.x=nr.x;d.y=nr.y;d.s=nr.s;d.l=nr.l;d.a=nr.a;d.w=nr.w;}
-      });
-      for(let i=sp.length-1;i>=0;i--){
-        const s=sp[i];ctx.save();ctx.globalAlpha=s.a*s.life;ctx.fillStyle='rgba(180,215,255,1)';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();ctx.restore();
-        s.x+=s.vx;s.y+=s.vy;s.vy+=.18;s.life-=s.dec;if(s.life<=0)sp.splice(i,1);
-      }
-      requestAnimationFrame(draw);
-    }
-    draw();
-  })();
-  </script>
-
+/* =============================================
+   PAGE 2 — scroll / wheel to reveal
+   ============================================= */
+(function(){
+  var page2=document.getElementById('page2');
+  var shown=false;
+  function show(){if(shown)return;shown=true;page2.classList.add('visible');}
+  function hide(){if(!shown)return;shown=false;page2.classList.remove('visible');}
+  /* wheel */
+  window.addEventListener('wheel',function(e){
+    if(e.deltaY>30) show(); else if(e.deltaY<-30) hide();
+  },{passive:true});
+  /* touch swipe */
+  var ty0=0;
+  window.addEventListener('touchstart',function(e){ty0=e.touches[0].clientY;},{passive:true});
+  window.addEventListener('touchend',function(e){
+    var dy=ty0-e.changedTouches[0].clientY;
+    if(dy>40) show(); else if(dy<-40) hide();
+  },{passive:true});
+})();
+</script>
 </body>
 </html>
