@@ -48,13 +48,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 @keyframes hintpulse{0%,100%{opacity:.14}50%{opacity:.38}}
 
-/* gold pulse ring around card */
-@keyframes pulse-gold{
-  0%{box-shadow:0 0 0 0 rgba(212,175,100,0.55),0 50px 130px rgba(0,0,0,0.95);}
-  70%{box-shadow:0 0 0 14px rgba(212,175,100,0),0 50px 130px rgba(0,0,0,0.95);}
-  100%{box-shadow:0 0 0 0 rgba(212,175,100,0),0 50px 130px rgba(0,0,0,0.95);}
-}
-.scene{animation:bob 7s ease-in-out infinite, pulse-gold 3.5s ease-out infinite;}
+.scene{animation:bob 7s ease-in-out infinite;}
 .back{background:#161619;border:1px solid rgba(255,255,255,0.05);transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;box-shadow:0 50px 130px rgba(0,0,0,0.95);}
 .back-inner{width:72%;height:74%;border:1px solid rgba(255,255,255,0.05);border-radius:8px;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.008) 10px,rgba(255,255,255,0.008) 11px);display:flex;align-items:center;justify-content:center;}
 .back-word{font-family:-apple-system,sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,0.10);}
@@ -64,37 +58,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .contact-shadow{width:220px;height:6px;background:radial-gradient(ellipse 85% 100% at 50% 0%,rgba(0,0,0,0.75) 0%,transparent 80%);filter:blur(5px);}
 .step{border-radius:1px;}
 .step-1{
-  width:234px;height:10px;
-  background:linear-gradient(to bottom,
-    rgba(58,55,62,0.95) 0%,
-    rgba(32,30,36,0.98) 55%,
-    rgba(18,17,22,1) 100%);
-  border-top:1px solid rgba(255,255,255,0.12);
-  border-left:1px solid rgba(255,255,255,0.04);
-  border-right:1px solid rgba(255,255,255,0.04);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), 0 2px 6px rgba(0,0,0,0.5);
+  width:234px;height:8px;
+  background:linear-gradient(to bottom,rgba(90,86,96,0.55) 0%,rgba(55,52,60,0.70) 100%);
+  border-top:1px solid rgba(255,255,255,0.14);
 }
 .step-2{
-  width:262px;height:10px;
-  background:linear-gradient(to bottom,
-    rgba(42,40,46,0.95) 0%,
-    rgba(26,24,30,0.98) 55%,
-    rgba(14,13,18,1) 100%);
-  border-top:1px solid rgba(255,255,255,0.07);
-  border-left:1px solid rgba(255,255,255,0.03);
-  border-right:1px solid rgba(255,255,255,0.03);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04), 0 3px 8px rgba(0,0,0,0.6);
+  width:262px;height:8px;
+  background:linear-gradient(to bottom,rgba(72,69,78,0.50) 0%,rgba(44,42,50,0.65) 100%);
+  border-top:1px solid rgba(255,255,255,0.08);
 }
 .step-3{
-  width:290px;height:10px;
-  background:linear-gradient(to bottom,
-    rgba(30,28,34,0.96) 0%,
-    rgba(18,17,22,0.99) 55%,
-    rgba(10,9,14,1) 100%);
-  border-top:1px solid rgba(255,255,255,0.04);
-  border-left:1px solid rgba(255,255,255,0.02);
-  border-right:1px solid rgba(255,255,255,0.02);
-  box-shadow:0 4px 12px rgba(0,0,0,0.7);
+  width:290px;height:8px;
+  background:linear-gradient(to bottom,rgba(58,55,64,0.45) 0%,rgba(34,32,40,0.60) 100%);
+  border-top:1px solid rgba(255,255,255,0.05);
 }
 .floor-pool{width:360px;height:28px;background:radial-gradient(ellipse 55% 100% at 50% 0%,rgba(180,175,190,0.06) 0%,transparent 70%);}
 
@@ -102,7 +78,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .info-wrap{
   position:absolute;
   left:50%;
-  top:calc(50% + 242px); /* just below the base steps */
+  top:calc(50% + 200px);
   transform:translateX(-50%) translateY(10px);
   width:min(580px, 90vw);
   opacity:0;
@@ -124,41 +100,47 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   text-align:center;
 }
 .info-cat{
-  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.52rem;
-  letter-spacing:.40em;text-transform:uppercase;
-  color:rgba(255,255,255,0.35);
-  margin-bottom:8px;
+  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.42rem;
+  letter-spacing:.45em;text-indent:.45em;text-transform:uppercase;
+  color:rgba(212,175,90,0.75);
+  text-shadow:0 0 8px rgba(212,175,90,0.40);
+  margin-bottom:6px;
 }
 .info-title{
-  font-family:'Exo 2',sans-serif;font-weight:200;font-size:1.40rem;
-  letter-spacing:.10em;line-height:1.1;
+  font-family:'Exo 2',sans-serif;font-weight:200;font-size:1.05rem;
+  letter-spacing:.08em;line-height:1.15;
   color:#fff;
-  text-shadow:0 0 10px rgba(255,255,255,1),0 0 28px rgba(255,255,255,0.75),0 0 65px rgba(255,255,255,0.40);
-  margin-bottom:14px;
+  text-shadow:0 0 8px rgba(255,255,255,0.95),0 0 22px rgba(255,255,255,0.55),0 0 50px rgba(255,255,255,0.25);
+  margin-bottom:10px;
 }
-.info-title strong{font-weight:600;}
+.info-title strong{
+  font-weight:600;
+  color:rgba(230,210,160,0.95);
+  text-shadow:0 0 8px rgba(212,175,90,0.60),0 0 22px rgba(212,175,90,0.30);
+}
 .info-line{
-  height:1px;width:130px;margin:0 auto 14px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.55) 50%,transparent);
+  height:1px;width:100px;margin:0 auto 10px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,90,0.55) 50%,transparent);
 }
 .info-list{
   list-style:none;
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:9px 32px;
+  gap:7px 24px;
   text-align:left;
 }
 .info-list li{
-  font-family:'Exo 2',sans-serif;font-weight:300;font-size:.88rem;
-  letter-spacing:.03em;line-height:1.38;
-  color:rgba(255,255,255,0.95);
-  text-shadow:0 0 6px rgba(255,255,255,0.90),0 0 18px rgba(255,255,255,0.55),0 0 40px rgba(255,255,255,0.22);
-  padding-left:16px;position:relative;
+  font-family:'Exo 2',sans-serif;font-weight:300;font-size:.72rem;
+  letter-spacing:.02em;line-height:1.32;
+  color:rgba(255,255,255,0.88);
+  text-shadow:0 0 5px rgba(255,255,255,0.80),0 0 14px rgba(255,255,255,0.40);
+  padding-left:13px;position:relative;
 }
 .info-list li::before{
-  content:'';position:absolute;left:0;top:8px;
-  width:4px;height:4px;border-radius:50%;
-  background:#fff;box-shadow:0 0 5px #fff,0 0 13px rgba(255,255,255,0.7);
+  content:'';position:absolute;left:0;top:7px;
+  width:3px;height:3px;border-radius:50%;
+  background:rgba(212,175,90,0.90);
+  box-shadow:0 0 4px rgba(212,175,90,0.80),0 0 10px rgba(212,175,90,0.45);
 }
 
 /* BRAND */
@@ -188,7 +170,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .flip-cta{
   position:absolute;
   left:50%;
-  top:calc(50% + 242px);
+  top:calc(50% + 200px);
   transform:translateX(-50%) translateY(8px);
   width:min(420px,88vw);
   text-align:center;
@@ -347,12 +329,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     transform:translateX(-50%) translateY(0);
   }
   .flip-cta p{font-size:.72rem;line-height:1.5;}
-  .info-cat{font-size:.40rem;}
-  .info-title{font-size:.88rem;}
-  .info-inner{padding:10px 0 4px;}
-  .info-line{margin:0 auto 9px;}
-  .info-list{gap:5px 18px;}
-  .info-list li{font-size:.64rem;}
+  .info-cat{font-size:.30rem;margin-bottom:3px;}
+  .info-title{font-size:.56rem;margin-bottom:6px;}
+  .info-inner{padding:6px 0 2px;}
+  .info-line{width:60px;margin:0 auto 6px;}
+  .info-list{gap:3px 10px;}
+  .info-list li{font-size:.50rem;line-height:1.25;padding-left:10px;}
+  .info-list li::before{top:4px;width:3px;height:3px;}
 
   /* corners */
   .cn{width:44px;height:44px;}
@@ -385,6 +368,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .brand{top:3%;}
   .brand-rule{top:calc(3% + clamp(1.5rem,8.5vw,2.8rem));}
   .floater{margin-top:16px;}
+}
+
+/* hide corners + info panel on mobile — desktop only */
+@media(max-width:480px){
+  .cn{display:none;}
+  .info-wrap{display:none;}
 }
 
 /* hide wheel cursor on any touch device */
@@ -834,50 +823,51 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
   var DATA = {
     '1':{
-      cat:'Vehicle Intelligence',
-      title:'<strong>Know</strong> your car',
+      cat:'Digital Asset',
+      title:'Your vehicle, <strong>fully documented</strong>',
       items:[
-        'Instant VIN decode — full history in seconds',
-        'AI maintenance forecasting by mileage & model',
-        'Recall & safety bulletin alerts, updated daily',
-        'Mileage wear prediction across 200+ components',
-        'Pre-purchase inspection scoring',
-        '5-year ownership cost projection',
+        'Factory baseline specs & original options archived',
+        'A singular, structured profile for every vehicle',
+        'Live data layered onto your precise configuration',
+        'Commuters, collectors & custom builds alike',
+        'Your most significant mobile asset — organized',
+        'The analog era of ownership is behind you',
       ]
     },
     '2':{
-      cat:'Market Intelligence',
-      title:'Data <strong>edge</strong>',
+      cat:'Car Advisor',
+      title:'Intelligent guidance, <strong>on demand</strong>',
       items:[
-        'Live valuation across 40M+ active listings',
-        'Dealer invoice & holdback transparency',
-        'Price drop alerts on any saved vehicle',
-        'Buy & sell timing from market momentum',
-        'Private seller vs. dealer cost comparison',
-        'Regional demand heatmaps — sell where it pays',
+        'Select your car card — Advisor knows exactly what you drive',
+        'No need to explain your vehicle. It already knows.',
+        'Front-end vibration, suspension wear, fluid concerns',
+        'Precise answers tied to your specific build & trim',
+        'Informed direction before you enter a service bay',
+        'Authoritative automotive counsel, always available',
       ]
     },
     '3':{
-      cat:'Garage & Ownership',
-      title:'<strong>Your</strong> garage',
+      cat:'Modification & Service Ledger',
+      title:'A complete <strong>vehicle record</strong>',
       items:[
-        'Unlimited multi-vehicle dashboard',
-        'Live OBD-II diagnostics via Bluetooth',
-        'Service record vault — every repair, forever',
-        'Fuel economy & trip analytics',
-        'Insurance optimizer — cut your premiums',
-        'Side-by-side vehicle comparison',
+        'Perpetual log of every modification & dyno result',
+        'Unbroken service timeline from acquisition forward',
+        'Part-level entries with dates, cost & provenance',
+        'Build progression documented from stock to finished',
+        'Verified history that substantiates resale value',
+        'The authoritative record of your vehicle\'s life',
       ]
     },
     '4':{
-      cat:'Early Access',
-      title:'<strong>Founding</strong> member',
+      cat:'Crews & Community',
+      title:'Proximity. <strong>Culture. Connection.</strong>',
       items:[
-        'First 1,000 get lifetime Pro — free',
-        'Direct line to the founding team',
-        'Vote on features before roadmap locks',
-        'Exclusive founding-member badge in-app',
-        'Priority onboarding & white-glove setup',
+        'Organized crews built around geography & taste',
+        'Regional meets, drives & events surfaced to you',
+        'Share build documentation with your network',
+        'Visibility into what serious local builders run',
+        'A social layer native to automotive ownership',
+        'Community that understands what you drive',
       ]
     },
   };
