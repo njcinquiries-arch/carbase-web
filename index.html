@@ -265,18 +265,36 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   /* shift floater slightly downward so brand has air */
   .floater{margin-top:32px;}
 
-  /* info + cta panels */
+  /* info + cta panels — fixed above bottom corners */
   .info-wrap{
-    top:calc(50% + 175px);
-    width:94vw;
+    position:fixed;
+    top:auto;
+    bottom:68px;
+    left:50%;
+    transform:translateX(-50%) translateY(12px);
+    width:92vw;
+    max-height:38vh;
+    overflow-y:auto;
+  }
+  .info-wrap.open{
+    transform:translateX(-50%) translateY(0);
   }
   .flip-cta{
-    top:calc(50% + 175px);
-    width:90vw;
+    position:fixed;
+    top:auto;
+    bottom:68px;
+    left:50%;
+    transform:translateX(-50%) translateY(12px);
+    width:88vw;
+  }
+  .flip-cta.show{
+    transform:translateX(-50%) translateY(0);
   }
   .flip-cta p{font-size:.72rem;line-height:1.5;}
   .info-cat{font-size:.40rem;}
   .info-title{font-size:.88rem;}
+  .info-inner{padding:10px 0 4px;}
+  .info-line{margin:0 auto 9px;}
   .info-list{gap:5px 18px;}
   .info-list li{font-size:.64rem;}
 
@@ -302,8 +320,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .step-3{width:173px;}
   .floor-pool{width:214px;}
   .floater{margin-top:24px;}
-  .info-wrap{top:calc(50% + 158px);width:96vw;}
-  .flip-cta{top:calc(50% + 158px);}
+  .info-wrap{bottom:62px;width:96vw;}
+  .flip-cta{bottom:62px;}
 }
 
 /* short phones (landscape or small height) */
