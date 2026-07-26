@@ -73,14 +73,26 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .card-top-badges {
   position: absolute; top: 12px; left: 12px; right: 12px;
   display: flex; justify-content: space-between; align-items: center;
-  z-index: 5;
+  z-index: 5; pointer-events: none;
+}
+.rank-badge-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: #a855f7; color: #ffffff;
+  padding: 3px 8px 3px 5px; border-radius: 8px;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.45);
+}
+.card-rank-icon-img {
+  width: 14px; height: 14px; object-fit: contain;
+}
+.card-badge-text {
+  font-family: 'Exo 2', sans-serif; font-weight: 700; font-size: 0.58rem;
+  letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff;
 }
 .card-badge {
   font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 0.58rem;
   letter-spacing: 0.1em; padding: 4px 8px; border-radius: 6px; text-transform: uppercase;
 }
-.rank-badge { background: #a855f7; color: #ffffff; box-shadow: 0 0 12px rgba(168, 85, 247, 0.4); }
-.ovr-badge { background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; backdrop-filter: blur(8px); }
+.ovr-badge { background: rgba(0, 0, 0, 0.70); border: 1px solid rgba(255, 255, 255, 0.22); color: #ffffff; backdrop-filter: blur(8px); }
 
 .card-info-panel {
   position: absolute; bottom: 0; left: 0; right: 0; height: 38%;
@@ -545,7 +557,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
             <div class="card-photo-gradient"></div>
           </div>
           <div class="card-top-badges">
-            <span id="card-rank-badge" class="card-badge rank-badge">SIGNATURE</span>
+            <div class="rank-badge-pill" id="card-rank-pill">
+              <img id="card-rank-icon" class="card-rank-icon-img" src="ranks/rank_signature_native.png" alt="Rank">
+              <span id="card-rank-badge" class="card-badge-text">SIGNATURE</span>
+            </div>
             <span id="card-ovr-badge" class="card-badge ovr-badge">98 OVR</span>
           </div>
           <div class="card-info-panel">
@@ -1298,9 +1313,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
   var car = getCarByCode(carCode);
 
+  var RANK_PNGS = {
+    'SIGNATURE': 'ranks/rank_signature_native.png',
+    'CHAMPION': 'ranks/rank_champion_native.png',
+    'ELITE': 'ranks/rank_elite_native.png',
+    'ADVANCED': 'ranks/rank_advanced_native.png',
+    'CONTENDER': 'ranks/rank_contender_native.png',
+    'AMATEUR': 'ranks/rank_amateur_native.png',
+    'ROOKIE': 'ranks/rank_rookie_native.png'
+  };
+
   document.getElementById('card-img').src = car.photo;
   document.getElementById('card-rank-badge').textContent = car.rank;
-  document.getElementById('card-rank-badge').style.backgroundColor = car.rankColor;
+  document.getElementById('card-rank-pill').style.backgroundColor = car.rankColor;
+  document.getElementById('card-rank-pill').style.boxShadow = '0 0 14px ' + car.rankColor + '70';
+  if (document.getElementById('card-rank-icon')) {
+    document.getElementById('card-rank-icon').src = RANK_PNGS[car.rank] || 'ranks/rank_contender_native.png';
+  }
   document.getElementById('card-ovr-badge').textContent = car.ovr + ' OVR';
   document.getElementById('card-custom-name').textContent = car.customName;
   document.getElementById('card-subtitle').textContent = car.year + ' ' + car.make + ' ' + car.model;
