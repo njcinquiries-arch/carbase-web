@@ -154,6 +154,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 1.05rem; color: #ffffff;
   letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.card-owner-row {
+  display: flex; align-items: center; gap: 6px; margin-top: 2px; margin-bottom: 2px;
+}
+.card-owner-avatar {
+  width: 16px; height: 16px; border-radius: 50%; object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.card-owner-name {
+  font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 0.72rem; color: #eab308;
+  letter-spacing: 0.02em;
+}
 .card-subtitle {
   font-family: 'Exo 2', sans-serif; font-weight: 300; font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.55); margin-top: 2px; margin-bottom: 8px;
@@ -623,11 +634,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
             </div>
           </div>
           <div class="card-info-panel">
-            <div id="card-custom-name" class="card-custom-name">Nürburgring Spec</div>
-            <div id="card-subtitle" class="card-subtitle">2023 Porsche 911 GT3 RS</div>
+            <div id="card-custom-name" class="card-custom-name">Quattro Beast</div>
+            <div class="card-owner-row" id="card-owner-row">
+              <img id="card-owner-avatar" class="card-owner-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Owner">
+              <span id="card-owner-name" class="card-owner-name">Carlos Martinez</span>
+            </div>
+            <div id="card-subtitle" class="card-subtitle">2021 Audi S4 Premium Plus</div>
             <div class="card-stats-row">
-              <span id="card-hp" class="card-stat-hp">545 <span class="unit">hp</span></span>
-              <span id="card-mods-count" class="card-stat-mods">3 mods</span>
+              <span id="card-hp" class="card-stat-hp">420 <span class="unit">hp</span></span>
+              <span id="card-mods-count" class="card-stat-mods">1 mod</span>
             </div>
           </div>
           <div class="front-hint">tap to reveal</div>
@@ -1256,6 +1271,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
    ============================================= */
 (function(){
   var CAR_DATABASE = {
+    'quattro-beast': {
+      customName: 'Quattro Beast',
+      make: 'Audi', model: 'S4', year: 2021, trim: 'Premium Plus',
+      powertrain: 'Combustion', drivetrain: 'AWD', engine: '3.0L Turbo V6',
+      photo: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&auto=format&fit=crop&q=80',
+      hp: 420, torque: 440, zeroToSixty: '3.9s',
+      rank: 'ADVANCED', rankColor: '#eab308', ovr: 75,
+      styleTag: 'OEM+',
+      mods: ['APR Stage 2 ECU Tune', 'AWE Touring Exhaust System'],
+      ownerName: 'Carlos Martinez',
+      ownerAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+      serial: 'AU-S4-420'
+    },
     'porsche-gt3rs': {
       customName: 'Nürburgring Spec',
       make: 'Porsche', model: '911 GT3 RS', year: 2023, trim: 'GT3 RS',
@@ -1263,7 +1291,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       photo: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80',
       hp: 545, torque: 360, zeroToSixty: '2.8s',
       rank: 'SIGNATURE', rankColor: '#a855f7', ovr: 98,
+      styleTag: 'Track Spec',
       mods: ['Akrapovič Titanium Exhaust', 'Eventuri Carbon Intake', 'BBS Magnesium Wheels'],
+      ownerName: 'Seb R.',
+      ownerAvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       serial: 'P9-GT3-RS'
     },
     'm3-competition': {
@@ -1273,7 +1304,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       photo: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&auto=format&fit=crop&q=80',
       hp: 580, torque: 550, zeroToSixty: '3.4s',
       rank: 'ADVANCED', rankColor: '#eab308', ovr: 83,
-      mods: ['Bootmod3 Stage 2 Tune', 'VRSF Catless Downpipes', 'KW V3 Coilovers'],
+      styleTag: 'Street',
+      mods: ['Bootmod3 Stage 2 Tune', 'VRSF Catless Downpipes'],
+      ownerName: 'Marcus V.',
+      ownerAvatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
       serial: 'B3-M3-911'
     },
     'godzilla-r35': {
@@ -1283,43 +1317,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       photo: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop&q=80',
       hp: 720, torque: 610, zeroToSixty: '2.4s',
       rank: 'SIGNATURE', rankColor: '#a855f7', ovr: 95,
+      styleTag: 'Time Attack',
       mods: ['HKS GT800 Turbo Kit', 'Tomei Titanium Midpipe'],
+      ownerName: 'Kenji T.',
+      ownerAvatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
       serial: 'N3-GTR-35'
-    },
-    'tesla-model3': {
-      customName: 'Electric Dream',
-      make: 'Tesla', model: 'Model 3 Performance', year: 2023, trim: 'Performance',
-      powertrain: 'EV', drivetrain: 'AWD', engine: 'Dual Motor EV',
-      photo: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop&q=80',
-      hp: 510, torque: 520, zeroToSixty: '2.9s',
-      rank: 'ADVANCED', rankColor: '#eab308', ovr: 74,
-      mods: ['Mountain Pass Coilovers', 'Martian Forged Wheels'],
-      serial: 'T3-PE-471'
-    },
-    'supra-gr': {
-      customName: 'Heritage Gulf',
-      make: 'Toyota', model: 'GR Supra', year: 2022, trim: 'Premium',
-      powertrain: 'Combustion', drivetrain: 'RWD', engine: '3.0L Turbo I6',
-      photo: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&auto=format&fit=crop&q=80',
-      hp: 480, torque: 460, zeroToSixty: '3.5s',
-      rank: 'ELITE', rankColor: '#3b82f6', ovr: 88,
-      mods: ['AMS Downpipe & Tune', 'Streethunter Carbon Wing'],
-      serial: 'T9-GR-SUP'
-    },
-    'corvette-c8': {
-      customName: 'Supercharged Stingray',
-      make: 'Chevrolet', model: 'Corvette C8', year: 2021, trim: 'Z51',
-      powertrain: 'Combustion', drivetrain: 'RWD', engine: '6.2L Supercharged V8',
-      photo: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&auto=format&fit=crop&q=80',
-      hp: 705, torque: 640, zeroToSixty: '2.6s',
-      rank: 'CHAMPION', rankColor: '#10b981', ovr: 92,
-      mods: ['ProCharger Stage 1 Supercharger', 'Corsa Catback Exhaust'],
-      serial: 'C8-SC-705'
     }
   };
 
   function getCarByCode(code){
-    if(!code) return CAR_DATABASE['porsche-gt3rs'];
+    if(!code) return CAR_DATABASE['quattro-beast'];
     var cleanCode = code.toLowerCase().trim();
     if(CAR_DATABASE[cleanCode]) return CAR_DATABASE[cleanCode];
 
@@ -1406,7 +1413,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     document.getElementById('card-ovr-val').textContent = car.ovr;
   }
   document.getElementById('card-custom-name').textContent = car.customName;
-  document.getElementById('card-subtitle').textContent = car.year + ' ' + car.make + ' ' + car.model;
+  if (document.getElementById('card-owner-name')) {
+    document.getElementById('card-owner-name').textContent = car.ownerName || 'Carlos Martinez';
+  }
+  if (document.getElementById('card-owner-avatar')) {
+    document.getElementById('card-owner-avatar').src = car.ownerAvatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+  }
+  document.getElementById('card-subtitle').textContent = car.year + ' ' + car.make + ' ' + car.model + (car.trim ? ' ' + car.trim : '');
   document.getElementById('card-hp').innerHTML = car.hp + ' <span class="unit">hp</span>';
   document.getElementById('card-mods-count').textContent = car.mods.length + ' mods';
 
