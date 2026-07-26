@@ -49,9 +49,83 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 @keyframes hintpulse{0%,100%{opacity:.14}50%{opacity:.38}}
 
 .scene{animation:bob 7s ease-in-out infinite;}
-.back{background:#161619;border:1px solid rgba(255,255,255,0.05);transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;box-shadow:0 50px 130px rgba(0,0,0,0.95);}
-.back-inner{width:72%;height:74%;border:1px solid rgba(255,255,255,0.05);border-radius:8px;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.008) 10px,rgba(255,255,255,0.008) 11px);display:flex;align-items:center;justify-content:center;}
-.back-word{font-family:-apple-system,sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,0.10);}
+.back{background:#161619;border:1px solid rgba(255,255,255,0.05);transform:rotateY(180deg);box-shadow:0 50px 130px rgba(0,0,0,0.95);}
+
+/* CAR CARD STYLES */
+.card-photo-zone {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 35%;
+  overflow: hidden;
+  border-radius: 18px 18px 0 0;
+  background: #000;
+}
+.card-img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  transition: transform 0.4s ease;
+}
+.scene:hover .card-img { transform: scale(1.05); }
+.card-photo-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 40%, rgba(20,20,24,0.95) 100%);
+}
+
+.card-top-badges {
+  position: absolute; top: 12px; left: 12px; right: 12px;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 5;
+}
+.card-badge {
+  font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 0.58rem;
+  letter-spacing: 0.1em; padding: 4px 8px; border-radius: 6px; text-transform: uppercase;
+}
+.rank-badge { background: #a855f7; color: #ffffff; box-shadow: 0 0 12px rgba(168, 85, 247, 0.4); }
+.ovr-badge { background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; backdrop-filter: blur(8px); }
+
+.card-info-panel {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 38%;
+  padding: 14px 16px 28px 16px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  background: linear-gradient(to top, rgba(12,12,16,0.98) 0%, rgba(18,18,24,0.85) 70%, transparent 100%);
+  border-radius: 0 0 18px 18px;
+}
+.card-custom-name {
+  font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 1.05rem; color: #ffffff;
+  letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-subtitle {
+  font-family: 'Exo 2', sans-serif; font-weight: 300; font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.55); margin-top: 2px; margin-bottom: 8px;
+}
+.card-stats-row { display: flex; justify-content: space-between; align-items: baseline; }
+.card-stat-hp { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 1.0rem; color: #38bdf8; }
+.card-stat-hp .unit { font-size: 0.65rem; color: rgba(255,255,255,0.45); font-weight: 300; }
+.card-stat-mods { font-family: 'Exo 2', sans-serif; font-weight: 300; font-size: 0.68rem; color: rgba(255, 255, 255, 0.5); letter-spacing: 0.05em; }
+
+/* CARD BACK CONTENT */
+.back-content {
+  width: 100%; height: 100%; padding: 16px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: radial-gradient(circle at 50% 0%, rgba(28,28,36,0.95) 0%, rgba(14,14,18,0.98) 100%);
+  border-radius: 18px;
+}
+.back-header {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 4px;
+}
+.back-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 0.92rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+.back-section-label { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 0.50rem; letter-spacing: 0.2em; color: rgba(212, 175, 90, 0.85); text-transform: uppercase; margin-top: 4px; margin-bottom: 4px; }
+.back-specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 6px 8px; }
+.back-spec-item { display: flex; flex-direction: column; }
+.back-spec-item .lbl { font-size: 0.52rem; color: rgba(255,255,255,0.38); font-family: 'Exo 2', sans-serif; }
+.back-spec-item .val { font-size: 0.68rem; color: #ffffff; font-weight: 600; font-family: 'Exo 2', sans-serif; }
+.back-perf-row { display: flex; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 6px 8px; }
+.back-perf-item { display: flex; flex-direction: column; }
+.back-perf-item .lbl { font-size: 0.52rem; color: rgba(255,255,255,0.38); }
+.back-perf-item .val { font-size: 0.72rem; color: #38bdf8; font-weight: 600; }
+.back-mods-list { display: flex; flex-direction: column; gap: 3px; max-height: 60px; overflow-y: auto; }
+.back-mod-chip { font-size: 0.62rem; color: rgba(255,255,255,0.8); font-family: 'Exo 2', sans-serif; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px; }
+.back-serial { font-size: 0.52rem; color: rgba(255,255,255,0.3); font-family: monospace; letter-spacing: 0.15em; text-align: center; margin-top: 4px; }
 
 /* BASE — solid stone pedestal, no glass */
 .base{width:300px;display:flex;flex-direction:column;align-items:center;}
@@ -463,12 +537,64 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
     <div class="scene" id="scene">
       <div class="card" id="card">
-        <div class="face front">
+        <!-- CARD FRONT -->
+        <div class="face front" id="card-front">
           <div class="front-hl" id="hl"></div>
-          <img class="front-logo" src="logo.png" alt="">
+          <div class="card-photo-zone">
+            <img id="card-img" class="card-img" src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80" alt="Car">
+            <div class="card-photo-gradient"></div>
+          </div>
+          <div class="card-top-badges">
+            <span id="card-rank-badge" class="card-badge rank-badge">SIGNATURE</span>
+            <span id="card-ovr-badge" class="card-badge ovr-badge">98 OVR</span>
+          </div>
+          <div class="card-info-panel">
+            <div id="card-custom-name" class="card-custom-name">Nürburgring Spec</div>
+            <div id="card-subtitle" class="card-subtitle">2023 Porsche 911 GT3 RS</div>
+            <div class="card-stats-row">
+              <span id="card-hp" class="card-stat-hp">545 <span class="unit">hp</span></span>
+              <span id="card-mods-count" class="card-stat-mods">3 mods</span>
+            </div>
+          </div>
           <div class="front-hint">tap to reveal</div>
         </div>
-        <div class="face back"><div class="back-inner"><div class="back-word">Carbase</div></div></div>
+
+        <!-- CARD BACK -->
+        <div class="face back" id="card-back">
+          <div class="front-hl" id="hl-back"></div>
+          <div class="back-content">
+            <div class="back-header">
+              <span id="back-custom-name" class="back-title">Nürburgring Spec</span>
+              <span id="back-rank-badge" class="card-badge rank-badge">SIGNATURE</span>
+            </div>
+
+            <div class="back-section-label">VEHICLE SPECIFICATIONS</div>
+            <div class="back-specs-grid">
+              <div class="back-spec-item"><span class="lbl">Make</span><span id="spec-make" class="val">Porsche</span></div>
+              <div class="back-spec-item"><span class="lbl">Model</span><span id="spec-model" class="val">911 GT3 RS</span></div>
+              <div class="back-spec-item"><span class="lbl">Year</span><span id="spec-year" class="val">2023</span></div>
+              <div class="back-spec-item"><span class="lbl">Powertrain</span><span id="spec-powertrain" class="val">Combustion</span></div>
+              <div class="back-spec-item"><span class="lbl">Drive</span><span id="spec-drivetrain" class="val">RWD</span></div>
+              <div class="back-spec-item"><span class="lbl">Engine</span><span id="spec-engine" class="val">4.0L Flat-6</span></div>
+            </div>
+
+            <div class="back-section-label">PERFORMANCE SPECS</div>
+            <div class="back-perf-row">
+              <div class="back-perf-item"><span class="lbl">Horsepower</span><span id="perf-hp" class="val">545 hp</span></div>
+              <div class="back-perf-item"><span class="lbl">Torque</span><span id="perf-tq" class="val">360 lb-ft</span></div>
+              <div class="back-perf-item"><span class="lbl">0-60 mph</span><span id="perf-zero" class="val">2.8s</span></div>
+            </div>
+
+            <div class="back-section-label">INSTALLED MODIFICATIONS</div>
+            <div id="back-mods-list" class="back-mods-list">
+              <div class="back-mod-chip">• Akrapovič Titanium Exhaust System</div>
+              <div class="back-mod-chip">• Eventuri Carbon Fiber Intake</div>
+              <div class="back-mod-chip">• BBS Magnesium Wheels</div>
+            </div>
+
+            <div id="back-serial" class="back-serial">SERIAL: P9-GT3-RS</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -971,6 +1097,162 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     var dy=ty0-e.changedTouches[0].clientY;
     if(dy>40) show(); else if(dy<-40) hide();
   },{passive:true});
+/* =============================================
+   DYNAMIC QR CODE CAR CARD RESOLVER
+   ============================================= */
+(function(){
+  var CAR_DATABASE = {
+    'porsche-gt3rs': {
+      customName: 'Nürburgring Spec',
+      make: 'Porsche', model: '911 GT3 RS', year: 2023, trim: 'GT3 RS',
+      powertrain: 'Combustion', drivetrain: 'RWD', engine: '4.0L Flat-6',
+      photo: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80',
+      hp: 545, torque: 360, zeroToSixty: '2.8s',
+      rank: 'SIGNATURE', rankColor: '#a855f7', ovr: 98,
+      mods: ['Akrapovič Titanium Exhaust', 'Eventuri Carbon Intake', 'BBS Magnesium Wheels'],
+      serial: 'P9-GT3-RS'
+    },
+    'm3-competition': {
+      customName: 'Project Midnight',
+      make: 'BMW', model: 'M3 Competition', year: 2021, trim: 'Competition',
+      powertrain: 'Combustion', drivetrain: 'RWD', engine: '3.0L Twin-Turbo I6',
+      photo: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&auto=format&fit=crop&q=80',
+      hp: 580, torque: 550, zeroToSixty: '3.4s',
+      rank: 'ADVANCED', rankColor: '#eab308', ovr: 83,
+      mods: ['Bootmod3 Stage 2 Tune', 'VRSF Catless Downpipes', 'KW V3 Coilovers'],
+      serial: 'B3-M3-911'
+    },
+    'godzilla-r35': {
+      customName: 'Godzilla R35',
+      make: 'Nissan', model: 'GT-R Nismo', year: 2020, trim: 'Nismo',
+      powertrain: 'Combustion', drivetrain: 'AWD', engine: '3.8L Twin-Turbo V6',
+      photo: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop&q=80',
+      hp: 720, torque: 610, zeroToSixty: '2.4s',
+      rank: 'SIGNATURE', rankColor: '#a855f7', ovr: 95,
+      mods: ['HKS GT800 Turbo Kit', 'Tomei Titanium Midpipe'],
+      serial: 'N3-GTR-35'
+    },
+    'tesla-model3': {
+      customName: 'Electric Dream',
+      make: 'Tesla', model: 'Model 3 Performance', year: 2023, trim: 'Performance',
+      powertrain: 'EV', drivetrain: 'AWD', engine: 'Dual Motor EV',
+      photo: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&auto=format&fit=crop&q=80',
+      hp: 510, torque: 520, zeroToSixty: '2.9s',
+      rank: 'ADVANCED', rankColor: '#eab308', ovr: 74,
+      mods: ['Mountain Pass Coilovers', 'Martian Forged Wheels'],
+      serial: 'T3-PE-471'
+    },
+    'supra-gr': {
+      customName: 'Heritage Gulf',
+      make: 'Toyota', model: 'GR Supra', year: 2022, trim: 'Premium',
+      powertrain: 'Combustion', drivetrain: 'RWD', engine: '3.0L Turbo I6',
+      photo: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&auto=format&fit=crop&q=80',
+      hp: 480, torque: 460, zeroToSixty: '3.5s',
+      rank: 'ELITE', rankColor: '#3b82f6', ovr: 88,
+      mods: ['AMS Downpipe & Tune', 'Streethunter Carbon Wing'],
+      serial: 'T9-GR-SUP'
+    },
+    'corvette-c8': {
+      customName: 'Supercharged Stingray',
+      make: 'Chevrolet', model: 'Corvette C8', year: 2021, trim: 'Z51',
+      powertrain: 'Combustion', drivetrain: 'RWD', engine: '6.2L Supercharged V8',
+      photo: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&auto=format&fit=crop&q=80',
+      hp: 705, torque: 640, zeroToSixty: '2.6s',
+      rank: 'CHAMPION', rankColor: '#10b981', ovr: 92,
+      mods: ['ProCharger Stage 1 Supercharger', 'Corsa Catback Exhaust'],
+      serial: 'C8-SC-705'
+    }
+  };
+
+  function getCarByCode(code){
+    if(!code) return CAR_DATABASE['porsche-gt3rs'];
+    var cleanCode = code.toLowerCase().trim();
+    if(CAR_DATABASE[cleanCode]) return CAR_DATABASE[cleanCode];
+
+    var hash = 0;
+    for(var i=0; i<cleanCode.length; i++) hash = cleanCode.charCodeAt(i) + ((hash << 5) - hash);
+    hash = Math.abs(hash);
+
+    var makes = ['Nissan','Toyota','Chevrolet','Ford','Audi','Mercedes-Benz','Subaru','Porsche','BMW'];
+    var models = {
+      Nissan:['GT-R','370Z','Silvia S15'],
+      Toyota:['GR Supra','GR Yaris','AE86'],
+      Chevrolet:['Corvette Z06','Camaro ZL1'],
+      Ford:['Mustang Shelby GT500','Focus RS'],
+      Audi:['R8 V10 Plus','RS6 Avant'],
+      'Mercedes-Benz':['AMG GT R','C63 AMG'],
+      Subaru:['WRX STI','BRZ'],
+      Porsche:['911 GT3','Cayman GT4'],
+      BMW:['M4 CSL','M2 Competition']
+    };
+    var photos = [
+      'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80'
+    ];
+
+    var make = makes[hash % makes.length];
+    var modelList = models[make] || ['Custom Build'];
+    var model = modelList[hash % modelList.length];
+    var photo = photos[hash % photos.length];
+    var year = 2018 + (hash % 7);
+    var ovr = 70 + (hash % 28);
+    var hp = 350 + (hash % 350);
+    var tq = 320 + (hash % 300);
+    var zero = (4.2 - (hp / 500)).toFixed(1) + 's';
+
+    var rank = 'CONTENDER';
+    var rankColor = '#f97316';
+    if (ovr >= 95) { rank = 'SIGNATURE'; rankColor = '#a855f7'; }
+    else if (ovr >= 90) { rank = 'CHAMPION'; rankColor = '#10b981'; }
+    else if (ovr >= 85) { rank = 'ELITE'; rankColor = '#3b82f6'; }
+    else if (ovr >= 78) { rank = 'ADVANCED'; rankColor = '#eab308'; }
+
+    return {
+      customName: 'Project ' + model,
+      make: make, model: model, year: year, trim: 'Spec-R',
+      powertrain: 'Combustion', drivetrain: hash % 2 === 0 ? 'AWD' : 'RWD', engine: 'High-Performance Engine',
+      photo: photo, hp: hp, torque: tq, zeroToSixty: zero,
+      rank: rank, rankColor: rankColor, ovr: ovr,
+      mods: ['Catback Exhaust System', 'Stage 1 ECU Tune', 'Coilover Suspension'],
+      serial: 'CB-' + cleanCode.slice(0,6).toUpperCase()
+    };
+  }
+
+  var path = window.location.pathname;
+  var parts = path.split('/c/');
+  var searchParams = new URLSearchParams(window.location.search);
+  var carCode = (parts.length > 1 && parts[1]) ? parts[1] : (searchParams.get('code') || searchParams.get('c') || searchParams.get('car') || '');
+
+  var car = getCarByCode(carCode);
+
+  document.getElementById('card-img').src = car.photo;
+  document.getElementById('card-rank-badge').textContent = car.rank;
+  document.getElementById('card-rank-badge').style.backgroundColor = car.rankColor;
+  document.getElementById('card-ovr-badge').textContent = car.ovr + ' OVR';
+  document.getElementById('card-custom-name').textContent = car.customName;
+  document.getElementById('card-subtitle').textContent = car.year + ' ' + car.make + ' ' + car.model;
+  document.getElementById('card-hp').innerHTML = car.hp + ' <span class="unit">hp</span>';
+  document.getElementById('card-mods-count').textContent = car.mods.length + ' mods';
+
+  document.getElementById('back-custom-name').textContent = car.customName;
+  document.getElementById('back-rank-badge').textContent = car.rank;
+  document.getElementById('back-rank-badge').style.backgroundColor = car.rankColor;
+  document.getElementById('spec-make').textContent = car.make;
+  document.getElementById('spec-model').textContent = car.model;
+  document.getElementById('spec-year').textContent = car.year;
+  document.getElementById('spec-powertrain').textContent = car.powertrain;
+  document.getElementById('spec-drivetrain').textContent = car.drivetrain;
+  document.getElementById('spec-engine').textContent = car.engine;
+  document.getElementById('perf-hp').textContent = car.hp + ' hp';
+  document.getElementById('perf-tq').textContent = car.torque + ' lb-ft';
+  document.getElementById('perf-zero').textContent = car.zeroToSixty;
+  document.getElementById('back-serial').textContent = 'SERIAL: ' + car.serial;
+
+  var modsHtml = car.mods.map(function(m){ return '<div class="back-mod-chip">• ' + m + '</div>'; }).join('');
+  document.getElementById('back-mods-list').innerHTML = modsHtml;
 })();
 </script>
 </body>
