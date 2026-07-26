@@ -747,8 +747,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     card.style.transition='transform .82s cubic-bezier(.4,0,.2,1)';
     card.style.transform=flipped?'rotateY(180deg)':'rotateY(0deg)';
     setTimeout(function(){card.style.transition='none';},880);
+    /* track flip state with a class so corners can read it */
+    scene.classList.toggle('is-flipped', flipped);
     if(flipped){
-      setTimeout(function(){flipCta.classList.add('show');},520);
+      setTimeout(function(){
+        /* only show CTA if no corner panel is currently open */
+        if(!document.getElementById('info-wrap').classList.contains('open')){
+          flipCta.classList.add('show');
+        }
+      },520);
     } else {
       flipCta.classList.remove('show');
     }
@@ -858,14 +865,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     if(active) document.getElementById('cn'+active).classList.remove('on');
     active=num;
     document.getElementById('cn'+num).classList.add('on');
-    /* hide flip CTA while a panel is open */
+    /* always hide flip CTA when any corner panel opens */
     flipCta.classList.remove('show');
   }
   function hide(){
     wrap.classList.remove('open');
     if(active){document.getElementById('cn'+active).classList.remove('on');active=null;}
-    /* restore flip CTA if card is still flipped */
-    if(document.getElementById('card').style.transform==='rotateY(180deg)'){
+    /* restore flip CTA only if card is still flipped */
+    if(document.getElementById('scene').classList.contains('is-flipped')){
       flipCta.classList.add('show');
     }
   }
