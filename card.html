@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Carbase Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+  width:100%;height:100%;
+  background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* CARD */
+.scene{
+  width:300px;height:420px;
+  perspective:1100px;
+  cursor:pointer;
+  user-select:none;-webkit-user-select:none;
+  animation:bob 7s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+.card{
+  width:100%;height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  border-radius:18px;
+  will-change:transform;
+}
+.face{
+  position:absolute;inset:0;
+  border-radius:18px;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  overflow:hidden;
+}
+
+/* FRONT */
+.front{
+  background:#1c1c1f;
+  border:1px solid rgba(255,255,255,0.07);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.07), 0 50px 130px rgba(0,0,0,0.95);
+}
+.front::after{
+  content:'';position:absolute;
+  top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.22) 50%,transparent);
+}
+.front-hl{
+  position:absolute;inset:0;border-radius:18px;pointer-events:none;
+  background:radial-gradient(ellipse 55% 45% at var(--hx,50%) var(--hy,30%),rgba(255,255,255,0.07) 0%,transparent 65%);
+  opacity:0;transition:opacity .15s;
+}
+.scene:hover .front-hl{opacity:1;}
+
+.front-logo{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-58%);
+  width:62%;opacity:0.88;
+  filter:drop-shadow(0 0 18px rgba(255,255,255,0.18));
+  pointer-events:none;
+}
+.front-hint{
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+  font-family:'Exo 2',sans-serif;font-weight:300;font-size:.40rem;
+  letter-spacing:.40em;text-indent:.40em;text-transform:uppercase;
+  color:rgba(255,255,255,0.22);white-space:nowrap;pointer-events:none;
+  animation:hintpulse 3s ease-in-out infinite;
+}
+@keyframes hintpulse{0%,100%{opacity:.14}50%{opacity:.38}}
+
+/* BACK */
+.back{
+  background:#161619;
+  border:1px solid rgba(255,255,255,0.05);
+  transform:rotateY(180deg);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 50px 130px rgba(0,0,0,0.95);
+}
+.back-inner{
+  width:72%;height:74%;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:8px;
+  background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.008) 10px,rgba(255,255,255,0.008) 11px);
+  display:flex;align-items:center;justify-content:center;
+}
+.back-word{
+  font-family:-apple-system,sans-serif;
+  font-size:.58rem;font-weight:700;
+  letter-spacing:.32em;text-transform:uppercase;
+  color:rgba(255,255,255,0.10);
+}
+
+/* BASE */
+.base{width:300px;display:flex;flex-direction:column;align-items:center;}
+.contact-shadow{
+  width:220px;height:6px;
+  background:radial-gradient(ellipse 85% 100% at 50% 0%,rgba(0,0,0,0.75) 0%,transparent 80%);
+  filter:blur(5px);
+}
+.step{border-radius:1px;}
+.step-1{
+  width:234px;height:8px;
+  background:linear-gradient(to bottom,rgba(90,86,96,0.55) 0%,rgba(55,52,60,0.70) 100%);
+  border-top:1px solid rgba(255,255,255,0.14);
+}
+.step-2{
+  width:262px;height:8px;
+  background:linear-gradient(to bottom,rgba(72,69,78,0.50) 0%,rgba(44,42,50,0.65) 100%);
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+.step-3{
+  width:290px;height:8px;
+  background:linear-gradient(to bottom,rgba(58,55,64,0.45) 0%,rgba(34,32,40,0.60) 100%);
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+.floor-pool{
+  width:360px;height:28px;
+  background:radial-gradient(ellipse 55% 100% at 50% 0%,rgba(180,175,190,0.06) 0%,transparent 70%);
+}
+</style>
+</head>
+<body>
+
+<div style="display:flex;flex-direction:column;align-items:center;">
+  <div class="scene" id="scene">
+    <div class="card" id="card">
+      <div class="face front">
+        <div class="front-hl" id="hl"></div>
+        <img class="front-logo" src="logo.png" alt="">
+        <div class="front-hint">tap to reveal</div>
+      </div>
+      <div class="face back">
+        <div class="back-inner"><div class="back-word">Carbase</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="base">
+    <div class="contact-shadow"></div>
+    <div class="step step-1"></div>
+    <div class="step step-2"></div>
+    <div class="step step-3"></div>
+    <div class="floor-pool"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var scene = document.getElementById('scene');
+  var card  = document.getElementById('card');
+  var hl    = document.getElementById('hl');
+  var flipped = false, raf = 0;
+  card.style.transition = 'none';
+
+  function tilt(rx, ry){
+    var b = flipped ? 180 : 0;
+    card.style.transform = 'rotateX('+(flipped?-rx:rx)+'deg) rotateY('+(b+ry)+'deg)';
+  }
+  function snap(){
+    card.style.transition = 'transform .68s cubic-bezier(.22,1,.36,1)';
+    card.style.transform  = flipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+    setTimeout(function(){ card.style.transition = 'none'; }, 720);
+  }
+  function playFlip(toBack){
+    try{
+      var ac = new(window.AudioContext||window.webkitAudioContext)();
+      var o = ac.createOscillator(), g = ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(toBack?720:520, ac.currentTime);
+      o.frequency.exponentialRampToValueAtTime(toBack?180:280, ac.currentTime+0.09);
+      g.gain.setValueAtTime(0.10, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.10);
+      o.start(ac.currentTime); o.stop(ac.currentTime+0.10);
+      var buf = ac.createBuffer(1, ac.sampleRate*0.28, ac.sampleRate);
+      var dat = buf.getChannelData(0);
+      for(var i=0;i<dat.length;i++) dat[i] = Math.random()*2-1;
+      var ns=ac.createBufferSource(), flt=ac.createBiquadFilter(), ng=ac.createGain();
+      ns.buffer=buf; flt.type='bandpass'; flt.frequency.value=1100; flt.Q.value=0.6;
+      ns.connect(flt); flt.connect(ng); ng.connect(ac.destination);
+      ng.gain.setValueAtTime(0.055, ac.currentTime+0.02);
+      ng.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.28);
+      ns.start(ac.currentTime+0.02); ns.stop(ac.currentTime+0.30);
+      setTimeout(function(){ ac.close(); }, 600);
+    }catch(e){}
+  }
+  function flip(){
+    flipped = !flipped;
+    playFlip(flipped);
+    card.style.transition = 'transform .82s cubic-bezier(.4,0,.2,1)';
+    card.style.transform  = flipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+    setTimeout(function(){ card.style.transition='none'; }, 880);
+    scene.classList.toggle('is-flipped', flipped);
+  }
+
+  /* mouse tilt */
+  scene.addEventListener('mousemove', function(e){
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function(){
+      var rc = scene.getBoundingClientRect();
+      var x = (e.clientX-rc.left)/rc.width, y = (e.clientY-rc.top)/rc.height;
+      tilt(-(y-0.5)*9, (x-0.5)*9);
+      hl.style.setProperty('--hx', (x*100)+'%');
+      hl.style.setProperty('--hy', (y*100)+'%');
+    });
+  });
+  scene.addEventListener('mouseleave', function(){ cancelAnimationFrame(raf); snap(); });
+  scene.addEventListener('click', flip);
+
+  /* touch tilt */
+  var touchMoved = false;
+  scene.addEventListener('touchstart',  function(){ touchMoved=false; }, {passive:true});
+  scene.addEventListener('touchmove', function(e){
+    touchMoved = true;
+    var t = e.touches[0], rc = scene.getBoundingClientRect();
+    var x = (t.clientX-rc.left)/rc.width, y = (t.clientY-rc.top)/rc.height;
+    tilt(-(y-0.5)*9, (x-0.5)*9);
+  }, {passive:true});
+  scene.addEventListener('touchend', function(){
+    snap();
+    if(!touchMoved) flip();
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>
