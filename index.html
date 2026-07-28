@@ -431,9 +431,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .scene{
     width: 290px;
     height: 406px;
-    transform: scale(0.65);
-    transform-origin: center bottom;
-    margin-bottom: -55px;
+    margin-bottom: -120px; /* pull scaled-down base up to the bottom of the card */
   }
   .card{border-radius:22px;}
   .face{border-radius:22px;}
@@ -468,8 +466,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 /* very small phones (SE etc) */
 @media(max-width:375px){
   .scene{
-    transform: scale(0.55);
-    margin-bottom: -80px;
+    margin-bottom: -155px;
   }
   .base{
     transform: scale(0.55);
@@ -885,16 +882,21 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var hasDragged = false;
   var lastFlipTime = 0;
 
+  var isMobile = window.innerWidth <= 480;
+  var isSmallMobile = window.innerWidth <= 375;
+  var scaleFactor = 1.0;
+  if (isMobile) {
+    scaleFactor = isSmallMobile ? 0.55 : 0.65;
+  }
+
   function updateCardTransform(rx, ry, animate) {
     if (animate) {
       card.style.transition = 'transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)';
     } else {
       card.style.transition = 'none';
     }
-    var baseRotY = flipped ? 180 : 0;
-    var finalRotX = flipped ? -rx : rx;
-    var finalRotY = baseRotY + ry;
-    card.style.transform = 'rotateX(' + finalRotX.toFixed(2) + 'deg) rotateY(' + finalRotY.toFixed(2) + 'deg)';
+    var baseTrans = flipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+    card.style.transform = 'scale(' + scaleFactor + ') ' + baseTrans + ' rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
   }
 
   function updateHologramLight(rx, ry) {
@@ -1051,6 +1053,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       updateCardTransform(0, 0, true);
     }, 120);
   }, { passive: true });
+
+  // Initial call on page load to apply scale factor immediately
+  updateCardTransform(0, 0, false);
 })();
 
 /* =============================================
