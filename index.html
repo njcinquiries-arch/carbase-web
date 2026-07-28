@@ -427,13 +427,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     width:clamp(50px,16vw,100px);
   }
 
-  /* card — much smaller so it clears brand text */
-  .scene{width:200px;height:280px;}
-  .card{border-radius:14px;}
-  .face{border-radius:14px;}
+  /* card — use scale instead of shrinking width/height to preserve aspect ratio and font ratios */
+  .scene{
+    width: 290px;
+    height: 406px;
+    transform: scale(0.74);
+    transform-origin: center bottom;
+    margin-bottom: -105px;
+  }
+  .card{border-radius:22px;}
+  .face{border-radius:22px;}
 
   /* base — scale to match card */
-  .base{width:200px;}
+  .base{
+    width: 290px;
+    transform: scale(0.74);
+    transform-origin: center top;
+  }
   .contact-shadow{width:148px;}
   .step-1{width:156px;}
   .step-2{width:176px;}
@@ -462,8 +472,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
 /* very small phones (SE etc) */
 @media(max-width:375px){
-  .scene{width:178px;height:249px;}
-  .base{width:178px;}
+  .scene{
+    transform: scale(0.64);
+    margin-bottom: -145px;
+  }
+  .base{
+    transform: scale(0.64);
+  }
   .contact-shadow{width:132px;}
   .step-1{width:139px;}
   .step-2{width:157px;}
