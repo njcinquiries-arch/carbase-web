@@ -365,33 +365,265 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   text-shadow:0 0 8px rgba(255,255,255,0.80);
 }
 
-/* second page */
+/* second page layout */
 #page2{
   position:fixed;inset:0;z-index:50;
-  background:#000;
+  background:#0a0a0c;
   display:flex;align-items:center;justify-content:center;flex-direction:column;
   opacity:0;pointer-events:none;
   transition:opacity .7s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+  padding: 40px 20px;
 }
 #page2.visible{opacity:1;pointer-events:auto;}
-.p2-label{
-  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:600;font-size:.52rem;
-  letter-spacing:.45em;text-transform:uppercase;
-  color:rgba(255,255,255,0.28);margin-bottom:18px;
+
+.p2-header{
+  text-align:center;
+  margin-bottom:35px;
 }
-.p2-title{
-  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:200;font-size:clamp(2rem,6vw,4.5rem);
-  letter-spacing:.20em;text-indent:.20em;text-transform:uppercase;
-  color:rgba(255,255,255,0.08);
-  text-shadow:none;
-  margin-bottom:28px;
+.p2-logo{
+  font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.8rem;
+  letter-spacing:.08em;text-transform:uppercase;color:#fff;
+  text-shadow:0 0 12px rgba(255,255,255,0.25);
+  margin-bottom:6px;
 }
-.p2-wip{
-  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:600;font-size:.60rem;
-  letter-spacing:.50em;text-transform:uppercase;
-  color:rgba(255,255,255,0.18);
-  border:1px solid rgba(255,255,255,0.10);
-  border-radius:20px;padding:7px 22px;
+.p2-tagline{
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight:400;font-size:.78rem;
+  color:rgba(255,255,255,0.45);
+}
+
+.p2-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:32px;
+}
+
+/* 3D SMARTPHONE */
+.phone-scene{
+  width:220px;height:450px;
+  perspective:1200px;
+  user-select:none;
+}
+.phone{
+  width:100%;height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transform: rotateX(0deg) rotateY(0deg);
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.phone-face{
+  position:absolute;inset:0;
+  border-radius:36px;
+  border:4px solid #202024;
+  background:#0a0a0c;
+  overflow:hidden;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  box-shadow: 0 35px 80px rgba(0,0,0,0.85);
+  transform: translateZ(2px);
+}
+.phone-front{
+  z-index:2;
+}
+.phone-back{
+  transform: rotateY(180deg) translateZ(2px);
+  background:#141418;
+  border:4px solid #2a2a30;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.phone-back::before {
+  content: '';
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: #0d0d10;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.phone-back-logo {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  font-size: 2.8rem;
+  color: rgba(255,255,255,0.12);
+  text-shadow: 0 0 10px rgba(255,255,255,0.05);
+}
+.phone-notch{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:80px;height:18px;border-radius:10px;
+  background:#000;z-index:10;
+}
+.phone-screen{
+  position:absolute;inset:6px;
+  border-radius:30px;
+  overflow:hidden;
+  background:#08080a;
+  display:flex;
+  flex-direction:column;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* SMARTPHONE SCREEN LAYOUTS */
+.screen-header{
+  padding:28px 16px 12px;
+  font-weight:700;font-size:.82rem;color:#fff;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  background:#0e0e12;
+}
+.screen-body{
+  flex:1;
+  overflow-y:auto;
+  padding:14px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  scrollbar-width:none;
+}
+.screen-body::-webkit-scrollbar{display:none;}
+
+/* Garage Screen */
+.screen-car-card{
+  background:#121216;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  padding:8px;
+  gap:10px;
+}
+.mini-photo-zone{
+  width:46px;height:46px;
+  border-radius:8px;
+}
+.mini-car-info{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.mini-name{
+  font-weight:600;font-size:.70rem;color:#fff;
+}
+.mini-specs{
+  font-size:.58rem;color:rgba(255,255,255,0.45);
+  margin-top:2px;
+}
+
+/* Chat Screen */
+.chat-bubble{
+  max-width:85%;
+  padding:8px 12px;
+  border-radius:14px;
+  font-size:.60rem;
+  line-height:1.4;
+}
+.chat-bubble.user{
+  background:#D9965B;
+  color:#000;
+  font-weight:500;
+  align-self:flex-end;
+  border-bottom-right-radius:2px;
+}
+.chat-bubble.ai{
+  background:#141418;
+  color:rgba(255,255,255,0.85);
+  align-self:flex-start;
+  border-bottom-left-radius:2px;
+  border:1px solid rgba(255,255,255,0.05);
+}
+
+/* Ledger Screen */
+.ledger-item{
+  background:#121216;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:12px;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.ledger-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+}
+.ledger-dot.oem{background:#4ADE80;box-shadow:0 0 8px rgba(74,222,128,0.45);}
+.ledger-dot.estimated{background:#FBBF24;box-shadow:0 0 8px rgba(251,191,36,0.45);}
+.ledger-dot.user-entered{background:#A78BFA;box-shadow:0 0 8px rgba(167,139,250,0.45);}
+.ledger-info{
+  flex:1;
+}
+.ledger-title{
+  font-weight:600;font-size:.64rem;color:#fff;
+}
+.ledger-date{
+  font-size:.54rem;color:rgba(255,255,255,0.40);
+  margin-top:2px;
+}
+.ledger-cost{
+  font-weight:700;font-size:.68rem;color:#D9965B;
+}
+
+/* FEATURES TABS NAVIGATION */
+.features-nav{
+  display:flex;
+  background:rgba(20,20,24,0.65);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:24px;
+  padding:4px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  gap:4px;
+}
+.feat-tab{
+  background:transparent;
+  border:none;
+  padding:10px 18px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  outline:none;
+  transition:all .25s ease;
+}
+.feat-tab .tab-icon{
+  font-size:.90rem;
+}
+.feat-tab .tab-label{
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight:600;font-size:.72rem;color:rgba(255,255,255,0.45);
+}
+.feat-tab:hover .tab-label{
+  color:rgba(255,255,255,0.85);
+}
+.feat-tab.active{
+  background:rgba(255,255,255,0.08);
+}
+.feat-tab.active .tab-label{
+  color:#D9965B;
+}
+.feat-tab.active .tab-icon{
+  filter:drop-shadow(0 0 8px rgba(217,150,91,0.45));
+}
+
+@media(max-width:480px){
+  .p2-content {
+    transform: scale(0.9);
+    transform-origin: center center;
+  }
+}
+@media(max-width:375px){
+  .p2-content {
+    transform: scale(0.8);
+  }
 }
 
 /* SCROLL HINT */
@@ -518,9 +750,46 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
 <!-- PAGE 2 — fades in on scroll -->
 <div id="page2">
-  <div class="p2-label">Coming soon</div>
-  <div class="p2-title">Carbase</div>
-  <div class="p2-wip">Work in progress</div>
+  <!-- Brand logo header -->
+  <div class="p2-header">
+    <div class="p2-logo">Carbase App</div>
+    <div class="p2-tagline">The ultimate automotive tracking ecosystem.</div>
+  </div>
+
+  <div class="p2-content">
+    <!-- 3D Smartphone Container -->
+    <div class="phone-scene" id="phone-scene">
+      <div class="phone" id="phone">
+        <div class="phone-face phone-front">
+          <!-- Screen notch -->
+          <div class="phone-notch"></div>
+          
+          <!-- Screen content -->
+          <div class="phone-screen" id="phone-screen"></div>
+        </div>
+        <!-- Phone back face -->
+        <div class="phone-face phone-back">
+          <div class="phone-back-logo">C</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Navigation Tabs -->
+    <div class="features-nav" id="features-nav">
+      <button class="feat-tab active" data-feature="garage">
+        <span class="tab-icon">🚗</span>
+        <span class="tab-label">Garage</span>
+      </button>
+      <button class="feat-tab" data-feature="advisor">
+        <span class="tab-icon">🤖</span>
+        <span class="tab-label">AI Advisor</span>
+      </button>
+      <button class="feat-tab" data-feature="ledger">
+        <span class="tab-icon">📋</span>
+        <span class="tab-label">Ledger</span>
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="stage">
@@ -1132,23 +1401,169 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 })();
 
 /* =============================================
-   PAGE 2 — scroll / wheel to reveal
+   PAGE 2 — 3D SMARTPHONE INTERACTIVITY
    ============================================= */
 (function(){
-  var page2=document.getElementById('page2');
+  var page2 = document.getElementById('page2');
+  var phone = document.getElementById('phone');
+  var screenEl = document.getElementById('phone-screen');
+  var nav = document.getElementById('features-nav');
+  var tabs = nav.querySelectorAll('.feat-tab');
+
+  var SCREENS = {
+    garage: `
+      <div class="screen-header">Digital Garage</div>
+      <div class="screen-body">
+        <div class="screen-car-card">
+          <div class="mini-photo-zone" style="background: url('https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
+          <div class="mini-car-info">
+            <div class="mini-name">Quattro Beast</div>
+            <div class="mini-specs">Audi S4 • 420 hp</div>
+          </div>
+        </div>
+        <div class="screen-car-card">
+          <div class="mini-photo-zone" style="background: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
+          <div class="mini-car-info">
+            <div class="mini-name">Nürburgring Spec</div>
+            <div class="mini-specs">Porsche GT3 RS • 545 hp</div>
+          </div>
+        </div>
+        <div class="screen-car-card">
+          <div class="mini-photo-zone" style="background: url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
+          <div class="mini-car-info">
+            <div class="mini-name">Godzilla R35</div>
+            <div class="mini-specs">Nissan GT-R • 720 hp</div>
+          </div>
+        </div>
+      </div>
+    `,
+    advisor: `
+      <div class="screen-header">AI Advisor</div>
+      <div class="screen-body">
+        <div class="chat-bubble user">What coilovers fit my 2021 Audi S4?</div>
+        <div class="chat-bubble ai">Based on your S4 Premium Plus, the best options are: <br>• <strong>KW V3 Coilovers</strong> (Best track feel)<br>• <strong>Bilstein B16</strong> (Best street balance).</div>
+        <div class="chat-bubble user">Does it void my warranty?</div>
+        <div class="chat-bubble ai">Under Magnuson-Moss, suspension mods only affect warranty claims directly related to suspension parts. Engine/drivetrain coverage remains intact.</div>
+      </div>
+    `,
+    ledger: `
+      <div class="screen-header">Service Ledger</div>
+      <div class="screen-body">
+        <div class="ledger-item">
+          <div class="ledger-dot oem"></div>
+          <div class="ledger-info">
+            <div class="ledger-title">KW V3 Coilovers</div>
+            <div class="ledger-date">Installed • July 2026</div>
+          </div>
+          <div class="ledger-cost">$2,450</div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-dot estimated"></div>
+          <div class="ledger-info">
+            <div class="ledger-title">APR Stage 2 Tune</div>
+            <div class="ledger-date">Installed • May 2026</div>
+          </div>
+          <div class="ledger-cost">$850</div>
+        </div>
+        <div class="ledger-item">
+          <div class="ledger-dot user-entered"></div>
+          <div class="ledger-info">
+            <div class="ledger-title">Brake Pad Service</div>
+            <div class="ledger-date">Maintenance • Mar 2026</div>
+          </div>
+          <div class="ledger-cost">$320</div>
+        </div>
+      </div>
+    `
+  };
+
+  // Load initial screen
+  screenEl.innerHTML = SCREENS.garage;
+
+  // Tabs click triggers screen change + 360 spin animation
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener('click', function(e) {
+      var btn = e.currentTarget;
+      if (btn.classList.contains('active')) return;
+
+      var feature = btn.getAttribute('data-feature');
+
+      // Update tabs UI
+      for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
+      btn.classList.add('active');
+
+      // Perform a full 3D flip spin transition
+      phone.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      phone.style.transform = 'rotateY(360deg)';
+
+      setTimeout(function() {
+        screenEl.innerHTML = SCREENS[feature];
+      }, 300); // swap screen halfway through spin
+
+      setTimeout(function() {
+        phone.style.transition = 'none';
+        phone.style.transform = 'rotateY(0deg)';
+      }, 800);
+    });
+  }
+
+  // Mouse tilt tracking on Page 2
+  var mouseX = 0, mouseY = 0;
+  var smX = 0, smY = 0;
+
+  document.addEventListener('mousemove', function(e) {
+    if (!page2.classList.contains('visible')) return;
+    // Calculate relative coordinates
+    var w = window.innerWidth, h = window.innerHeight;
+    mouseX = (e.clientX / w) - 0.5;
+    mouseY = (e.clientY / h) - 0.5;
+  });
+
+  // Gyroscope tilt on phone for the smartphone model
+  window.addEventListener('deviceorientation', function(e) {
+    if (!page2.classList.contains('visible') || (e.gamma === null && e.beta === null)) return;
+    var gamma = e.gamma || 0; // roll
+    var beta = e.beta || 0;   // pitch
+    var basePitch = 60;
+    
+    // Convert to mouse-like scale (-0.5 to 0.5)
+    mouseX = (gamma / 90) * 0.8;
+    mouseY = ((beta - basePitch) / 90) * 0.8;
+  });
+
+  (function loop() {
+    if (page2.classList.contains('visible')) {
+      smX += (mouseX - smX) * 0.12;
+      smY += (mouseY - smY) * 0.12;
+
+      // Rotate phone slightly based on movement (max tilt 15 deg)
+      var rx = -smY * 26;
+      var ry = smX * 26;
+
+      // Keep rotation applied unless currently spin-transitioning
+      if (phone.style.transform.indexOf('360deg') === -1) {
+        phone.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+      }
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  /* swipe / scroll to reveal page 2 */
   var shown=false;
-  function show(){if(shown)return;shown=true;page2.classList.add('visible');}
-  function hide(){if(!shown)return;shown=false;page2.classList.remove('visible');}
+  function showPage2(){if(shown)return;shown=true;page2.classList.add('visible');}
+  function hidePage2(){if(!shown)return;shown=false;page2.classList.remove('visible');}
+
   /* wheel */
   window.addEventListener('wheel',function(e){
-    if(e.deltaY>30) show(); else if(e.deltaY<-30) hide();
+    if(e.deltaY>30) showPage2(); else if(e.deltaY<-30) hidePage2();
   },{passive:true});
+
   /* touch swipe */
   var ty0=0;
   window.addEventListener('touchstart',function(e){ty0=e.touches[0].clientY;},{passive:true});
   window.addEventListener('touchend',function(e){
     var dy=ty0-e.changedTouches[0].clientY;
-    if(dy>40) show(); else if(dy<-40) hide();
+    if(dy>40) showPage2(); else if(dy<-40) hidePage2();
   },{passive:true});
 })();
 /* =============================================
