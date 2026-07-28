@@ -1046,7 +1046,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     x = Math.max(0, Math.min(1, x));
     y = Math.max(0, Math.min(1, y));
 
-    var maxTilt = 18;
+    var maxTilt = 30; // Increased max tilt from 18 to 30 degrees
     targetRx = -(y - 0.5) * maxTilt;
     targetRy = (x - 0.5) * maxTilt;
   }
@@ -1160,11 +1160,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
     // Normal phone holding pitch is roughly 60 degrees. Adjust offsets relative to it.
     var basePitch = 60;
-    var rx = (beta - basePitch) * 0.85; // Increased gyro sensitivity from 0.45 to 0.85
-    var ry = gamma * 0.85;             // Increased gyro sensitivity from 0.45 to 0.85
+    var rx = (beta - basePitch) * 1.2; // Increased gyro sensitivity from 0.85 to 1.2
+    var ry = gamma * 1.2;              // Increased gyro sensitivity from 0.85 to 1.2
 
-    // Clamp gyro rotations to a max tilt of 22 degrees (increased from 16)
-    var maxGyro = 22;
+    // Clamp gyro rotations to a max tilt of 30 degrees (increased from 22)
+    var maxGyro = 30;
     targetRx = Math.max(-maxGyro, Math.min(maxGyro, rx));
     targetRy = Math.max(-maxGyro, Math.min(maxGyro, ry));
     isGyroActive = true;
