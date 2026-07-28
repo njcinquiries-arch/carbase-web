@@ -310,7 +310,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .flip-cta{
   position:absolute;
   left:50%;
-  top:calc(50% + 200px);
+  top:calc(50% + 220px); /* Lowered slightly from 200px to 220px */
   transform:translateX(-50%) translateY(8px);
   width:min(420px,88vw);
   text-align:center;
@@ -330,37 +330,38 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 .flip-cta-line{
   height:1px;width:80px;margin:0 auto 12px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45) 50%,transparent);
+  background:linear-gradient(90deg,transparent,rgba(217,150,91,0.65) 50%,transparent); /* Brand color gradient */
 }
 .flip-cta p{
   font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:300;font-size:.96rem;
   letter-spacing:.05em;line-height:1.58;
   color:rgba(255,255,255,0.90);
-  text-shadow:0 0 7px rgba(255,255,255,0.95),0 0 22px rgba(255,255,255,0.55),0 0 50px rgba(255,255,255,0.22);
+  text-shadow:0 0 7px rgba(255,255,255,0.25);
 }
 .flip-cta p strong{
-  font-weight:600;color:#fff;
-  text-shadow:0 0 8px #fff,0 0 24px rgba(255,255,255,0.65);
+  font-weight:600;
+  color:#D9965B; /* Brand color highlight */
+  text-shadow:0 0 10px rgba(217,150,91,0.45);
 }
 .flip-cta-badge{
   display:inline-block;
   margin-top:11px;
   font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:600;font-size:.55rem;
   letter-spacing:.30em;text-transform:uppercase;
-  color:rgba(255,255,255,0.50);
-  border:1px solid rgba(255,255,255,0.22);
+  color:#D9965B; /* Brand color text */
+  border:1px solid rgba(217, 150, 91, 0.35); /* Brand color border */
   border-radius:20px;
   padding:6px 18px;
   text-decoration:none;
-  text-shadow:none;
-  transition:color .22s,border-color .22s,box-shadow .22s;
+  background: rgba(217, 150, 91, 0.05);
+  transition:all .22s;
   pointer-events:auto;
   cursor:pointer;
 }
 .flip-cta-badge:hover{
   color:#fff;
-  border-color:rgba(255,255,255,0.70);
-  box-shadow:0 0 12px rgba(255,255,255,0.25),0 0 28px rgba(255,255,255,0.10);
+  border-color:#D9965B;
+  box-shadow:0 0 12px rgba(217,150,91,0.45),0 0 28px rgba(217,150,91,0.15);
   text-shadow:0 0 8px rgba(255,255,255,0.80);
 }
 
@@ -444,7 +445,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .flip-cta{
     position:fixed;
     top:auto;
-    bottom:68px;
+    bottom:48px; /* Lowered from 68px to 48px */
     left:50%;
     transform:translateX(-50%) translateY(12px);
     width:88vw;
@@ -465,7 +466,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     transform-origin: center center;
     margin-top: 24px;
   }
-  .flip-cta{bottom:62px;}
+  .flip-cta{bottom:42px;} /* Lowered from 62px to 42px */
 }
 
 /* short phones (landscape or small height) */
