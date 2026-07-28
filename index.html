@@ -60,6 +60,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   background: linear-gradient(135deg, #181524 0%, #0c0b14 100%);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+  transform: translateZ(1px);
 }
 
 .front-hl{position:absolute;inset:0;border-radius:22px;pointer-events:none;background:linear-gradient(var(--rot, 105deg), transparent 35%, rgba(255,255,255,0.002) 47%, rgba(255,255,255,0.008) 50%, rgba(255,255,255,0.002) 53%, transparent 65%);opacity:0;transition:opacity .15s; mix-blend-mode: screen;}
@@ -68,7 +69,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .back{
   background: linear-gradient(135deg, #161422 0%, #0b0a12 100%);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(1px);
   box-shadow: none;
 }
 
@@ -443,11 +444,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     transform: scale(0.74);
     transform-origin: center top;
   }
-  .contact-shadow{width:148px;}
-  .step-1{width:156px;}
-  .step-2{width:176px;}
-  .step-3{width:194px;}
-  .floor-pool{width:240px;}
 
   /* shift floater slightly downward so brand has air */
   .floater{margin-top:32px;}
@@ -478,11 +474,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .base{
     transform: scale(0.64);
   }
-  .contact-shadow{width:132px;}
-  .step-1{width:139px;}
-  .step-2{width:157px;}
-  .step-3{width:173px;}
-  .floor-pool{width:214px;}
   .floater{margin-top:24px;}
   .flip-cta{bottom:62px;}
 }
