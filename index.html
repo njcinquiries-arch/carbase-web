@@ -379,7 +379,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
 .p2-header{
   text-align:center;
-  margin-bottom:35px;
+  margin-bottom:30px;
 }
 .p2-logo{
   font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.8rem;
@@ -489,86 +489,187 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 .screen-body::-webkit-scrollbar{display:none;}
 
-/* Garage Screen */
-.screen-car-card{
-  background:#121216;
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:12px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  padding:8px;
-  gap:10px;
-}
-.mini-photo-zone{
-  width:46px;height:46px;
-  border-radius:8px;
-}
-.mini-car-info{
+/* Interactive Swipe Mode Screen */
+.swipe-container{
+  position:relative;
+  flex:1;
   display:flex;
   flex-direction:column;
-  justify-content:center;
+  align-items:center;
+  justify-content:space-between;
+  padding: 10px 0;
 }
-.mini-name{
-  font-weight:600;font-size:.70rem;color:#fff;
+.swipe-deck{
+  position:relative;
+  width:160px;height:230px;
+  margin-top:10px;
 }
-.mini-specs{
-  font-size:.58rem;color:rgba(255,255,255,0.45);
-  margin-top:2px;
-}
-
-/* Chat Screen */
-.chat-bubble{
-  max-width:85%;
-  padding:8px 12px;
+.mini-swipe-card{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#1c192c 0%,#0e0d16 100%);
+  border:1px solid rgba(255,255,255,0.12);
   border-radius:14px;
-  font-size:.60rem;
-  line-height:1.4;
-}
-.chat-bubble.user{
-  background:#D9965B;
-  color:#000;
-  font-weight:500;
-  align-self:flex-end;
-  border-bottom-right-radius:2px;
-}
-.chat-bubble.ai{
-  background:#141418;
-  color:rgba(255,255,255,0.85);
-  align-self:flex-start;
-  border-bottom-left-radius:2px;
-  border:1px solid rgba(255,255,255,0.05);
-}
-
-/* Ledger Screen */
-.ledger-item{
-  background:#121216;
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:12px;
   padding:10px;
   display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transition:transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.45s;
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+  transform-origin:center bottom;
+  pointer-events:none;
+}
+.mini-swipe-card.card-0{transform:translateY(0) scale(1);z-index:3;}
+.mini-swipe-card.card-1{transform:translateY(8px) scale(0.94);opacity:0.85;z-index:2;}
+.mini-swipe-card.card-2{transform:translateY(16px) scale(0.88);opacity:0.70;z-index:1;}
+.mini-swipe-card.card-3{transform:translateY(24px) scale(0.82);opacity:0.40;z-index:0;}
+
+.m-card-header{
+  display:flex;
+  justify-content:space-between;
   align-items:center;
-  gap:10px;
 }
-.ledger-dot{
-  width:8px;height:8px;
+.m-card-name{
+  font-weight:700;font-size:.56rem;color:#fff;
+  text-overflow:ellipsis;white-space:nowrap;overflow:hidden;
+  max-width:90px;
+}
+.m-card-ovr{
+  background:#D9965B;color:#000;
+  font-weight:800;font-size:.52rem;
+  padding:2px 5px;border-radius:4px;
+}
+.m-card-photo{
+  height:100px;
+  border-radius:8px;
+  margin:6px 0;
+}
+.m-card-footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:.50rem;
+  color:rgba(255,255,255,0.4);
+}
+.m-card-role{
+  color:#D9965B;font-weight:600;
+}
+
+.swipe-controls{
+  display:flex;
+  gap:12px;
+  margin-bottom:5px;
+}
+.swipe-btn{
+  background:#141418;
+  border:1px solid rgba(255,255,255,0.06);
+  color:#fff;
   border-radius:50%;
+  width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  font-size:.75rem;
+  transition:all 0.2s;
 }
-.ledger-dot.oem{background:#4ADE80;box-shadow:0 0 8px rgba(74,222,128,0.45);}
-.ledger-dot.estimated{background:#FBBF24;box-shadow:0 0 8px rgba(251,191,36,0.45);}
-.ledger-dot.user-entered{background:#A78BFA;box-shadow:0 0 8px rgba(167,139,250,0.45);}
-.ledger-info{
+.swipe-btn:active{transform:scale(0.85);}
+.swipe-btn.pass-btn{color:#ff4a4a;border-color:rgba(255,74,74,0.15);}
+.swipe-btn.save-btn{color:#4ade80;border-color:rgba(74,222,128,0.15);}
+
+/* Interactive Grid View Screen */
+.grid-container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:8px 4px;
+}
+.mini-grid-card{
+  background:#121216;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:10px;
+  padding:6px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+.m-grid-photo{
+  width:100%;height:55px;
+  border-radius:6px;
+  margin-bottom:4px;
+}
+.m-grid-name{
+  font-weight:600;font-size:.54rem;color:#fff;
+  max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.m-grid-spec{
+  font-size:.46rem;color:rgba(255,255,255,0.4);
+  margin-top:1px;
+}
+
+/* Interactive Checklist Screen */
+.clone-container{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.clone-stats{
+  display:flex;
+  justify-content:space-between;
+  background:#121216;
+  border-radius:10px;
+  padding:8px 12px;
+  font-size:.56rem;
+  color:rgba(255,255,255,0.6);
+  border:1px solid rgba(255,255,255,0.04);
+}
+.clone-stats strong{color:#D9965B;}
+.clone-list{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.clone-item{
+  display:flex;
+  align-items:center;
+  background:#121216;
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:10px;
+  padding:8px 10px;
+  gap:8px;
+  cursor:pointer;
+  transition:background 0.2s;
+}
+.clone-item:hover{background:#181820;}
+.clone-checkbox{
+  width:12px;height:12px;
+  border-radius:3px;
+  border:1px solid rgba(255,255,255,0.25);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.clone-item.checked .clone-checkbox{
+  background:#D9965B;
+  border-color:#D9965B;
+}
+.clone-checkbox::after{
+  content:'✓';
+  color:#000;
+  font-size:.48rem;
+  font-weight:bold;
+  display:none;
+}
+.clone-item.checked .clone-checkbox::after{
+  display:block;
+}
+.clone-item-info{
   flex:1;
+  display:flex;
+  flex-direction:column;
 }
-.ledger-title{
-  font-weight:600;font-size:.64rem;color:#fff;
+.clone-part-name{
+  font-weight:600;font-size:.58rem;color:#fff;
 }
-.ledger-date{
-  font-size:.54rem;color:rgba(255,255,255,0.40);
-  margin-top:2px;
-}
-.ledger-cost{
-  font-weight:700;font-size:.68rem;color:#D9965B;
+.clone-part-cat{
+  font-size:.48rem;color:rgba(255,255,255,0.4);
 }
 
 /* FEATURES TABS NAVIGATION */
@@ -776,17 +877,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
     <!-- Features Navigation Tabs -->
     <div class="features-nav" id="features-nav">
-      <button class="feat-tab active" data-feature="garage">
-        <span class="tab-icon">🚗</span>
-        <span class="tab-label">Garage</span>
+      <button class="feat-tab active" data-feature="swipe">
+        <span class="tab-icon">🎴</span>
+        <span class="tab-label">Swipe Vault</span>
       </button>
-      <button class="feat-tab" data-feature="advisor">
-        <span class="tab-icon">🤖</span>
-        <span class="tab-label">AI Advisor</span>
-      </button>
-      <button class="feat-tab" data-feature="ledger">
+      <button class="feat-tab" data-feature="grid">
         <span class="tab-icon">📋</span>
-        <span class="tab-label">Ledger</span>
+        <span class="tab-label">Grid Feed</span>
+      </button>
+      <button class="feat-tab" data-feature="clone">
+        <span class="tab-icon">🧬</span>
+        <span class="tab-label">Spec Clone</span>
       </button>
     </div>
   </div>
@@ -1215,26 +1316,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }
   }
 
-  // Pointer / Mouse / Touch Movement Handler
   function handleMove(clientX, clientY) {
-    var rect = scene.getBoundingClientRect();
+    var rect = card.getBoundingClientRect();
     var x = (clientX - rect.left) / rect.width;
     var y = (clientY - rect.top) / rect.height;
 
-    // Clamp coordinates
     x = Math.max(0, Math.min(1, x));
     y = Math.max(0, Math.min(1, y));
 
-    // Dynamic Tilt: ±18 deg
     var maxTilt = 18;
-    var rx = -(y - 0.5) * maxTilt;
-    var ry = (x - 0.5) * maxTilt;
-
-    updateCardTransform(rx, ry, false);
-    updateHologramLight(rx, ry);
+    targetRx = -(y - 0.5) * maxTilt;
+    targetRy = (x - 0.5) * maxTilt;
   }
 
-  // Mouse Events
   scene.addEventListener('mousemove', function(e) {
     if (!isInteracting) {
       handleMove(e.clientX, e.clientY);
@@ -1260,13 +1354,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   window.addEventListener('mouseup', function(e) {
     if (isInteracting) {
       isInteracting = false;
-      updateCardTransform(0, 0, true);
+      targetRx = 0; targetRy = 0;
     }
   });
 
   scene.addEventListener('mouseleave', function() {
     if (!isInteracting) {
-      updateCardTransform(0, 0, true);
+      targetRx = 0; targetRy = 0;
     }
   });
 
@@ -1305,14 +1399,39 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       flipCard();
     }
     isInteracting = false;
-    setTimeout(function() {
-      updateCardTransform(0, 0, true);
-    }, 120);
+    targetRx = 0; targetRy = 0;
   }, { passive: true });
+
+  // Smooth Card Tilt Animation Loop (Decouples DOM updates from high-frequency touch/gyro events)
+  var currentRx = 0, currentRy = 0;
+  var targetRx = 0, targetRy = 0;
+  var isGyroActive = false;
+
+  (function cardRenderLoop() {
+    if (!isInteracting) {
+      // Interpolate current tilt to target tilt (gyro or center 0)
+      currentRx += (targetRx - currentRx) * 0.12;
+      currentRy += (targetRy - currentRy) * 0.12;
+
+      // Only write to DOM if there is active movement to conserve performance
+      if (Math.abs(targetRx - currentRx) > 0.01 || Math.abs(targetRy - currentRy) > 0.01 || isGyroActive) {
+        updateCardTransform(currentRx, currentRy, false);
+        updateHologramLight(currentRx, currentRy);
+      }
+    } else {
+      // Touch drag is active, smoothly follow target coordinates
+      currentRx += (targetRx - currentRx) * 0.35;
+      currentRy += (targetRy - currentRy) * 0.35;
+      updateCardTransform(currentRx, currentRy, false);
+      updateHologramLight(currentRx, currentRy);
+    }
+    requestAnimationFrame(cardRenderLoop);
+  })();
 
   // Gyroscope Device Orientation tilt listener
   function handleOrientation(event) {
     if (isInteracting) return; // Touch drag takes priority
+    if (event.gamma === null && event.beta === null) return;
 
     var gamma = event.gamma || 0; // roll: left/right tilt (-90 to 90)
     var beta = event.beta || 0;   // pitch: front/back tilt (-180 to 180)
@@ -1324,11 +1443,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
     // Clamp gyro rotations to a max tilt of 16 degrees
     var maxGyro = 16;
-    rx = Math.max(-maxGyro, Math.min(maxGyro, rx));
-    ry = Math.max(-maxGyro, Math.min(maxGyro, ry));
-
-    updateCardTransform(rx, ry, false);
-    updateHologramLight(rx, ry);
+    targetRx = Math.max(-maxGyro, Math.min(maxGyro, rx));
+    targetRy = Math.max(-maxGyro, Math.min(maxGyro, ry));
+    isGyroActive = true;
   }
 
   function initGyroscope() {
@@ -1389,11 +1506,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       wSmX+=(wx-wSmX)*0.22;
       wSmY+=(wy-wSmY)*0.22;
 
-      wcur.style.left  = wSmX+'px';
-      wcur.style.top   = wSmY+'px';
-      wcur.style.transform='translate(-50%,-50%) rotate('+spinAngle+'deg)';
-      wcur.style.opacity='1';
-    } else {
       wcur.style.opacity='0';
     }
     requestAnimationFrame(raf);
@@ -1411,74 +1523,123 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var tabs = nav.querySelectorAll('.feat-tab');
 
   var SCREENS = {
-    garage: `
-      <div class="screen-header">Digital Garage</div>
+    swipe: `
+      <div class="screen-header">Vault Discover</div>
+      <div class="swipe-container">
+        <div class="swipe-deck" id="vault-deck">
+          <div class="mini-swipe-card card-0" style="border-top: 3px solid #D9965B;">
+            <div class="m-card-header">
+              <span class="m-card-name">Quattro Beast</span>
+              <span class="m-card-ovr">98</span>
+            </div>
+            <div class="m-card-photo" style="background: url('https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
+            <div class="m-card-footer">
+              <span>Audi S4</span>
+              <span class="m-card-role">EURO</span>
+            </div>
+          </div>
+          <div class="mini-swipe-card card-1" style="border-top: 3px solid #ff4a4a;">
+            <div class="m-card-header">
+              <span class="m-card-name">Nürburgring Spec</span>
+              <span class="m-card-ovr">94</span>
+            </div>
+            <div class="m-card-photo" style="background: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
+            <div class="m-card-footer">
+              <span>Porsche GT3 RS</span>
+              <span class="m-card-role">TRACK</span>
+            </div>
+          </div>
+          <div class="mini-swipe-card card-2" style="border-top: 3px solid #4ade80;">
+            <div class="m-card-header">
+              <span class="m-card-name">Godzilla R35</span>
+              <span class="m-card-ovr">91</span>
+            </div>
+            <div class="m-card-photo" style="background: url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
+            <div class="m-card-footer">
+              <span>Nissan GT-R</span>
+              <span class="m-card-role">JDM</span>
+            </div>
+          </div>
+        </div>
+        <div class="swipe-controls">
+          <button class="swipe-btn pass-btn" id="m-pass-btn">❌</button>
+          <button class="swipe-btn save-btn" id="m-save-btn">💚</button>
+        </div>
+      </div>
+    `,
+    grid: `
+      <div class="screen-header">Tuner Catalog</div>
       <div class="screen-body">
-        <div class="screen-car-card">
-          <div class="mini-photo-zone" style="background: url('https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
-          <div class="mini-car-info">
-            <div class="mini-name">Quattro Beast</div>
-            <div class="mini-specs">Audi S4 • 420 hp</div>
+        <div class="grid-container">
+          <div class="mini-grid-card">
+            <div class="m-grid-photo" style="background: url('https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=120&auto=format&fit=crop&q=80') center/cover;"></div>
+            <span class="m-grid-name">Audi S4</span>
+            <span class="m-grid-spec">OVR 98 • 420 hp</span>
           </div>
-        </div>
-        <div class="screen-car-card">
-          <div class="mini-photo-zone" style="background: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
-          <div class="mini-car-info">
-            <div class="mini-name">Nürburgring Spec</div>
-            <div class="mini-specs">Porsche GT3 RS • 545 hp</div>
+          <div class="mini-grid-card">
+            <div class="m-grid-photo" style="background: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=120&auto=format&fit=crop&q=80') center/cover;"></div>
+            <span class="m-grid-name">GT3 RS</span>
+            <span class="m-grid-spec">OVR 94 • 545 hp</span>
           </div>
-        </div>
-        <div class="screen-car-card">
-          <div class="mini-photo-zone" style="background: url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
-          <div class="mini-car-info">
-            <div class="mini-name">Godzilla R35</div>
-            <div class="mini-specs">Nissan GT-R • 720 hp</div>
+          <div class="mini-grid-card">
+            <div class="m-grid-photo" style="background: url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=120&auto=format&fit=crop&q=80') center/cover;"></div>
+            <span class="m-grid-name">GT-R R35</span>
+            <span class="m-grid-spec">OVR 91 • 720 hp</span>
+          </div>
+          <div class="mini-grid-card">
+            <div class="m-grid-photo" style="background: url('https://images.unsplash.com/photo-1605558202076-168223c98590?w=120&auto=format&fit=crop&q=80') center/cover;"></div>
+            <span class="m-grid-name">M4 Competition</span>
+            <span class="m-grid-spec">OVR 89 • 503 hp</span>
           </div>
         </div>
       </div>
     `,
-    advisor: `
-      <div class="screen-header">AI Advisor</div>
+    clone: `
+      <div class="screen-header">Tuner Cloning</div>
       <div class="screen-body">
-        <div class="chat-bubble user">What coilovers fit my 2021 Audi S4?</div>
-        <div class="chat-bubble ai">Based on your S4 Premium Plus, the best options are: <br>• <strong>KW V3 Coilovers</strong> (Best track feel)<br>• <strong>Bilstein B16</strong> (Best street balance).</div>
-        <div class="chat-bubble user">Does it void my warranty?</div>
-        <div class="chat-bubble ai">Under Magnuson-Moss, suspension mods only affect warranty claims directly related to suspension parts. Engine/drivetrain coverage remains intact.</div>
-      </div>
-    `,
-    ledger: `
-      <div class="screen-header">Service Ledger</div>
-      <div class="screen-body">
-        <div class="ledger-item">
-          <div class="ledger-dot oem"></div>
-          <div class="ledger-info">
-            <div class="ledger-title">KW V3 Coilovers</div>
-            <div class="ledger-date">Installed • July 2026</div>
+        <div class="clone-container">
+          <div class="clone-stats">
+            <span>Cloned Wishlist</span>
+            <span>Completed: <strong id="clone-count">2/4</strong></span>
           </div>
-          <div class="ledger-cost">$2,450</div>
-        </div>
-        <div class="ledger-item">
-          <div class="ledger-dot estimated"></div>
-          <div class="ledger-info">
-            <div class="ledger-title">APR Stage 2 Tune</div>
-            <div class="ledger-date">Installed • May 2026</div>
+          <div class="clone-list">
+            <div class="clone-item checked" data-cost="2450">
+              <div class="clone-checkbox"></div>
+              <div class="clone-item-info">
+                <span class="clone-part-name">KW V3 Coilovers</span>
+                <span class="clone-part-cat">Suspension • $2,450</span>
+              </div>
+            </div>
+            <div class="clone-item" data-cost="850">
+              <div class="clone-checkbox"></div>
+              <div class="clone-item-info">
+                <span class="clone-part-name">APR Stage 2 ECU Tune</span>
+                <span class="clone-part-cat">Engine tuning • $850</span>
+              </div>
+            </div>
+            <div class="clone-item checked" data-cost="320">
+              <div class="clone-checkbox"></div>
+              <div class="clone-item-info">
+                <span class="clone-part-name">EBC Yellowstuff Pads</span>
+                <span class="clone-part-cat">Brakes • $320</span>
+              </div>
+            </div>
+            <div class="clone-item" data-cost="1200">
+              <div class="clone-checkbox"></div>
+              <div class="clone-item-info">
+                <span class="clone-part-name">AWE Track Exhaust</span>
+                <span class="clone-part-cat">Exhaust • $1,200</span>
+              </div>
+            </div>
           </div>
-          <div class="ledger-cost">$850</div>
-        </div>
-        <div class="ledger-item">
-          <div class="ledger-dot user-entered"></div>
-          <div class="ledger-info">
-            <div class="ledger-title">Brake Pad Service</div>
-            <div class="ledger-date">Maintenance • Mar 2026</div>
-          </div>
-          <div class="ledger-cost">$320</div>
         </div>
       </div>
     `
   };
 
   // Load initial screen
-  screenEl.innerHTML = SCREENS.garage;
+  screenEl.innerHTML = SCREENS.swipe;
+  bindSwipeHandlers();
 
   // Tabs click triggers screen change + 360 spin animation
   for (var i = 0; i < tabs.length; i++) {
@@ -1498,6 +1659,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
       setTimeout(function() {
         screenEl.innerHTML = SCREENS[feature];
+        if (feature === 'swipe') bindSwipeHandlers();
+        if (feature === 'clone') bindCloneHandlers();
       }, 300); // swap screen halfway through spin
 
       setTimeout(function() {
@@ -1505,6 +1668,67 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
         phone.style.transform = 'rotateY(0deg)';
       }, 800);
     });
+  }
+
+  // Interactive Swipe Deck Physics Replicas
+  function bindSwipeHandlers() {
+    var deck = document.getElementById('vault-deck');
+    var cards = Array.prototype.slice.call(deck.querySelectorAll('.mini-swipe-card'));
+    var passBtn = document.getElementById('m-pass-btn');
+    var saveBtn = document.getElementById('m-save-btn');
+
+    function swipeTopCard(direction) {
+      if (cards.length === 0) return;
+      var topCard = cards[0];
+
+      // Animates the top card off-screen
+      topCard.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s';
+      if (direction === 'pass') {
+        topCard.style.transform = 'translateX(-180px) rotate(-15deg)';
+      } else {
+        topCard.style.transform = 'translateY(-220px) scale(0.9)';
+      }
+      topCard.style.opacity = '0';
+
+      // Update deck array and stack class indices
+      cards.shift();
+      setTimeout(function() {
+        topCard.remove();
+        // If all swiped, regenerate full stack
+        if (cards.length === 0) {
+          screenEl.innerHTML = SCREENS.swipe;
+          bindSwipeHandlers();
+        }
+      }, 450);
+
+      // Shift lower cards up in 3D deck hierarchy
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        card.className = 'mini-swipe-card card-' + i;
+      }
+    }
+
+    passBtn.addEventListener('click', function() { swipeTopCard('pass'); });
+    saveBtn.addEventListener('click', function() { swipeTopCard('save'); });
+  }
+
+  // Tuner Clone Checklist Handler
+  function bindCloneHandlers() {
+    var items = screenEl.querySelectorAll('.clone-item');
+    var countEl = document.getElementById('clone-count');
+
+    function updateCount() {
+      var checked = screenEl.querySelectorAll('.clone-item.checked').length;
+      countEl.innerText = checked + '/' + items.length;
+    }
+
+    for (var i = 0; i < items.length; i++) {
+      items[i].addEventListener('click', function(e) {
+        var item = e.currentTarget;
+        item.classList.toggle('checked');
+        updateCount();
+      });
+    }
   }
 
   // Mouse tilt tracking on Page 2
