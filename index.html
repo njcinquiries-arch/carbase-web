@@ -368,363 +368,102 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 /* second page layout */
 #page2{
   position:fixed;inset:0;z-index:50;
-  background:#0a0a0c;
+  background:#050508;
   display:flex;align-items:center;justify-content:center;flex-direction:column;
   opacity:0;pointer-events:none;
   transition:opacity .7s cubic-bezier(.4,0,.2,1);
-  overflow-y:auto;
-  padding: 40px 20px;
+  overflow:hidden;
 }
 #page2.visible{opacity:1;pointer-events:auto;}
 
 .p2-header{
   text-align:center;
-  margin-bottom:30px;
+  margin-bottom:20px;
+  z-index:10;
 }
 .p2-logo{
   font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.8rem;
-  letter-spacing:.08em;text-transform:uppercase;color:#fff;
+  letter-spacing:.12em;text-transform:uppercase;color:#fff;
   text-shadow:0 0 12px rgba(255,255,255,0.25);
   margin-bottom:6px;
 }
 .p2-tagline{
   font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight:400;font-size:.78rem;
-  color:rgba(255,255,255,0.45);
+  color:rgba(255,255,255,0.40);
+  letter-spacing:0.04em;
 }
 
-.p2-content{
+.p2-container{
+  position:relative;
   display:flex;
   flex-direction:column;
-  align-items:center;
-  gap:32px;
-}
-
-/* 3D SMARTPHONE */
-.phone-scene{
-  width:220px;height:450px;
-  perspective:1200px;
-  user-select:none;
-}
-.phone{
-  width:100%;height:100%;
-  position:relative;
-  transform-style:preserve-3d;
-  transform: rotateX(0deg) rotateY(0deg);
-  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.phone-face{
-  position:absolute;inset:0;
-  border-radius:36px;
-  border:4px solid #202024;
-  background:#0a0a0c;
-  overflow:hidden;
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-  box-shadow: 0 35px 80px rgba(0,0,0,0.85);
-  transform: translateZ(2px);
-}
-.phone-front{
-  z-index:2;
-}
-.phone-back{
-  transform: rotateY(180deg) translateZ(2px);
-  background:#141418;
-  border:4px solid #2a2a30;
-  display:flex;
   align-items:center;
   justify-content:center;
-}
-.phone-back::before {
-  content: '';
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  width: 50px;
-  height: 50px;
-  background: #0d0d10;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.05);
-}
-.phone-back-logo {
-  font-family: 'Exo 2', sans-serif;
-  font-weight: 700;
-  font-size: 2.8rem;
-  color: rgba(255,255,255,0.12);
-  text-shadow: 0 0 10px rgba(255,255,255,0.05);
-}
-.phone-notch{
-  position:absolute;top:10px;left:50%;transform:translateX(-50%);
-  width:80px;height:18px;border-radius:10px;
-  background:#000;z-index:10;
-}
-.phone-screen{
-  position:absolute;inset:6px;
-  border-radius:30px;
-  overflow:hidden;
-  background:#08080a;
-  display:flex;
-  flex-direction:column;
-  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  width:100%;
+  max-width:600px;
+  height:480px;
 }
 
-/* SMARTPHONE SCREEN LAYOUTS */
-.screen-header{
-  padding:28px 16px 12px;
-  font-weight:700;font-size:.82rem;color:#fff;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  text-align:center;
-  text-transform:uppercase;
-  letter-spacing:0.04em;
-  background:#0e0e12;
+/* HOLOGRAPHIC CANVAS */
+#p2-canvas{
+  width:100%;
+  height:100%;
+  max-height:380px;
+  cursor:grab;
+  z-index:5;
 }
-.screen-body{
-  flex:1;
-  overflow-y:auto;
-  padding:14px 12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  scrollbar-width:none;
-}
-.screen-body::-webkit-scrollbar{display:none;}
+#p2-canvas:active{cursor:grabbing;}
 
-/* Interactive Swipe Mode Screen */
-.swipe-container{
-  position:relative;
-  flex:1;
+/* SPEC CONTROLS */
+.holo-nav{
   display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:space-between;
-  padding: 10px 0;
-}
-.swipe-deck{
-  position:relative;
-  width:160px;height:230px;
+  gap:12px;
+  z-index:10;
   margin-top:10px;
 }
-.mini-swipe-card{
-  position:absolute;inset:0;
-  background:linear-gradient(135deg,#1c192c 0%,#0e0d16 100%);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:14px;
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  transition:transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.45s;
-  box-shadow:0 10px 25px rgba(0,0,0,0.5);
-  transform-origin:center bottom;
-  pointer-events:none;
-}
-.mini-swipe-card.card-0{transform:translateY(0) scale(1);z-index:3;}
-.mini-swipe-card.card-1{transform:translateY(8px) scale(0.94);opacity:0.85;z-index:2;}
-.mini-swipe-card.card-2{transform:translateY(16px) scale(0.88);opacity:0.70;z-index:1;}
-.mini-swipe-card.card-3{transform:translateY(24px) scale(0.82);opacity:0.40;z-index:0;}
-
-.m-card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.m-card-name{
-  font-weight:700;font-size:.56rem;color:#fff;
-  text-overflow:ellipsis;white-space:nowrap;overflow:hidden;
-  max-width:90px;
-}
-.m-card-ovr{
-  background:#D9965B;color:#000;
-  font-weight:800;font-size:.52rem;
-  padding:2px 5px;border-radius:4px;
-}
-.m-card-photo{
-  height:100px;
-  border-radius:8px;
-  margin:6px 0;
-}
-.m-card-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:.50rem;
-  color:rgba(255,255,255,0.4);
-}
-.m-card-role{
-  color:#D9965B;font-weight:600;
-}
-
-.swipe-controls{
-  display:flex;
-  gap:12px;
-  margin-bottom:5px;
-}
-.swipe-btn{
-  background:#141418;
-  border:1px solid rgba(255,255,255,0.06);
-  color:#fff;
-  border-radius:50%;
-  width:32px;height:32px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;
-  font-size:.75rem;
-  transition:all 0.2s;
-}
-.swipe-btn:active{transform:scale(0.85);}
-.swipe-btn.pass-btn{color:#ff4a4a;border-color:rgba(255,74,74,0.15);}
-.swipe-btn.save-btn{color:#4ade80;border-color:rgba(74,222,128,0.15);}
-
-/* Interactive Grid View Screen */
-.grid-container{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  padding:8px 4px;
-}
-.mini-grid-card{
-  background:#121216;
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:10px;
-  padding:6px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-}
-.m-grid-photo{
-  width:100%;height:55px;
-  border-radius:6px;
-  margin-bottom:4px;
-}
-.m-grid-name{
-  font-weight:600;font-size:.54rem;color:#fff;
-  max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.m-grid-spec{
-  font-size:.46rem;color:rgba(255,255,255,0.4);
-  margin-top:1px;
-}
-
-/* Interactive Checklist Screen */
-.clone-container{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.clone-stats{
-  display:flex;
-  justify-content:space-between;
-  background:#121216;
-  border-radius:10px;
-  padding:8px 12px;
-  font-size:.56rem;
-  color:rgba(255,255,255,0.6);
-  border:1px solid rgba(255,255,255,0.04);
-}
-.clone-stats strong{color:#D9965B;}
-.clone-list{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.clone-item{
-  display:flex;
-  align-items:center;
-  background:#121216;
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:10px;
-  padding:8px 10px;
-  gap:8px;
-  cursor:pointer;
-  transition:background 0.2s;
-}
-.clone-item:hover{background:#181820;}
-.clone-checkbox{
-  width:12px;height:12px;
-  border-radius:3px;
-  border:1px solid rgba(255,255,255,0.25);
-  display:flex;align-items:center;justify-content:center;
-  transition:all 0.2s;
-}
-.clone-item.checked .clone-checkbox{
-  background:#D9965B;
-  border-color:#D9965B;
-}
-.clone-checkbox::after{
-  content:'✓';
-  color:#000;
-  font-size:.48rem;
-  font-weight:bold;
-  display:none;
-}
-.clone-item.checked .clone-checkbox::after{
-  display:block;
-}
-.clone-item-info{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
-.clone-part-name{
-  font-weight:600;font-size:.58rem;color:#fff;
-}
-.clone-part-cat{
-  font-size:.48rem;color:rgba(255,255,255,0.4);
-}
-
-/* FEATURES TABS NAVIGATION */
-.features-nav{
-  display:flex;
-  background:rgba(20,20,24,0.65);
-  border:1px solid rgba(255,255,255,0.05);
+.holo-btn{
+  background:rgba(18,18,24,0.75);
+  border:1px solid rgba(217,150,91,0.20);
+  color:rgba(255,255,255,0.60);
+  padding:8px 20px;
   border-radius:24px;
-  padding:4px;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  gap:4px;
-}
-.feat-tab{
-  background:transparent;
-  border:none;
-  padding:10px 18px;
-  border-radius:20px;
-  display:flex;
-  align-items:center;
-  gap:8px;
+  font-family:system-ui, -apple-system, sans-serif;
+  font-weight:600;font-size:.72rem;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
   cursor:pointer;
-  outline:none;
-  transition:all .25s ease;
+  transition:all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
 }
-.feat-tab .tab-icon{
-  font-size:.90rem;
+.holo-btn:hover{
+  color:#fff;
+  border-color:rgba(217,150,91,0.50);
+  box-shadow:0 0 12px rgba(217,150,91,0.15);
 }
-.feat-tab .tab-label{
-  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-weight:600;font-size:.72rem;color:rgba(255,255,255,0.45);
-}
-.feat-tab:hover .tab-label{
-  color:rgba(255,255,255,0.85);
-}
-.feat-tab.active{
-  background:rgba(255,255,255,0.08);
-}
-.feat-tab.active .tab-label{
+.holo-btn.active{
   color:#D9965B;
-}
-.feat-tab.active .tab-icon{
-  filter:drop-shadow(0 0 8px rgba(217,150,91,0.45));
+  border-color:#D9965B;
+  background:rgba(217,150,91,0.06);
+  box-shadow:0 0 16px rgba(217,150,91,0.25);
 }
 
-@media(max-width:480px){
-  .p2-content {
-    transform: scale(0.9);
-    transform-origin: center center;
-  }
+.holo-description{
+  text-align:center;
+  font-family:system-ui, -apple-system, sans-serif;
+  font-size:.70rem;
+  color:rgba(255,255,255,0.35);
+  max-width:320px;
+  margin-top:15px;
+  line-height:1.5;
+  height:32px;
+  z-index:10;
 }
-@media(max-width:375px){
-  .p2-content {
-    transform: scale(0.8);
-  }
+
+@media(max-height:680px){
+  .p2-container{height:340px;}
+  #p2-canvas{max-height:260px;}
 }
 
 /* SCROLL HINT */
@@ -857,38 +596,20 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     <div class="p2-tagline">The ultimate automotive tracking ecosystem.</div>
   </div>
 
-  <div class="p2-content">
-    <!-- 3D Smartphone Container -->
-    <div class="phone-scene" id="phone-scene">
-      <div class="phone" id="phone">
-        <div class="phone-face phone-front">
-          <!-- Screen notch -->
-          <div class="phone-notch"></div>
-          
-          <!-- Screen content -->
-          <div class="phone-screen" id="phone-screen"></div>
-        </div>
-        <!-- Phone back face -->
-        <div class="phone-face phone-back">
-          <div class="phone-back-logo">C</div>
-        </div>
-      </div>
+  <div class="p2-container">
+    <!-- 3D Holographic Canvas -->
+    <canvas id="p2-canvas"></canvas>
+    
+    <!-- Holographic Nav -->
+    <div class="holo-nav">
+      <button class="holo-btn active" data-shape="globe">Spec Globe</button>
+      <button class="holo-btn" data-shape="turbo">Tuner Turbo</button>
+      <button class="holo-btn" data-shape="kw">KW Coilovers</button>
     </div>
 
-    <!-- Features Navigation Tabs -->
-    <div class="features-nav" id="features-nav">
-      <button class="feat-tab active" data-feature="swipe">
-        <span class="tab-icon">🎴</span>
-        <span class="tab-label">Swipe Vault</span>
-      </button>
-      <button class="feat-tab" data-feature="grid">
-        <span class="tab-icon">📋</span>
-        <span class="tab-label">Grid Feed</span>
-      </button>
-      <button class="feat-tab" data-feature="clone">
-        <span class="tab-icon">🧬</span>
-        <span class="tab-label">Spec Clone</span>
-      </button>
+    <!-- Description -->
+    <div class="holo-description" id="holo-desc">
+      Spec Globe: Interactive holographic visualizer projecting core performance systems and mechanical specs.
     </div>
   </div>
 </div>
@@ -1513,268 +1234,278 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 })();
 
 /* =============================================
-   PAGE 2 — 3D SMARTPHONE INTERACTIVITY
+   PAGE 2 — 3D HOLOGRAPHIC MORPHING PARTICLES
    ============================================= */
 (function(){
   var page2 = document.getElementById('page2');
-  var phone = document.getElementById('phone');
-  var screenEl = document.getElementById('phone-screen');
-  var nav = document.getElementById('features-nav');
-  var tabs = nav.querySelectorAll('.feat-tab');
+  var cv = document.getElementById('p2-canvas');
+  var ctx = cv.getContext('2d');
+  var desc = document.getElementById('holo-desc');
+  var btns = document.querySelectorAll('.holo-btn');
 
-  var SCREENS = {
-    swipe: `
-      <div class="screen-header">Vault Discover</div>
-      <div class="swipe-container">
-        <div class="swipe-deck" id="vault-deck">
-          <div class="mini-swipe-card card-0" style="border-top: 3px solid #D9965B;">
-            <div class="m-card-header">
-              <span class="m-card-name">Quattro Beast</span>
-              <span class="m-card-ovr">98</span>
-            </div>
-            <div class="m-card-photo" style="background: url('https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
-            <div class="m-card-footer">
-              <span>Audi S4</span>
-              <span class="m-card-role">EURO</span>
-            </div>
-          </div>
-          <div class="mini-swipe-card card-1" style="border-top: 3px solid #ff4a4a;">
-            <div class="m-card-header">
-              <span class="m-card-name">Nürburgring Spec</span>
-              <span class="m-card-ovr">94</span>
-            </div>
-            <div class="m-card-photo" style="background: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
-            <div class="m-card-footer">
-              <span>Porsche GT3 RS</span>
-              <span class="m-card-role">TRACK</span>
-            </div>
-          </div>
-          <div class="mini-swipe-card card-2" style="border-top: 3px solid #4ade80;">
-            <div class="m-card-header">
-              <span class="m-card-name">Godzilla R35</span>
-              <span class="m-card-ovr">91</span>
-            </div>
-            <div class="m-card-photo" style="background: url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=150&auto=format&fit=crop&q=80') center/cover;"></div>
-            <div class="m-card-footer">
-              <span>Nissan GT-R</span>
-              <span class="m-card-role">JDM</span>
-            </div>
-          </div>
-        </div>
-        <div class="swipe-controls">
-          <button class="swipe-btn pass-btn" id="m-pass-btn">❌</button>
-          <button class="swipe-btn save-btn" id="m-save-btn">💚</button>
-        </div>
-      </div>
-    `,
-    grid: `
-      <div class="screen-header">Tuner Catalog</div>
-      <div class="screen-body">
-        <div class="grid-container">
-          <div class="mini-grid-card">
-            <div class="m-grid-photo" style="background: url('https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=120&auto=format&fit=crop&q=80') center/cover;"></div>
-            <span class="m-grid-name">Audi S4</span>
-            <span class="m-grid-spec">OVR 98 • 420 hp</span>
-          </div>
-          <div class="mini-grid-card">
-            <div class="m-grid-photo" style="background: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=120&auto=format&fit=crop&q=80') center/cover;"></div>
-            <span class="m-grid-name">GT3 RS</span>
-            <span class="m-grid-spec">OVR 94 • 545 hp</span>
-          </div>
-          <div class="mini-grid-card">
-            <div class="m-grid-photo" style="background: url('https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=120&auto=format&fit=crop&q=80') center/cover;"></div>
-            <span class="m-grid-name">GT-R R35</span>
-            <span class="m-grid-spec">OVR 91 • 720 hp</span>
-          </div>
-          <div class="mini-grid-card">
-            <div class="m-grid-photo" style="background: url('https://images.unsplash.com/photo-1605558202076-168223c98590?w=120&auto=format&fit=crop&q=80') center/cover;"></div>
-            <span class="m-grid-name">M4 Competition</span>
-            <span class="m-grid-spec">OVR 89 • 503 hp</span>
-          </div>
-        </div>
-      </div>
-    `,
-    clone: `
-      <div class="screen-header">Tuner Cloning</div>
-      <div class="screen-body">
-        <div class="clone-container">
-          <div class="clone-stats">
-            <span>Cloned Wishlist</span>
-            <span>Completed: <strong id="clone-count">2/4</strong></span>
-          </div>
-          <div class="clone-list">
-            <div class="clone-item checked" data-cost="2450">
-              <div class="clone-checkbox"></div>
-              <div class="clone-item-info">
-                <span class="clone-part-name">KW V3 Coilovers</span>
-                <span class="clone-part-cat">Suspension • $2,450</span>
-              </div>
-            </div>
-            <div class="clone-item" data-cost="850">
-              <div class="clone-checkbox"></div>
-              <div class="clone-item-info">
-                <span class="clone-part-name">APR Stage 2 ECU Tune</span>
-                <span class="clone-part-cat">Engine tuning • $850</span>
-              </div>
-            </div>
-            <div class="clone-item checked" data-cost="320">
-              <div class="clone-checkbox"></div>
-              <div class="clone-item-info">
-                <span class="clone-part-name">EBC Yellowstuff Pads</span>
-                <span class="clone-part-cat">Brakes • $320</span>
-              </div>
-            </div>
-            <div class="clone-item" data-cost="1200">
-              <div class="clone-checkbox"></div>
-              <div class="clone-item-info">
-                <span class="clone-part-name">AWE Track Exhaust</span>
-                <span class="clone-part-cat">Exhaust • $1,200</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `
+  var W = 0, H = 0;
+  var particles = [];
+  var count = 350;
+  var shape = 'globe';
+
+  var descTexts = {
+    globe: 'Spec Globe: Interactive holographic visualizer projecting core performance systems and mechanical specs.',
+    turbo: 'Tuner Turbo: Compresses and forces air spec induction. Boosts performance ratios and mechanical values.',
+    kw: 'KW Coilovers: Visualizing spring-coil rate and mechanical compliance. Regulates stance height and grip.'
   };
 
-  // Load initial screen
-  screenEl.innerHTML = SCREENS.swipe;
-  bindSwipeHandlers();
-
-  // Tabs click triggers screen change + 360 spin animation
-  for (var i = 0; i < tabs.length; i++) {
-    tabs[i].addEventListener('click', function(e) {
-      var btn = e.currentTarget;
-      if (btn.classList.contains('active')) return;
-
-      var feature = btn.getAttribute('data-feature');
-
-      // Update tabs UI
-      for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
-      btn.classList.add('active');
-
-      // Perform a full 3D flip spin transition
-      phone.style.transition = 'transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
-      phone.style.transform = 'rotateY(360deg)';
-
-      setTimeout(function() {
-        screenEl.innerHTML = SCREENS[feature];
-        if (feature === 'swipe') bindSwipeHandlers();
-        if (feature === 'clone') bindCloneHandlers();
-      }, 300); // swap screen halfway through spin
-
-      setTimeout(function() {
-        phone.style.transition = 'none';
-        phone.style.transform = 'rotateY(0deg)';
-      }, 800);
+  // Initialize Particles with coordinates
+  for (var i = 0; i < count; i++) {
+    particles.push({
+      x: 0, y: 0, z: 0,
+      tx: 0, ty: 0, tz: 0,
+      color: 'rgba(217, 150, 91, ' + (0.3 + Math.random() * 0.7) + ')'
     });
   }
 
-  // Interactive Swipe Deck Physics Replicas
-  function bindSwipeHandlers() {
-    var deck = document.getElementById('vault-deck');
-    var cards = Array.prototype.slice.call(deck.querySelectorAll('.mini-swipe-card'));
-    var passBtn = document.getElementById('m-pass-btn');
-    var saveBtn = document.getElementById('m-save-btn');
-
-    function swipeTopCard(direction) {
-      if (cards.length === 0) return;
-      var topCard = cards[0];
-
-      // Animates the top card off-screen
-      topCard.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s';
-      if (direction === 'pass') {
-        topCard.style.transform = 'translateX(-180px) rotate(-15deg)';
-      } else {
-        topCard.style.transform = 'translateY(-220px) scale(0.9)';
-      }
-      topCard.style.opacity = '0';
-
-      // Update deck array and stack class indices
-      cards.shift();
-      setTimeout(function() {
-        topCard.remove();
-        // If all swiped, regenerate full stack
-        if (cards.length === 0) {
-          screenEl.innerHTML = SCREENS.swipe;
-          bindSwipeHandlers();
-        }
-      }, 450);
-
-      // Shift lower cards up in 3D deck hierarchy
-      for (var i = 0; i < cards.length; i++) {
-        var card = cards[i];
-        card.className = 'mini-swipe-card card-' + i;
-      }
-    }
-
-    passBtn.addEventListener('click', function() { swipeTopCard('pass'); });
-    saveBtn.addEventListener('click', function() { swipeTopCard('save'); });
+  function resize() {
+    W = cv.clientWidth;
+    H = cv.clientHeight;
+    // Set internal resolution based on CSS sizing
+    cv.width = W;
+    cv.height = H;
   }
+  window.addEventListener('resize', resize);
+  resize();
 
-  // Tuner Clone Checklist Handler
-  function bindCloneHandlers() {
-    var items = screenEl.querySelectorAll('.clone-item');
-    var countEl = document.getElementById('clone-count');
-
-    function updateCount() {
-      var checked = screenEl.querySelectorAll('.clone-item.checked').length;
-      countEl.innerText = checked + '/' + items.length;
-    }
-
-    for (var i = 0; i < items.length; i++) {
-      items[i].addEventListener('click', function(e) {
-        var item = e.currentTarget;
-        item.classList.toggle('checked');
-        updateCount();
-      });
+  // Mathematical Shape Generators
+  function generateShape(type) {
+    for (var i = 0; i < count; i++) {
+      var p = particles[i];
+      if (type === 'globe') {
+        // Sphere Math
+        var theta = Math.random() * Math.PI * 2;
+        var phi = Math.acos((Math.random() * 2) - 1);
+        var r = 110;
+        p.tx = r * Math.sin(phi) * Math.cos(theta);
+        p.ty = r * Math.sin(phi) * Math.sin(theta);
+        p.tz = r * Math.cos(phi);
+      } else if (type === 'turbo') {
+        // Double Scroll Helix Math (Turbo Compressor shape)
+        var angle = (i / count) * Math.PI * 8;
+        var spiralR = 25 + (i / count) * 85;
+        p.tx = spiralR * Math.cos(angle);
+        p.ty = spiralR * Math.sin(angle);
+        p.tz = (Math.sin(angle * 3) * 20) + ((i / count) * 40 - 20);
+      } else if (type === 'kw') {
+        // Spring Coil Helix Math (Coilover shape)
+        var turns = 8;
+        var progress = i / count;
+        var angle = progress * Math.PI * 2 * turns;
+        var r = 55;
+        p.tx = r * Math.cos(angle);
+        p.ty = r * Math.sin(angle);
+        p.tz = (progress * 240) - 120; // vertical height
+      }
     }
   }
 
-  // Mouse tilt tracking on Page 2
-  var mouseX = 0, mouseY = 0;
-  var smX = 0, smY = 0;
+  // Load Initial Shape Coordinates
+  generateShape('globe');
 
+  // Mouse & Gyro orientation tracking variables
+  var rotX = 0, rotY = 0;
+  var targetRotX = 0, targetRotY = 0;
+
+  var isHovered = false;
+  var isDragging = false;
+  var startX = 0, startY = 0;
+
+  // Click tabs triggers morph shape
+  for (var k = 0; k < btns.length; k++) {
+    btns[k].addEventListener('click', function(e) {
+      var btn = e.currentTarget;
+      if (btn.classList.contains('active')) return;
+
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      btn.classList.add('active');
+
+      shape = btn.getAttribute('data-shape');
+      generateShape(shape);
+      desc.innerText = descTexts[shape];
+
+      // Give it a cool spinning impulse on shape switch
+      rotY += 4.5;
+    });
+  }
+
+  // Mouse Move Tilt
   document.addEventListener('mousemove', function(e) {
-    if (!page2.classList.contains('visible')) return;
-    // Calculate relative coordinates
-    var w = window.innerWidth, h = window.innerHeight;
-    mouseX = (e.clientX / w) - 0.5;
-    mouseY = (e.clientY / h) - 0.5;
+    if (!page2.classList.contains('visible') || isDragging) return;
+    var x = (e.clientX / window.innerWidth) - 0.5;
+    var y = (e.clientY / window.innerHeight) - 0.5;
+    targetRotX = y * 1.8;
+    targetRotY = x * 1.8;
   });
 
-  // Gyroscope tilt on phone for the smartphone model
+  // Gyro orientation tilt
   window.addEventListener('deviceorientation', function(e) {
-    if (!page2.classList.contains('visible') || (e.gamma === null && e.beta === null)) return;
-    var gamma = e.gamma || 0; // roll
-    var beta = e.beta || 0;   // pitch
+    if (!page2.classList.contains('visible') || isDragging || (e.gamma === null && e.beta === null)) return;
+    var gamma = e.gamma || 0;
+    var beta = e.beta || 0;
     var basePitch = 60;
     
-    // Convert to mouse-like scale (-0.5 to 0.5)
-    mouseX = (gamma / 90) * 0.8;
-    mouseY = ((beta - basePitch) / 90) * 0.8;
+    targetRotY = (gamma / 90) * 2.2;
+    targetRotX = ((beta - basePitch) / 90) * 2.2;
   });
 
-  (function loop() {
-    if (page2.classList.contains('visible')) {
-      smX += (mouseX - smX) * 0.12;
-      smY += (mouseY - smY) * 0.12;
+  // Drag interaction to spin shape manually
+  cv.addEventListener('mousedown', function(e) {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    var dx = e.clientX - startX;
+    var dy = e.clientY - startY;
+    rotY += dx * 0.008;
+    rotX += dy * 0.008;
+    startX = e.clientX;
+    startY = e.clientY;
+  });
+  window.addEventListener('mouseup', function() {
+    isDragging = false;
+  });
 
-      // Rotate phone slightly based on movement (max tilt 15 deg)
-      var rx = -smY * 26;
-      var ry = smX * 26;
+  // Touch support for drag
+  cv.addEventListener('touchstart', function(e) {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  cv.addEventListener('touchmove', function(e) {
+    if (!isDragging) return;
+    var dx = e.touches[0].clientX - startX;
+    var dy = e.touches[0].clientY - startY;
+    rotY += dx * 0.008;
+    rotX += dy * 0.008;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  cv.addEventListener('touchend', function() {
+    isDragging = false;
+  });
 
-      // Keep rotation applied unless currently spin-transitioning
-      if (phone.style.transform.indexOf('360deg') === -1) {
-        phone.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+  var localTime = 0;
+
+  // 3D Render Loop
+  (function holoRenderLoop() {
+    requestAnimationFrame(holoRenderLoop);
+    if (!page2.classList.contains('visible')) return;
+
+    // Clear Canvas
+    ctx.clearRect(0, 0, W, H);
+
+    // Easing variables rotation
+    if (!isDragging) {
+      rotX += (targetRotX - rotX) * 0.08;
+      rotY += (targetRotY - rotY) * 0.08;
+      // Add a constant slow rotation auto-spin
+      rotY += 0.003;
+    }
+
+    localTime += 0.01;
+
+    // Projected Particles
+    var projected = [];
+    var focalLength = 280;
+
+    var cx = W / 2;
+    var cy = H / 2;
+
+    var cosX = Math.cos(rotX);
+    var sinX = Math.sin(rotX);
+    var cosY = Math.cos(rotY);
+    var sinY = Math.sin(rotY);
+
+    for (var i = 0; i < count; i++) {
+      var p = particles[i];
+
+      // Smooth Morphing interpolation (using math logic)
+      p.x += (p.tx - p.x) * 0.08;
+      p.y += (p.ty - p.y) * 0.08;
+      p.z += (p.tz - p.z) * 0.08;
+
+      // Apply slow wave deformation for organic shimmer
+      var dx = p.x;
+      var dy = p.y;
+      var dz = p.z;
+      
+      if (shape === 'globe') {
+        var wave = Math.sin(localTime * 1.5 + dx * 0.02) * 2;
+        dx += wave; dy += wave; dz += wave;
+      }
+
+      // Rotate Y
+      var x1 = dx * cosY - dz * sinY;
+      var z1 = dz * cosY + dx * sinY;
+
+      // Rotate X
+      var y2 = dy * cosX - z1 * sinX;
+      var z2 = z1 * cosX + dy * sinX;
+
+      // Perspective Projection
+      var scale = focalLength / (focalLength + z2 + 150);
+      var sx = cx + x1 * scale;
+      var sy = cy + y2 * scale;
+
+      projected.push({
+        sx: sx,
+        sy: sy,
+        z: z2,
+        color: p.color,
+        scale: scale
+      });
+    }
+
+    // Depth Sorting (painter's algorithm)
+    projected.sort(function(a, b) { return b.z - a.z; });
+
+    // Draw Connector Lines between close particles (for wiremesh look)
+    ctx.lineWidth = 0.5;
+    for (var a = 0; a < projected.length; a++) {
+      var pA = projected[a];
+      var connections = 0;
+      for (var b = a + 1; b < projected.length; b++) {
+        var pB = projected[b];
+        var dist = Math.hypot(pA.sx - pB.sx, pA.sy - pB.sy);
+
+        // Connect if visually close and not too far in depth Z
+        var maxConnectDist = 28 * pA.scale;
+        if (dist < maxConnectDist && Math.abs(pA.z - pB.z) < 40 && connections < 3) {
+          connections++;
+          var lineOpacity = (1 - (dist / maxConnectDist)) * 0.14 * (pA.scale * 0.8);
+          ctx.strokeStyle = 'rgba(217, 150, 91, ' + lineOpacity + ')';
+          ctx.beginPath();
+          ctx.moveTo(pA.sx, pA.sy);
+          ctx.lineTo(pB.sx, pB.sy);
+          ctx.stroke();
+        }
       }
     }
-    requestAnimationFrame(loop);
+
+    // Draw Particle Nodes
+    for (var j = 0; j < projected.length; j++) {
+      var pt = projected[j];
+      var size = Math.max(0.8, pt.scale * 2.2);
+
+      // Depth fading opacity
+      ctx.fillStyle = pt.color;
+      ctx.beginPath();
+      ctx.arc(pt.sx, pt.sy, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
   })();
 
   /* swipe / scroll to reveal page 2 */
-  var shown=false;
-  function showPage2(){if(shown)return;shown=true;page2.classList.add('visible');}
+  var shown = false;
+  function showPage2(){if(shown)return;shown=true;page2.classList.add('visible');resize();}
   function hidePage2(){if(!shown)return;shown=false;page2.classList.remove('visible');}
 
   /* wheel */
