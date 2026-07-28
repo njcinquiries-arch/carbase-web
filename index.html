@@ -427,24 +427,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     width:clamp(50px,16vw,100px);
   }
 
-  /* card — use scale instead of shrinking width/height to preserve aspect ratio and font ratios */
-  .scene{
-    width: 290px;
-    height: 406px;
-    margin-bottom: -75px; /* pull scaled-down base up to the bottom of the card */
+  /* card — parent floater is scaled on mobile to preserve 1:1 ratio and avoid WebKit 3D glitches */
+  .floater{
+    transform: scale(0.88);
+    transform-origin: center center;
+    margin-top: 32px;
   }
   .card{border-radius:22px;}
   .face{border-radius:22px;}
 
-  /* base — scale to match card */
+  /* base — styled relative to floater */
   .base{
     width: 290px;
-    transform: scale(0.85);
-    transform-origin: center top;
   }
-
-  /* shift floater slightly downward so brand has air */
-  .floater{margin-top:32px;}
 
   .flip-cta{
     position:fixed;
@@ -465,13 +460,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
 /* very small phones (SE etc) */
 @media(max-width:375px){
-  .scene{
-    margin-bottom: -105px;
+  .floater{
+    transform: scale(0.78);
+    transform-origin: center center;
+    margin-top: 24px;
   }
-  .base{
-    transform: scale(0.76);
-  }
-  .floater{margin-top:24px;}
   .flip-cta{bottom:62px;}
 }
 
@@ -882,13 +875,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var hasDragged = false;
   var lastFlipTime = 0;
 
-  var isMobile = window.innerWidth <= 480;
-  var isSmallMobile = window.innerWidth <= 375;
-  var scaleFactor = 1.0;
-  if (isMobile) {
-    scaleFactor = isSmallMobile ? 0.76 : 0.85;
-  }
-
   function updateCardTransform(rx, ry, animate) {
     if (animate) {
       card.style.transition = 'transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)';
@@ -896,7 +882,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       card.style.transition = 'none';
     }
     var baseTrans = flipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
-    card.style.transform = 'scale(' + scaleFactor + ') ' + baseTrans + ' rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+    card.style.transform = baseTrans + ' rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
   }
 
   function updateHologramLight(rx, ry) {
