@@ -449,22 +449,22 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   background:rgba(217,150,91,0.06);
   box-shadow:0 0 16px rgba(217,150,91,0.25);
 }
-
 .holo-description{
   text-align:center;
   font-family:system-ui, -apple-system, sans-serif;
   font-size:.70rem;
   color:rgba(255,255,255,0.35);
-  max-width:320px;
+  max-width:440px;
   margin-top:15px;
-  line-height:1.5;
-  height:32px;
+  line-height:1.6;
+  min-height:80px;
   z-index:10;
 }
 
 @media(max-height:680px){
   .p2-container{height:340px;}
   #p2-canvas{max-height:260px;}
+  .holo-description{min-height:60px; font-size:.65rem;}
 }
 
 /* SCROLL HINT */
@@ -610,7 +610,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
     <!-- Description -->
     <div class="holo-description" id="holo-desc">
-      Showroom Grid: Dense database visualizer categorizing builds by tuner roles, verified status, and modification categories.
+      Showroom Grid: Establishing the digital identity database for the physical world. Cars are one of our most essential, valuable assets—yet they remain completely undigitalized. The Showroom Grid builds a unified community ledger mapping stats, roles, and verified tuner specs to create an immutable registry for custom builds.
     </div>
   </div>
 </div>
@@ -1250,9 +1250,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var shape = 'globe';
 
   var descTexts = {
-    globe: 'Showroom Grid: Dense database visualizer categorizing builds by tuner roles, verified status, and modification categories.',
-    deck: 'Discovery Deck: Holographic representation of Swipe Mode. Flick cards up to collect builds, down to dismiss, and interactively browse showpieces.',
-    dna: 'Spec DNA: Interactive cloning visualizer. Duplicate parts wishlists and spec profiles directly to your own project card in a single tap.'
+    globe: 'Showroom Grid: Establishing the digital identity database for the physical world. Cars are one of our most essential, valuable assets—yet they remain completely undigitalized. The Showroom Grid builds a unified community ledger mapping stats, roles, and verified tuner specs to create an immutable registry for custom builds.',
+    deck: 'Discovery Deck: The gateway to curation. Traditional showrooms are static and disconnected. The Discovery Deck uses Swipe Physics to browse custom project specs, enabling enthusiasts to instantly catalog and curate builds. It transforms how we discover, review, and archive automotive history directly from handheld devices.',
+    dna: 'Spec DNA: Bridging the gap between aspiration and realization. Every vehicle has a unique modification sequence. Spec DNA enables Tuner Spec Cloning—allowing you to extract verified parts lists, track performance stats, and import blueprints directly to your own card as a structured roadmap for your project build.'
   };
 
   // Initialize Particles with coordinates
