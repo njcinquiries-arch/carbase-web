@@ -1304,9 +1304,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     'ROOKIE': 'ranks/rank_rookie_native.png'
   };
 
-  document.getElementById('card-img').src = car.photo;
+  var photoUrl = car.photo;
+  if (!photoUrl || (!photoUrl.startsWith('http://') && !photoUrl.startsWith('https://'))) {
+    photoUrl = 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80';
+  }
+  document.getElementById('card-img').src = photoUrl;
   if (document.getElementById('blurred-bg-img')) {
-    document.getElementById('blurred-bg-img').src = car.photo;
+    document.getElementById('blurred-bg-img').src = photoUrl;
   }
   if (document.getElementById('card-rank-badge')) {
     document.getElementById('card-rank-badge').textContent = car.rank;
