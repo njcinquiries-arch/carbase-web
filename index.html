@@ -499,10 +499,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 @media(max-width:480px){
   .app-store-btn-bottom{
-    bottom:36px;
+    bottom:calc(28px + env(safe-area-inset-bottom, 0px));
     right:16px;
     padding:6px 12px;
     font-size:0.68rem;
+    border-radius:16px;
   }
 }
 
