@@ -1041,6 +1041,48 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }, 120);
   }, { passive: true });
 
+  // Gyroscope Device Orientation tilt listener
+  function handleOrientation(event) {
+    if (isInteracting) return; // Touch drag takes priority
+
+    var gamma = event.gamma || 0; // roll: left/right tilt (-90 to 90)
+    var beta = event.beta || 0;   // pitch: front/back tilt (-180 to 180)
+
+    // Normal phone holding pitch is roughly 60 degrees. Adjust offsets relative to it.
+    var basePitch = 60;
+    var rx = (beta - basePitch) * 0.45;
+    var ry = gamma * 0.45;
+
+    // Clamp gyro rotations to a max tilt of 16 degrees
+    var maxGyro = 16;
+    rx = Math.max(-maxGyro, Math.min(maxGyro, rx));
+    ry = Math.max(-maxGyro, Math.min(maxGyro, ry));
+
+    updateCardTransform(rx, ry, false);
+    updateHologramLight(rx, ry);
+  }
+
+  function initGyroscope() {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      // iOS 13+ requires user click interaction to request permission
+      document.body.addEventListener('click', function requestPermissionGesture() {
+        DeviceOrientationEvent.requestPermission()
+          .then(function(response) {
+            if (response === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation);
+            }
+          })
+          .catch(console.error);
+        document.body.removeEventListener('click', requestPermissionGesture);
+      }, { once: true });
+    } else {
+      // Android / non-iOS browsers
+      window.addEventListener('deviceorientation', handleOrientation);
+    }
+  }
+
+  initGyroscope();
+
   // Initial call on page load to apply scale factor immediately
   updateCardTransform(0, 0, false);
 })();
