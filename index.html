@@ -431,7 +431,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .scene{
     width: 290px;
     height: 406px;
-    margin-bottom: -120px; /* pull scaled-down base up to the bottom of the card */
+    margin-bottom: -75px; /* pull scaled-down base up to the bottom of the card */
   }
   .card{border-radius:22px;}
   .face{border-radius:22px;}
@@ -439,7 +439,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   /* base — scale to match card */
   .base{
     width: 290px;
-    transform: scale(0.65);
+    transform: scale(0.85);
     transform-origin: center top;
   }
 
@@ -466,10 +466,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 /* very small phones (SE etc) */
 @media(max-width:375px){
   .scene{
-    margin-bottom: -155px;
+    margin-bottom: -105px;
   }
   .base{
-    transform: scale(0.55);
+    transform: scale(0.76);
   }
   .floater{margin-top:24px;}
   .flip-cta{bottom:62px;}
@@ -886,7 +886,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var isSmallMobile = window.innerWidth <= 375;
   var scaleFactor = 1.0;
   if (isMobile) {
-    scaleFactor = isSmallMobile ? 0.55 : 0.65;
+    scaleFactor = isSmallMobile ? 0.76 : 0.85;
   }
 
   function updateCardTransform(rx, ry, animate) {
