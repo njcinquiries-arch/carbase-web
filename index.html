@@ -1362,8 +1362,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var cardEl = document.getElementById('card');
   if (car.rank === 'Signature' || car.ovr >= 70) {
     var glowColor = getRankGlowColor(car.rank, car.ovr);
-    var glowRgba = hexToRgba(glowColor, 0.28);
-    cardEl.style.boxShadow = '0 20px 60px rgba(0,0,0,0.95), 0 0 35px ' + glowRgba;
+    var tightGlow = hexToRgba(glowColor, 0.55);
+    var wideGlow = hexToRgba(glowColor, 0.28);
+    cardEl.style.boxShadow = '0 20px 60px rgba(0,0,0,0.95), 0 0 12px ' + tightGlow + ', 0 0 45px ' + wideGlow;
   } else {
     cardEl.style.boxShadow = '0 20px 60px rgba(0,0,0,0.95)';
   }
