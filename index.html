@@ -603,14 +603,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     
     <!-- Holographic Nav -->
     <div class="holo-nav">
-      <button class="holo-btn active" data-shape="globe">Spec Globe</button>
-      <button class="holo-btn" data-shape="turbo">Tuner Turbo</button>
-      <button class="holo-btn" data-shape="kw">KW Coilovers</button>
+      <button class="holo-btn active" data-shape="globe">Showroom Grid</button>
+      <button class="holo-btn" data-shape="deck">Discovery Deck</button>
+      <button class="holo-btn" data-shape="dna">Spec DNA</button>
     </div>
 
     <!-- Description -->
     <div class="holo-description" id="holo-desc">
-      Spec Globe: Interactive holographic visualizer projecting core performance systems and mechanical specs.
+      Showroom Grid: Dense database visualizer categorizing builds by tuner roles, verified status, and modification categories.
     </div>
   </div>
 </div>
@@ -1160,11 +1160,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
     // Normal phone holding pitch is roughly 60 degrees. Adjust offsets relative to it.
     var basePitch = 60;
-    var rx = (beta - basePitch) * 0.45;
-    var ry = gamma * 0.45;
+    var rx = (beta - basePitch) * 0.85; // Increased gyro sensitivity from 0.45 to 0.85
+    var ry = gamma * 0.85;             // Increased gyro sensitivity from 0.45 to 0.85
 
-    // Clamp gyro rotations to a max tilt of 16 degrees
-    var maxGyro = 16;
+    // Clamp gyro rotations to a max tilt of 22 degrees (increased from 16)
+    var maxGyro = 22;
     targetRx = Math.max(-maxGyro, Math.min(maxGyro, rx));
     targetRy = Math.max(-maxGyro, Math.min(maxGyro, ry));
     isGyroActive = true;
@@ -1250,9 +1250,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var shape = 'globe';
 
   var descTexts = {
-    globe: 'Spec Globe: Interactive holographic visualizer projecting core performance systems and mechanical specs.',
-    turbo: 'Tuner Turbo: Compresses and forces air spec induction. Boosts performance ratios and mechanical values.',
-    kw: 'KW Coilovers: Visualizing spring-coil rate and mechanical compliance. Regulates stance height and grip.'
+    globe: 'Showroom Grid: Dense database visualizer categorizing builds by tuner roles, verified status, and modification categories.',
+    deck: 'Discovery Deck: Holographic representation of Swipe Mode. Flick cards up to collect builds, down to dismiss, and interactively browse showpieces.',
+    dna: 'Spec DNA: Interactive cloning visualizer. Duplicate parts wishlists and spec profiles directly to your own project card in a single tap.'
   };
 
   // Initialize Particles with coordinates
@@ -1279,29 +1279,51 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     for (var i = 0; i < count; i++) {
       var p = particles[i];
       if (type === 'globe') {
-        // Sphere Math
+        // Sphere Math (Showroom Grid)
         var theta = Math.random() * Math.PI * 2;
         var phi = Math.acos((Math.random() * 2) - 1);
         var r = 110;
         p.tx = r * Math.sin(phi) * Math.cos(theta);
         p.ty = r * Math.sin(phi) * Math.sin(theta);
         p.tz = r * Math.cos(phi);
-      } else if (type === 'turbo') {
-        // Double Scroll Helix Math (Turbo Compressor shape)
-        var angle = (i / count) * Math.PI * 8;
-        var spiralR = 25 + (i / count) * 85;
-        p.tx = spiralR * Math.cos(angle);
-        p.ty = spiralR * Math.sin(angle);
-        p.tz = (Math.sin(angle * 3) * 20) + ((i / count) * 40 - 20);
-      } else if (type === 'kw') {
-        // Spring Coil Helix Math (Coilover shape)
-        var turns = 8;
+      } else if (type === 'deck') {
+        // Stack of 3 3D Cards math
+        var pointsPerBox = Math.floor(count / 3);
+        var boxIndex = Math.min(2, Math.floor(i / pointsPerBox));
+        var localIndex = i % pointsPerBox;
+        var t = localIndex / pointsPerBox;
+        var zOffset = (boxIndex * 35) - 35; // stacked offset in depth
+        
+        // Form a rectangle outline width=80, height=120
+        var w = 82;
+        var h = 118;
+        var perimeter = 2 * (w + h);
+        var pos = t * perimeter;
+        var x, y;
+        if (pos < w) {
+          x = pos - w/2; y = -h/2;
+        } else if (pos < w + h) {
+          x = w/2; y = (pos - w) - h/2;
+        } else if (pos < 2*w + h) {
+          x = w/2 - (pos - (w + h)); y = h/2;
+        } else {
+          x = -w/2; y = h/2 - (pos - (2*w + h));
+        }
+        p.tx = x;
+        p.ty = y;
+        p.tz = zOffset;
+      } else if (type === 'dna') {
+        // Double Helix Math (Spec DNA cloning)
+        var turns = 4.5;
         var progress = i / count;
         var angle = progress * Math.PI * 2 * turns;
-        var r = 55;
-        p.tx = r * Math.cos(angle);
-        p.ty = r * Math.sin(angle);
-        p.tz = (progress * 240) - 120; // vertical height
+        var helixR = 50;
+        var isStrandB = (i % 2 === 0);
+        var offset = isStrandB ? Math.PI : 0;
+        
+        p.tx = helixR * Math.cos(angle + offset);
+        p.ty = helixR * Math.sin(angle + offset);
+        p.tz = (progress * 240) - 120; // vertical span
       }
     }
   }
