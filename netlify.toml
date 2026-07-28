@@ -15,6 +15,12 @@
   to     = "/404"
   status = 404
 
+# Rewrite /c/* to index.html for SPA routing
+[[redirects]]
+  from   = "/c/*"
+  to     = "/index.html"
+  status = 200
+
 [[redirects]]
   from   = "/wp-admin/*"
   to     = "/404"

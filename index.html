@@ -6,7 +6,7 @@
 <title>Carbase</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;600;700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#0d0d12;}
@@ -22,11 +22,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 
 /* CARD */
-.scene{width:300px;height:420px;perspective:1100px;cursor:pointer!important;user-select:none;-webkit-user-select:none;touch-action:none;}
-.card{width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:18px;will-change:transform;}
-.face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
+.scene{width:290px;height:406px;perspective:1100px;cursor:pointer!important;user-select:none;-webkit-user-select:none;touch-action:none;}
+.card{width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:22px;will-change:transform;}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
 .front{background:#1c1c1f;border:1px solid rgba(255,255,255,0.07);box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 50px 130px rgba(0,0,0,0.95);}
-.front::after{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.22) 50%,transparent);}
+
 .front-hl{position:absolute;inset:0;border-radius:18px;pointer-events:none;background:radial-gradient(ellipse 55% 45% at var(--hx,50%) var(--hy,30%),rgba(255,255,255,0.07) 0%,transparent 65%);opacity:0;transition:opacity .15s;}
 .scene:hover .front-hl{opacity:1}
 
@@ -41,7 +41,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 .front-hint{
   position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
-  font-family:'Exo 2',sans-serif;font-weight:300;font-size:.40rem;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:300;font-size:.40rem;
   letter-spacing:.40em;text-indent:.40em;text-transform:uppercase;
   color:rgba(255,255,255,0.22);white-space:nowrap;pointer-events:none;
   animation:hintpulse 3s ease-in-out infinite;
@@ -49,30 +49,35 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 @keyframes hintpulse{0%,100%{opacity:.14}50%{opacity:.38}}
 
 .scene{animation:bob 7s ease-in-out infinite;}
-.card{width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:18px;will-change:transform;}
-.face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
+.card{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;border-radius:22px;
+  will-change:transform;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.95);
+}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
 .front{
   background: linear-gradient(135deg, #181524 0%, #0c0b14 100%);
-  border: 1px solid rgba(212, 175, 84, 0.65);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 20px 60px rgba(0,0,0,0.9), 0 0 30px rgba(212,175,84,0.22);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
 }
-.front::after{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.22) 50%,transparent);}
-.front-hl{position:absolute;inset:0;border-radius:18px;pointer-events:none;background:radial-gradient(ellipse 55% 45% at var(--hx,50%) var(--hy,30%),rgba(255,255,255,0.12) 0%,transparent 65%);opacity:0;transition:opacity .15s;}
-.scene:hover .front-hl{opacity:1}
+
+.front-hl{position:absolute;inset:0;border-radius:22px;pointer-events:none;background:linear-gradient(var(--rot, 105deg), transparent 35%, rgba(255,255,255,0.002) 47%, rgba(255,255,255,0.008) 50%, rgba(255,255,255,0.002) 53%, transparent 65%);opacity:0;transition:opacity .15s; mix-blend-mode: screen;}
+.scene:hover .front-hl{opacity:0.15}
 
 .back{
   background: linear-gradient(135deg, #161422 0%, #0b0a12 100%);
-  border: 1px solid rgba(212, 175, 84, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   transform: rotateY(180deg);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 30px rgba(212,175,84,0.22);
+  box-shadow: none;
 }
 
 /* CAR CARD STYLES */
 .card-photo-zone {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 35%;
+  top: 0; left: 0; right: 0; height: 70%;
   overflow: hidden;
-  border-radius: 18px 18px 0 0;
+  border-radius: 22px 22px 0 0;
   background: #000;
   pointer-events: none;
 }
@@ -83,14 +88,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 .card-photo-gradient {
   position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 40%, rgba(12,11,20,0.95) 100%);
+  background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 35%, transparent 60%, rgba(20,20,22,1) 100%);
   pointer-events: none;
 }
 
 /* BLURRED PHOTO BACKFILL (EXACT CARCARD.TSX ARCHITECTURE) */
 .blurred-backfill {
-  position: absolute; bottom: 0; left: 0; right: 0; top: 68%;
-  overflow: hidden; border-radius: 0 0 18px 18px;
+  position: absolute; bottom: 0; left: 0; right: 0; top: 70%;
+  overflow: hidden; border-radius: 0 0 22px 22px;
   pointer-events: none; z-index: 2;
 }
 .blurred-img {
@@ -100,13 +105,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 .blur-glass-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(14, 12, 24, 0.60) 0%, rgba(10, 8, 18, 0.92) 100%);
+  background: linear-gradient(180deg, rgba(20, 20, 22, 0.40) 0%, rgba(20, 20, 22, 0.95) 100%);
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
 }
 
 .card-top-badges {
-  position: absolute; top: 12px; left: 12px; right: 12px;
-  display: flex; justify-content: space-between; align-items: center;
+  position: absolute; top: 14px; left: 14px; right: 14px;
+  display: flex; justify-content: space-between; align-items: flex-start;
   z-index: 10; pointer-events: none;
 }
 .rank-badge-pill {
@@ -120,38 +125,39 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   width: 14px; height: 14px; object-fit: contain;
 }
 .card-badge-text {
-  font-family: 'Exo 2', sans-serif; font-weight: 700; font-size: 0.58rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 700; font-size: 0.58rem;
   letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff;
   text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 .ovr-badge {
-  display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
-  background: rgba(0, 0, 0, 0.75);
-  border: 1px solid rgba(212, 175, 84, 0.65);
-  padding: 3px 10px; border-radius: 10px;
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
 }
 .ovr-val {
-  font-family: 'Exo 2', sans-serif; font-weight: 900; font-size: 1.1rem;
-  color: #ffffff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); line-height: 1.0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 900; font-size: 1.8rem;
+  color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); line-height: 0.9;
 }
 .ovr-label {
-  font-family: 'Exo 2', sans-serif; font-weight: 700; font-size: 0.45rem;
-  color: rgba(212, 175, 84, 0.9); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 700; font-size: 0.38rem;
+  color: #ffffff; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;
 }
 
 /* SIGNATURE DEFAULT FROSTED GLASS BACKFILL PANEL */
 .card-info-panel {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 32%;
-  padding: 12px 16px 20px 16px;
+  position: absolute; bottom: 0; left: 0; right: 0; height: 30%;
+  padding: 12px 16px 16px 16px;
   display: flex; flex-direction: column; justify-content: flex-end;
-  border-top: 1px solid rgba(212, 175, 84, 0.25);
-  border-radius: 0 0 18px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0 0 22px 22px;
   pointer-events: none; z-index: 5;
 }
 .card-custom-name {
-  font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 1.05rem; color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 600; font-size: 1.05rem; color: #ffffff;
   letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .card-owner-row {
@@ -162,42 +168,97 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   border: 1px solid rgba(255,255,255,0.3);
 }
 .card-owner-name {
-  font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 0.72rem; color: #eab308;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 600; font-size: 0.72rem; color: #eab308;
   letter-spacing: 0.02em;
 }
 .card-subtitle {
-  font-family: 'Exo 2', sans-serif; font-weight: 300; font-size: 0.68rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 300; font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.55); margin-top: 2px; margin-bottom: 8px;
 }
 .card-stats-row { display: flex; justify-content: space-between; align-items: baseline; }
-.card-stat-hp { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 1.0rem; color: #d4af37; }
+.card-stat-hp { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 600; font-size: 1.0rem; color: #d4af37; }
 .card-stat-hp .unit { font-size: 0.65rem; color: rgba(255,255,255,0.45); font-weight: 300; }
-.card-stat-mods { font-family: 'Exo 2', sans-serif; font-weight: 300; font-size: 0.68rem; color: rgba(255, 255, 255, 0.5); letter-spacing: 0.05em; }
+.card-stat-mods { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 300; font-size: 0.68rem; color: rgba(255, 255, 255, 0.5); letter-spacing: 0.05em; }
 
 /* CARD BACK CONTENT */
 .back-content {
-  width: 100%; height: 100%; padding: 16px;
-  display: flex; flex-direction: column; justify-content: space-between;
+  width: 100%; height: 100%; padding: 20px;
+  display: flex; flex-direction: column;
   background: radial-gradient(circle at 50% 0%, rgba(28,28,36,0.95) 0%, rgba(14,14,18,0.98) 100%);
-  border-radius: 18px;
+  border-radius: 22px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #fff;
 }
 .back-header {
   display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; margin-bottom: 12px;
 }
-.back-title { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 0.92rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
-.back-section-label { font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 0.50rem; letter-spacing: 0.2em; color: rgba(212, 175, 90, 0.85); text-transform: uppercase; margin-top: 4px; margin-bottom: 4px; }
-.back-specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 6px 8px; }
-.back-spec-item { display: flex; flex-direction: column; }
-.back-spec-item .lbl { font-size: 0.52rem; color: rgba(255,255,255,0.38); font-family: 'Exo 2', sans-serif; }
-.back-spec-item .val { font-size: 0.68rem; color: #ffffff; font-weight: 600; font-family: 'Exo 2', sans-serif; }
-.back-perf-row { display: flex; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 6px 8px; }
-.back-perf-item { display: flex; flex-direction: column; }
-.back-perf-item .lbl { font-size: 0.52rem; color: rgba(255,255,255,0.38); }
-.back-perf-item .val { font-size: 0.72rem; color: #38bdf8; font-weight: 600; }
-.back-mods-list { display: flex; flex-direction: column; gap: 3px; max-height: 60px; overflow-y: auto; }
-.back-mod-chip { font-size: 0.62rem; color: rgba(255,255,255,0.8); font-family: 'Exo 2', sans-serif; background: rgba(255,255,255,0.04); padding: 3px 6px; border-radius: 4px; }
-.back-serial { font-size: 0.52rem; color: rgba(255,255,255,0.3); font-family: monospace; letter-spacing: 0.15em; text-align: center; margin-top: 4px; }
+.back-title {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 700; font-size: 1.0rem; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;
+}
+.back-header-badges {
+  display: flex; align-items: center; gap: 8px;
+}
+.back-rank-badge {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 700; font-size: 0.55rem; text-transform: uppercase;
+  color: #fff; padding: 3px 8px; border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+.back-specs-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px;
+  margin-bottom: 14px;
+}
+.back-spec-item {
+  display: flex; flex-direction: column;
+}
+.back-spec-label {
+  font-size: 0.52rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;
+}
+.back-spec-value {
+  font-size: 0.75rem; color: #ffffff; font-weight: 600;
+}
+.back-stats-section {
+  background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 10px 12px; margin-bottom: 10px;
+}
+.back-stats-title {
+  font-size: 0.52rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+}
+.back-stats-row {
+  display: flex; justify-content: space-between;
+}
+.back-stat-item {
+  display: flex; flex-direction: column; flex: 1;
+}
+.back-stat-label {
+  font-size: 0.58rem; color: rgba(255,255,255,0.6); margin-bottom: 2px;
+}
+.back-stat-value {
+  font-size: 1.05rem; color: #ffffff; font-weight: 700;
+}
+.back-role-section {
+  background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 6px;
+  margin-bottom: 12px;
+}
+.back-role-label {
+  font-size: 0.58rem; color: rgba(255,255,255,0.5); font-style: italic;
+}
+.back-footer {
+  text-align: center; margin-top: auto; padding-bottom: 4px;
+}
+.back-footer-text {
+  font-size: 0.55rem; color: rgba(255,255,255,0.4);
+}
+.back-serial-container {
+  position: absolute; bottom: 8px; right: 12px; z-index: 99; cursor: pointer;
+}
+.back-serial-text {
+  font-size: 0.5rem; font-weight: 800; color: rgba(255, 255, 255, 0.35); letter-spacing: 0.08em;
+}
 
 /* BASE — solid stone pedestal, no glass */
 .base{width:300px;display:flex;flex-direction:column;align-items:center;}
@@ -220,74 +281,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 .floor-pool{width:360px;height:28px;background:radial-gradient(ellipse 55% 100% at 50% 0%,rgba(180,175,190,0.06) 0%,transparent 70%);}
 
-/* INFO PANEL — absolute below the base, never shifts card up */
-.info-wrap{
-  position:absolute;
-  left:50%;
-  top:calc(50% + 200px);
-  transform:translateX(-50%) translateY(10px);
-  width:min(580px, 90vw);
-  opacity:0;
-  visibility:hidden;
-  transition:opacity .45s cubic-bezier(.22,1,.36,1),
-             transform .45s cubic-bezier(.22,1,.36,1),
-             visibility 0s .45s;
-}
-.info-wrap.open{
-  opacity:1;
-  visibility:visible;
-  transform:translateX(-50%) translateY(0);
-  transition:opacity .45s cubic-bezier(.22,1,.36,1),
-             transform .45s cubic-bezier(.22,1,.36,1),
-             visibility 0s 0s;
-}
-.info-inner{
-  padding:14px 0 4px;
-  text-align:center;
-}
-.info-cat{
-  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.42rem;
-  letter-spacing:.45em;text-indent:.45em;text-transform:uppercase;
-  color:rgba(212,175,90,0.75);
-  text-shadow:0 0 8px rgba(212,175,90,0.40);
-  margin-bottom:6px;
-}
-.info-title{
-  font-family:'Exo 2',sans-serif;font-weight:200;font-size:1.05rem;
-  letter-spacing:.08em;line-height:1.15;
-  color:#fff;
-  text-shadow:0 0 8px rgba(255,255,255,0.95),0 0 22px rgba(255,255,255,0.55),0 0 50px rgba(255,255,255,0.25);
-  margin-bottom:10px;
-}
-.info-title strong{
-  font-weight:600;
-  color:rgba(230,210,160,0.95);
-  text-shadow:0 0 8px rgba(212,175,90,0.60),0 0 22px rgba(212,175,90,0.30);
-}
-.info-line{
-  height:1px;width:100px;margin:0 auto 10px;
-  background:linear-gradient(90deg,transparent,rgba(212,175,90,0.55) 50%,transparent);
-}
-.info-list{
-  list-style:none;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px 24px;
-  text-align:left;
-}
-.info-list li{
-  font-family:'Exo 2',sans-serif;font-weight:300;font-size:.72rem;
-  letter-spacing:.02em;line-height:1.32;
-  color:rgba(255,255,255,0.88);
-  text-shadow:0 0 5px rgba(255,255,255,0.80),0 0 14px rgba(255,255,255,0.40);
-  padding-left:13px;position:relative;
-}
-.info-list li::before{
-  content:'';position:absolute;left:0;top:7px;
-  width:3px;height:3px;border-radius:50%;
-  background:rgba(212,175,90,0.90);
-  box-shadow:0 0 4px rgba(212,175,90,0.80),0 0 10px rgba(212,175,90,0.45);
-}
+.floor-pool{width:360px;height:28px;background:radial-gradient(ellipse 55% 100% at 50% 0%,rgba(180,175,190,0.06) 0%,transparent 70%);}
 
 /* BRAND */
 .brand{
@@ -339,7 +333,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45) 50%,transparent);
 }
 .flip-cta p{
-  font-family:'Exo 2',sans-serif;font-weight:300;font-size:.96rem;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:300;font-size:.96rem;
   letter-spacing:.05em;line-height:1.58;
   color:rgba(255,255,255,0.90);
   text-shadow:0 0 7px rgba(255,255,255,0.95),0 0 22px rgba(255,255,255,0.55),0 0 50px rgba(255,255,255,0.22);
@@ -351,7 +345,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .flip-cta-badge{
   display:inline-block;
   margin-top:11px;
-  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.55rem;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:600;font-size:.55rem;
   letter-spacing:.30em;text-transform:uppercase;
   color:rgba(255,255,255,0.50);
   border:1px solid rgba(255,255,255,0.22);
@@ -380,19 +374,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 #page2.visible{opacity:1;pointer-events:auto;}
 .p2-label{
-  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.52rem;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:600;font-size:.52rem;
   letter-spacing:.45em;text-transform:uppercase;
   color:rgba(255,255,255,0.28);margin-bottom:18px;
 }
 .p2-title{
-  font-family:'Exo 2',sans-serif;font-weight:200;font-size:clamp(2rem,6vw,4.5rem);
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:200;font-size:clamp(2rem,6vw,4.5rem);
   letter-spacing:.20em;text-indent:.20em;text-transform:uppercase;
   color:rgba(255,255,255,0.08);
   text-shadow:none;
   margin-bottom:28px;
 }
 .p2-wip{
-  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.60rem;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;font-weight:600;font-size:.60rem;
   letter-spacing:.50em;text-transform:uppercase;
   color:rgba(255,255,255,0.18);
   border:1px solid rgba(255,255,255,0.10);
@@ -449,20 +443,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   /* shift floater slightly downward so brand has air */
   .floater{margin-top:32px;}
 
-  /* info + cta panels — fixed above bottom corners */
-  .info-wrap{
-    position:fixed;
-    top:auto;
-    bottom:68px;
-    left:50%;
-    transform:translateX(-50%) translateY(12px);
-    width:92vw;
-    max-height:38vh;
-    overflow-y:auto;
-  }
-  .info-wrap.open{
-    transform:translateX(-50%) translateY(0);
-  }
   .flip-cta{
     position:fixed;
     top:auto;
@@ -475,21 +455,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     transform:translateX(-50%) translateY(0);
   }
   .flip-cta p{font-size:.72rem;line-height:1.5;}
-  .info-cat{font-size:.30rem;margin-bottom:3px;}
-  .info-title{font-size:.56rem;margin-bottom:6px;}
-  .info-inner{padding:6px 0 2px;}
-  .info-line{width:60px;margin:0 auto 6px;}
-  .info-list{gap:3px 10px;}
-  .info-list li{font-size:.50rem;line-height:1.25;padding-left:10px;}
-  .info-list li::before{top:4px;width:3px;height:3px;}
-
-  /* corners */
-  .cn{width:44px;height:44px;}
-  #cn1{top:12px;left:12px;}
-  #cn2{top:12px;right:12px;}
-  #cn3{bottom:12px;left:12px;}
-  #cn4{bottom:12px;right:12px;}
-  .cn-ring{width:34px;height:34px;font-size:.68rem;}
 
   /* scroll hint closer to bottom */
   .scroll-hint{padding-bottom:10px;}
@@ -505,7 +470,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .step-3{width:173px;}
   .floor-pool{width:214px;}
   .floater{margin-top:24px;}
-  .info-wrap{bottom:62px;width:96vw;}
   .flip-cta{bottom:62px;}
 }
 
@@ -514,12 +478,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .brand{top:3%;}
   .brand-rule{top:calc(3% + clamp(1.5rem,8.5vw,2.8rem));}
   .floater{margin-top:16px;}
-}
-
-/* hide corners + info panel on mobile — desktop only */
-@media(max-width:480px){
-  .cn{display:none;}
-  .info-wrap{display:none;}
 }
 
 /* hide wheel cursor on any touch device */
@@ -534,33 +492,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   opacity:0;
   transition:opacity .18s;
   will-change:transform;
-}
-
-/* CORNER BUTTONS + BRACKET LINES */
-.cn{
-  position:fixed;z-index:999;
-  width:50px;height:50px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-#cn1{top:20px;left:20px;}
-#cn2{top:20px;right:20px;}
-#cn3{bottom:20px;left:20px;}
-#cn4{bottom:20px;right:20px;}
-.cn-ring{
-  width:38px;height:38px;border-radius:50%;
-  border:1px solid rgba(255,255,255,0.22);
-  background:rgba(0,0,0,0.55);
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Exo 2',sans-serif;font-weight:600;font-size:.76rem;letter-spacing:.03em;
-  color:rgba(255,255,255,0.50);
-  transition:all .22s;user-select:none;
-}
-.cn:hover .cn-ring,.cn.on .cn-ring{
-  border-color:#fff;color:#fff;
-  box-shadow:0 0 10px rgba(255,255,255,0.40),0 0 26px rgba(255,255,255,0.18);
-  text-shadow:0 0 7px #fff,0 0 18px rgba(255,255,255,0.55);
 }
 </style>
 </head>
@@ -596,12 +527,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   <div class="p2-wip">Work in progress</div>
 </div>
 
-<!-- CORNERS -->
-<div class="cn" id="cn1"><div class="cn-ring">1</div></div>
-<div class="cn" id="cn2"><div class="cn-ring">2</div></div>
-<div class="cn" id="cn3"><div class="cn-ring">3</div></div>
-<div class="cn" id="cn4"><div class="cn-ring">4</div></div>
-
 <div class="stage">
   <div class="brand"><span>Car</span>base</div>
   <div class="brand-rule"></div>
@@ -624,9 +549,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
           </div>
 
           <div class="card-top-badges">
-            <div class="rank-badge-pill" id="card-rank-pill">
-              <img id="card-rank-icon" class="card-rank-icon-img" src="ranks/rank_signature_native.png" alt="Rank">
-              <span id="card-rank-badge" class="card-badge-text">SIGNATURE</span>
+            <div class="top-left-badges" style="display:flex; flex-direction:column; gap:6px;">
+              <img id="card-rank-icon" class="card-rank-icon-img" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.6));" src="ranks/rank_signature_native.png" alt="Rank">
+              <div class="powertrain-badge" style="width:22px;height:22px;border-radius:11px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;margin-left:11px;">
+                <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.44 0C5.44 0 6.64 2.8 8.84 4.8C10.64 6.44 9.8 9.2 8.44 10.4C6.8 11.84 3.72 12.08 1.8 10.56C-0.319999 8.88 -0.0799988 5.76 1.48 4C1.04 5.36 1.76 6.8 3 7.52C2.72 6.08 3.56 4.32 4.4 3.2C4.76 2.68 5.44 0 5.44 0Z" fill="#F97316"/></svg>
+              </div>
             </div>
             <div class="ovr-badge" id="card-ovr-badge">
               <span class="ovr-label">OVERALL</span>
@@ -645,6 +572,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
               <span id="card-mods-count" class="card-stat-mods">1 mod</span>
             </div>
           </div>
+          <!-- Unique serial number (matching CarCard.tsx) -->
+          <div class="front-serial-container" style="position: absolute; bottom: 8px; right: 12px; z-index: 99;">
+            <span id="front-serial" class="front-serial-text" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 0.5rem; font-weight: 800; color: rgba(255, 255, 255, 0.35); letter-spacing: 0.08em; text-transform: uppercase;"></span>
+          </div>
           <div class="front-hint">tap to reveal</div>
         </div>
 
@@ -653,35 +584,47 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
           <div class="front-hl" id="hl-back"></div>
           <div class="back-content">
             <div class="back-header">
-              <span id="back-custom-name" class="back-title">Nürburgring Spec</span>
-              <span id="back-rank-badge" class="card-badge rank-badge">SIGNATURE</span>
+              <span id="back-custom-name" class="back-title">Quattro Beast</span>
+              <div class="back-header-badges">
+                <span id="back-rank-badge" class="back-rank-badge">SIGNATURE</span>
+              </div>
             </div>
 
-            <div class="back-section-label">VEHICLE SPECIFICATIONS</div>
             <div class="back-specs-grid">
-              <div class="back-spec-item"><span class="lbl">Make</span><span id="spec-make" class="val">Porsche</span></div>
-              <div class="back-spec-item"><span class="lbl">Model</span><span id="spec-model" class="val">911 GT3 RS</span></div>
-              <div class="back-spec-item"><span class="lbl">Year</span><span id="spec-year" class="val">2023</span></div>
-              <div class="back-spec-item"><span class="lbl">Powertrain</span><span id="spec-powertrain" class="val">Combustion</span></div>
-              <div class="back-spec-item"><span class="lbl">Drive</span><span id="spec-drivetrain" class="val">RWD</span></div>
-              <div class="back-spec-item"><span class="lbl">Engine</span><span id="spec-engine" class="val">4.0L Flat-6</span></div>
+              <div class="back-spec-item"><span class="back-spec-label">Make</span><span id="spec-make" class="back-spec-value">Audi</span></div>
+              <div class="back-spec-item"><span class="back-spec-label">Model</span><span id="spec-model" class="back-spec-value">S4</span></div>
+              <div class="back-spec-item"><span class="back-spec-label">Year</span><span id="spec-year" class="back-spec-value">2021</span></div>
+              <div class="back-spec-item"><span class="back-spec-label">Trim</span><span id="spec-trim" class="back-spec-value">Premium Plus</span></div>
+              <div class="back-spec-item"><span class="back-spec-label">Drive</span><span id="spec-drivetrain" class="back-spec-value">AWD</span></div>
+              <div class="back-spec-item"><span class="back-spec-label">Engine</span><span id="spec-engine" class="back-spec-value">3.0L Turbo V6</span></div>
             </div>
 
-            <div class="back-section-label">PERFORMANCE SPECS</div>
-            <div class="back-perf-row">
-              <div class="back-perf-item"><span class="lbl">Horsepower</span><span id="perf-hp" class="val">545 hp</span></div>
-              <div class="back-perf-item"><span class="lbl">Torque</span><span id="perf-tq" class="val">360 lb-ft</span></div>
-              <div class="back-perf-item"><span class="lbl">0-60 mph</span><span id="perf-zero" class="val">2.8s</span></div>
+            <div class="back-stats-section">
+              <div class="back-stats-title">Intrinsic Performance</div>
+              <div class="back-stats-row">
+                <div class="back-stat-item">
+                  <span class="back-stat-label">Horsepower</span>
+                  <span id="perf-hp" class="back-stat-value">420 hp</span>
+                </div>
+                <div class="back-stat-item">
+                  <span class="back-stat-label">Torque</span>
+                  <span id="perf-tq" class="back-stat-value">440 lb-ft</span>
+                </div>
+              </div>
             </div>
 
-            <div class="back-section-label">INSTALLED MODIFICATIONS</div>
-            <div id="back-mods-list" class="back-mods-list">
-              <div class="back-mod-chip">• Akrapovič Titanium Exhaust System</div>
-              <div class="back-mod-chip">• Eventuri Carbon Fiber Intake</div>
-              <div class="back-mod-chip">• BBS Magnesium Wheels</div>
+            <div class="back-role-section" id="back-role-section" style="display:none;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span class="back-role-label">Role: <span id="spec-role">Daily Driver</span></span>
             </div>
 
-            <div id="back-serial" class="back-serial">SERIAL: P9-GT3-RS</div>
+            <div class="back-footer">
+              <span class="back-footer-text">Tap to flip • Double-tap to open</span>
+            </div>
+
+            <div class="back-serial-container">
+              <span id="back-serial" class="back-serial-text">AU-S4-420</span>
+            </div>
           </div>
         </div>
       </div>
@@ -704,14 +647,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     <a class="flip-cta-badge" href="#" target="_blank" id="cta-link">↗ carbaseapp.com</a>
   </div>
 
-  <!-- INFO — positioned below base, outside floater so card never shifts -->
-  <div class="info-wrap" id="info-wrap">
-    <div class="info-inner">
-      <div class="info-cat" id="info-cat"></div>
-      <div class="info-title" id="info-title"></div>
-      <div class="info-line"></div>
-      <ul class="info-list" id="info-list"></ul>
-    </div>
   </div>
 
 </div>
@@ -957,15 +892,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     card.style.transform = 'rotateX(' + finalRotX.toFixed(2) + 'deg) rotateY(' + finalRotY.toFixed(2) + 'deg)';
   }
 
-  function updateHologramLight(xPct, yPct) {
+  function updateHologramLight(rx, ry) {
+    // rx is tilt up/down (rotateX), ry is tilt left/right (rotateY)
+    // We want a diagonal reflection angle (around 105deg resting) that shifts when tilted.
+    var baseAngle = 105;
+    var angleShift = (ry * 1.5) + (rx * 1.5);
+    var finalAngle = baseAngle + angleShift;
+    
     if (hlFront) {
-      hlFront.style.setProperty('--hx', xPct + '%');
-      hlFront.style.setProperty('--hy', yPct + '%');
+      hlFront.style.setProperty('--rot', finalAngle + 'deg');
       hlFront.style.opacity = '1';
     }
     if (hlBack) {
-      hlBack.style.setProperty('--hx', xPct + '%');
-      hlBack.style.setProperty('--hy', yPct + '%');
+      hlBack.style.setProperty('--rot', finalAngle + 'deg');
       hlBack.style.opacity = '1';
     }
   }
@@ -1006,9 +945,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     scene.classList.toggle('is-flipped', flipped);
     if (flipped) {
       setTimeout(function(){
-        if (!document.getElementById('info-wrap').classList.contains('open')) {
-          flipCta.classList.add('show');
-        }
+        flipCta.classList.add('show');
       }, 450);
     } else {
       flipCta.classList.remove('show');
@@ -1031,7 +968,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     var ry = (x - 0.5) * maxTilt;
 
     updateCardTransform(rx, ry, false);
-    updateHologramLight(x * 100, y * 100);
+    updateHologramLight(rx, ry);
   }
 
   // Mouse Events
@@ -1077,9 +1014,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   });
 
   // Touch Events (Phones / Tablets)
+  var touchStartTime = 0;
+
   scene.addEventListener('touchstart', function(e) {
     isInteracting = true;
     hasDragged = false;
+    touchStartTime = Date.now();
     var t = e.touches[0];
     startX = t.clientX;
     startY = t.clientY;
@@ -1091,13 +1031,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       var t = e.touches[0];
       var dx = Math.abs(t.clientX - startX);
       var dy = Math.abs(t.clientY - startY);
-      if (dx > 8 || dy > 8) hasDragged = true;
+      if (dx > 18 || dy > 18) hasDragged = true;
       handleMove(t.clientX, t.clientY);
     }
   }, { passive: true });
 
   scene.addEventListener('touchend', function(e) {
-    if (!hasDragged) {
+    var touchDuration = Date.now() - touchStartTime;
+    // Treat as a tap/flip if drag distance is low OR touch duration was very short (< 250ms)
+    if (!hasDragged || touchDuration < 250) {
       flipCard();
     }
     isInteracting = false;
@@ -1105,102 +1047,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       updateCardTransform(0, 0, true);
     }, 120);
   }, { passive: true });
-})();
-
-/* =============================================
-   CORNER INFO PANELS — expand below base
-   ============================================= */
-(function(){
-  var wrap  = document.getElementById('info-wrap');
-  var elCat = document.getElementById('info-cat');
-  var elTit = document.getElementById('info-title');
-  var elLst = document.getElementById('info-list');
-
-  var DATA = {
-    '1':{
-      cat:'Digital Asset',
-      title:'Your vehicle, <strong>fully documented</strong>',
-      items:[
-        'Factory baseline specs & original options archived',
-        'A singular, structured profile for every vehicle',
-        'Live data layered onto your precise configuration',
-        'Commuters, collectors & custom builds alike',
-        'Your most significant mobile asset — organized',
-        'The analog era of ownership is behind you',
-      ]
-    },
-    '2':{
-      cat:'Car Advisor',
-      title:'Intelligent guidance, <strong>on demand</strong>',
-      items:[
-        'Select your car card — Advisor knows exactly what you drive',
-        'No need to explain your vehicle. It already knows.',
-        'Front-end vibration, suspension wear, fluid concerns',
-        'Precise answers tied to your specific build & trim',
-        'Informed direction before you enter a service bay',
-        'Authoritative automotive counsel, always available',
-      ]
-    },
-    '3':{
-      cat:'Modification & Service Ledger',
-      title:'A complete <strong>vehicle record</strong>',
-      items:[
-        'Perpetual log of every modification & dyno result',
-        'Unbroken service timeline from acquisition forward',
-        'Part-level entries with dates, cost & provenance',
-        'Build progression documented from stock to finished',
-        'Verified history that substantiates resale value',
-        'The authoritative record of your vehicle\'s life',
-      ]
-    },
-    '4':{
-      cat:'Crews & Community',
-      title:'Proximity. <strong>Culture. Connection.</strong>',
-      items:[
-        'Organized crews built around geography & taste',
-        'Regional meets, drives & events surfaced to you',
-        'Share build documentation with your network',
-        'Visibility into what serious local builders run',
-        'A social layer native to automotive ownership',
-        'Community that understands what you drive',
-      ]
-    },
-  };
-
-  var active=null;
-
-  var flipCta=document.getElementById('flip-cta');
-
-  function show(num){
-    var d=DATA[num]; if(!d)return;
-    elCat.textContent=d.cat;
-    elTit.innerHTML=d.title;
-    elLst.innerHTML=d.items.map(function(i){return '<li>'+i+'</li>';}).join('');
-    wrap.classList.add('open');
-    if(active) document.getElementById('cn'+active).classList.remove('on');
-    active=num;
-    document.getElementById('cn'+num).classList.add('on');
-    /* always hide flip CTA when any corner panel opens */
-    flipCta.classList.remove('show');
-  }
-  function hide(){
-    wrap.classList.remove('open');
-    if(active){document.getElementById('cn'+active).classList.remove('on');active=null;}
-    /* restore flip CTA only if card is still flipped */
-    if(document.getElementById('scene').classList.contains('is-flipped')){
-      flipCta.classList.add('show');
-    }
-  }
-
-  document.getElementById('cn1').addEventListener('click',function(){active==='1'?hide():show('1');});
-  document.getElementById('cn2').addEventListener('click',function(){active==='2'?hide():show('2');});
-  document.getElementById('cn3').addEventListener('click',function(){active==='3'?hide():show('3');});
-  document.getElementById('cn4').addEventListener('click',function(){active==='4'?hide():show('4');});
-
-  /* click anywhere on stage bg to close */
-  document.querySelector('.stage').addEventListener('click',function(e){
-    if(!e.target.closest('.floater,.cn'))hide();
-  });
 })();
 
 /* =============================================
@@ -1266,6 +1112,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     var dy=ty0-e.changedTouches[0].clientY;
     if(dy>40) show(); else if(dy<-40) hide();
   },{passive:true});
+})();
 /* =============================================
    DYNAMIC QR CODE CAR CARD RESOLVER
    ============================================= */
@@ -1279,6 +1126,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       hp: 420, torque: 440, zeroToSixty: '3.9s',
       rank: 'ADVANCED', rankColor: '#eab308', ovr: 75,
       styleTag: 'OEM+',
+      role: 'Daily Driver',
       mods: ['APR Stage 2 ECU Tune', 'AWE Touring Exhaust System'],
       ownerName: 'Carlos Martinez',
       ownerAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
@@ -1292,6 +1140,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       hp: 545, torque: 360, zeroToSixty: '2.8s',
       rank: 'SIGNATURE', rankColor: '#a855f7', ovr: 98,
       styleTag: 'Track Spec',
+      role: 'Track Toy',
       mods: ['Akrapovič Titanium Exhaust', 'Eventuri Carbon Intake', 'BBS Magnesium Wheels'],
       ownerName: 'Seb R.',
       ownerAvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
@@ -1305,6 +1154,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       hp: 580, torque: 550, zeroToSixty: '3.4s',
       rank: 'ADVANCED', rankColor: '#eab308', ovr: 83,
       styleTag: 'Street',
+      role: 'Weekend Toy',
       mods: ['Bootmod3 Stage 2 Tune', 'VRSF Catless Downpipes'],
       ownerName: 'Marcus V.',
       ownerAvatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
@@ -1318,6 +1168,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       hp: 720, torque: 610, zeroToSixty: '2.4s',
       rank: 'SIGNATURE', rankColor: '#a855f7', ovr: 95,
       styleTag: 'Time Attack',
+      role: 'Time Attack spec',
       mods: ['HKS GT800 Turbo Kit', 'Tomei Titanium Midpipe'],
       ownerName: 'Kenji T.',
       ownerAvatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
@@ -1326,6 +1177,44 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   };
 
   function getCarByCode(code){
+    var searchParams = new URLSearchParams(window.location.search);
+    
+    // Check if query parameters are present to dynamically parse the scanned card
+    if (searchParams.get('make') || searchParams.get('model')) {
+      var modsString = searchParams.get('mods') || '';
+      var modsArray = modsString ? modsString.split(',') : [];
+      
+      var rankVal = (searchParams.get('rank') || 'CONTENDER').toUpperCase();
+      var rankColorVal = '#f97316';
+      var ovrVal = parseInt(searchParams.get('ovr') || '70', 10);
+      
+      if (rankVal === 'SIGNATURE') rankColorVal = '#D4A574';
+      else if (rankVal === 'CHAMPION') rankColorVal = '#10b981';
+      else if (rankVal === 'ELITE') rankColorVal = '#3b82f6';
+      else if (rankVal === 'ADVANCED') rankColorVal = '#eab308';
+      
+      return {
+        customName: searchParams.get('name') || 'Custom Build',
+        make: searchParams.get('make') || 'Unknown',
+        model: searchParams.get('model') || 'Unknown',
+        year: parseInt(searchParams.get('year') || '2026', 10),
+        trim: searchParams.get('trim') || 'Spec-R',
+        powertrain: searchParams.get('powertrain') || 'Combustion',
+        drivetrain: searchParams.get('drivetrain') || 'RWD',
+        engine: searchParams.get('engine') || 'High-Performance Engine',
+        photo: searchParams.get('photo') || 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80',
+        hp: parseInt(searchParams.get('hp') || '350', 10),
+        torque: parseInt(searchParams.get('tq') || '320', 10),
+        zeroToSixty: searchParams.get('zeroToSixty') || '4.0s',
+        rank: rankVal,
+        rankColor: rankColorVal,
+        ovr: ovrVal,
+        role: searchParams.get('role') || (ovrVal >= 85 ? 'Track Spec' : 'Daily Driver'),
+        mods: modsArray,
+        serial: searchParams.get('serial') || code || 'CB-UNKNOWN'
+      };
+    }
+
     if(!code) return CAR_DATABASE['quattro-beast'];
     var cleanCode = code.toLowerCase().trim();
     if(CAR_DATABASE[cleanCode]) return CAR_DATABASE[cleanCode];
@@ -1377,6 +1266,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       powertrain: 'Combustion', drivetrain: hash % 2 === 0 ? 'AWD' : 'RWD', engine: 'High-Performance Engine',
       photo: photo, hp: hp, torque: tq, zeroToSixty: zero,
       rank: rank, rankColor: rankColor, ovr: ovr,
+      role: hash % 2 === 0 ? 'Daily Driver' : 'Weekend Toy',
       mods: ['Catback Exhaust System', 'Stage 1 ECU Tune', 'Coilover Suspension'],
       serial: 'CB-' + cleanCode.slice(0,6).toUpperCase()
     };
@@ -1403,16 +1293,22 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   if (document.getElementById('blurred-bg-img')) {
     document.getElementById('blurred-bg-img').src = car.photo;
   }
-  document.getElementById('card-rank-badge').textContent = car.rank;
-  document.getElementById('card-rank-pill').style.backgroundColor = car.rankColor;
-  document.getElementById('card-rank-pill').style.boxShadow = '0 0 14px ' + car.rankColor + '70';
+  if (document.getElementById('card-rank-badge')) {
+    document.getElementById('card-rank-badge').textContent = car.rank;
+  }
+  if (document.getElementById('card-rank-pill')) {
+    document.getElementById('card-rank-pill').style.backgroundColor = car.rankColor;
+    document.getElementById('card-rank-pill').style.boxShadow = '0 0 14px ' + car.rankColor + '70';
+  }
   if (document.getElementById('card-rank-icon')) {
     document.getElementById('card-rank-icon').src = RANK_PNGS[car.rank] || 'ranks/rank_contender_native.png';
   }
   if (document.getElementById('card-ovr-val')) {
     document.getElementById('card-ovr-val').textContent = car.ovr;
   }
-  document.getElementById('card-custom-name').textContent = car.customName;
+  if (document.getElementById('card-custom-name')) {
+    document.getElementById('card-custom-name').textContent = car.customName;
+  }
   if (document.getElementById('card-owner-name')) {
     document.getElementById('card-owner-name').textContent = car.ownerName || 'Carlos Martinez';
   }
@@ -1422,6 +1318,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   document.getElementById('card-subtitle').textContent = car.year + ' ' + car.make + ' ' + car.model + (car.trim ? ' ' + car.trim : '');
   document.getElementById('card-hp').innerHTML = car.hp + ' <span class="unit">hp</span>';
   document.getElementById('card-mods-count').textContent = car.mods.length + ' mods';
+  document.getElementById('front-serial').textContent = car.serial ? car.serial.slice(-6).toUpperCase() : 'UNKNOWN';
 
   document.getElementById('back-custom-name').textContent = car.customName;
   document.getElementById('back-rank-badge').textContent = car.rank;
@@ -1429,16 +1326,47 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   document.getElementById('spec-make').textContent = car.make;
   document.getElementById('spec-model').textContent = car.model;
   document.getElementById('spec-year').textContent = car.year;
-  document.getElementById('spec-powertrain').textContent = car.powertrain;
+  document.getElementById('spec-trim').textContent = car.trim || 'N/A';
   document.getElementById('spec-drivetrain').textContent = car.drivetrain;
-  document.getElementById('spec-engine').textContent = car.engine;
+  document.getElementById('spec-engine').textContent = car.engineConfig || car.engine || 'N/A';
   document.getElementById('perf-hp').textContent = car.hp + ' hp';
   document.getElementById('perf-tq').textContent = car.torque + ' lb-ft';
-  document.getElementById('perf-zero').textContent = car.zeroToSixty;
-  document.getElementById('back-serial').textContent = 'SERIAL: ' + car.serial;
+  
+  if (car.role) {
+    document.getElementById('back-role-section').style.display = 'flex';
+    document.getElementById('spec-role').textContent = car.role;
+  } else {
+    document.getElementById('back-role-section').style.display = 'none';
+  }
+  
+  document.getElementById('back-serial').textContent = car.serial;
 
-  var modsHtml = car.mods.map(function(m){ return '<div class="back-mod-chip">• ' + m + '</div>'; }).join('');
-  document.getElementById('back-mods-list').innerHTML = modsHtml;
+  // Dynamic glow based on rank/score
+  function getRankGlowColor(rank, overall) {
+    if (rank === 'Signature') return '#D4A574';
+    if (overall >= 95) return '#10B981';
+    if (overall >= 85) return '#EF4444';
+    if (overall >= 70) return '#F59E0B';
+    if (overall >= 55) return '#8B5CF6';
+    if (overall >= 40) return '#3B82F6';
+    return '#6B7280';
+  }
+
+  function hexToRgba(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+  }
+
+  var cardEl = document.getElementById('card');
+  if (car.rank === 'Signature' || car.ovr >= 70) {
+    var glowColor = getRankGlowColor(car.rank, car.ovr);
+    var glowRgba = hexToRgba(glowColor, 0.28);
+    cardEl.style.boxShadow = '0 20px 60px rgba(0,0,0,0.95), 0 0 35px ' + glowRgba;
+  } else {
+    cardEl.style.boxShadow = '0 20px 60px rgba(0,0,0,0.95)';
+  }
 })();
 </script>
 </body>
