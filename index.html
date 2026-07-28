@@ -92,11 +92,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   pointer-events: none;
 }
 
-/* BLURRED PHOTO BACKFILL (EXACT CARCARD.TSX ARCHITECTURE) */
 .blurred-backfill {
   position: absolute; bottom: 0; left: 0; right: 0; top: 70%;
   overflow: hidden; border-radius: 0 0 22px 22px;
-  pointer-events: none; z-index: 2;
+  pointer-events: none; z-index: 1;
 }
 .blurred-img {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -1052,9 +1051,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   }, { passive: true });
 
   scene.addEventListener('touchend', function(e) {
-    var touchDuration = Date.now() - touchStartTime;
-    // Treat as a tap/flip if drag distance is low OR touch duration was very short (< 250ms)
-    if (!hasDragged || touchDuration < 250) {
+    // Only flip if they did not drag the card (tap gesture)
+    if (!hasDragged) {
       flipCard();
     }
     isInteracting = false;
