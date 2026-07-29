@@ -53,13 +53,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   width:100%;height:100%;position:relative;
   transform-style:preserve-3d;border-radius:22px;
   will-change:transform;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 16px rgba(var(--glow-rgb, 255,255,255), 0.65), 0 0 45px rgba(var(--glow-rgb, 255,255,255), 0.35);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 16px var(--card-glow-tight, rgba(255,255,255,0.65)), 0 0 45px var(--card-glow-wide, rgba(255,255,255,0.35));
   transition: box-shadow 0.25s ease;
 }
 
 .scene.is-interacting .card,
 .scene:active .card {
-  box-shadow: 0 26px 75px rgba(0,0,0,0.95), 0 0 28px rgba(var(--glow-rgb, 255,255,255), 0.90), 0 0 65px rgba(var(--glow-rgb, 255,255,255), 0.55) !important;
+  box-shadow: 0 26px 75px rgba(0,0,0,0.95), 0 0 28px var(--card-glow-tight-active, rgba(255,255,255,0.95)), 0 0 70px var(--card-glow-wide-active, rgba(255,255,255,0.65)) !important;
 }
 
 .face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
@@ -1917,8 +1917,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     return '#ffffff';
   }
 
-  function hexToRgbTuple(hex) {
-    if (!hex || !hex.startsWith('#')) return '255,255,255';
+  function hexToRgba(hex, alpha) {
+    if (!hex || !hex.startsWith('#')) return 'rgba(255,255,255,' + alpha + ')';
     var clean = hex.slice(1);
     if (clean.length === 3) {
       clean = clean[0]+clean[0] + clean[1]+clean[1] + clean[2]+clean[2];
@@ -1926,15 +1926,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     var r = parseInt(clean.slice(0, 2), 16) || 255;
     var g = parseInt(clean.slice(2, 4), 16) || 255;
     var b = parseInt(clean.slice(4, 6), 16) || 255;
-    return r + ',' + g + ',' + b;
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
   }
 
   var cardEl = document.getElementById('card');
-  if (car.rank === 'SIGNATURE' || car.rank === 'Signature' || car.ovr >= 70) {
-    var glowColor = getRankGlowColor(car.rank, car.ovr);
-    var rgbTuple = hexToRgbTuple(glowColor);
-    cardEl.style.setProperty('--glow-rgb', rgbTuple);
-  }
+  var glowColor = getRankGlowColor(car.rank, car.ovr);
+  
+  cardEl.style.setProperty('--card-glow-tight', hexToRgba(glowColor, 0.65));
+  cardEl.style.setProperty('--card-glow-wide', hexToRgba(glowColor, 0.35));
+  cardEl.style.setProperty('--card-glow-tight-active', hexToRgba(glowColor, 0.95));
+  cardEl.style.setProperty('--card-glow-wide-active', hexToRgba(glowColor, 0.65));
 
   // AUTOMATIC QR SCAN POP-UP ANIMATION & BANNER
   if (hasQrParams) {
