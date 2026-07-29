@@ -2327,8 +2327,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var qrPill = document.getElementById('qr-scanned-pill');
   if (infoBtn && demoBanner) {
     function handleInfoToggle(e) {
-      e.preventDefault();
-      e.stopPropagation();
+      if (e) e.stopPropagation();
       var opening = !demoBanner.classList.contains('show');
       demoBanner.classList.toggle('show');
       if (opening && qrPill) {
@@ -2336,7 +2335,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       }
     }
     infoBtn.addEventListener('click', handleInfoToggle);
-    infoBtn.addEventListener('touchstart', handleInfoToggle, { passive: false });
   }
 
   // Mobile scroll lock via touchmove prevention (prevents pull-to-refresh without breaking clicks)
