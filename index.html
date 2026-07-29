@@ -786,41 +786,38 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   transform: scale(1.05);
 }
 
-/* Demo Warning Banner */
+/* Demo Banner — liquid glass, desktop below base, mobile above card */
 .demo-banner {
-  position: absolute;
-  top: -45px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-10px);
-  z-index: 20;
-  display: flex;
+  display: none; /* hidden until .show toggled */
   align-items: center;
-  gap: 6px;
-  background: rgba(217, 150, 91, 0.15);
-  border: 1px solid rgba(217, 150, 91, 0.35);
+  gap: 8px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: 20px;
-  padding: 6px 14px;
-  color: #D9965B;
+  padding: 7px 16px;
+  color: rgba(255,255,255,0.82);
   font-family: system-ui, -apple-system, sans-serif;
-  font-weight: 700;
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  font-size: 0.63rem;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 20px rgba(217, 150, 91, 0.2);
-  opacity: 0;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.12);
   pointer-events: none;
-  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   white-space: nowrap;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.4s cubic-bezier(0.22,1,0.36,1), transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  /* Desktop: sit below the base steps, centered in floater flow */
+  margin-top: 18px;
+  align-self: center;
 }
 .demo-banner.show {
+  display: flex;
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
-}
-.qr-scanned-pill.show ~ .demo-banner {
-  top: -85px;
+  transform: translateY(0);
 }
 
 @media(max-width:480px){
@@ -829,6 +826,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     left: 16px;
     width: 36px;
     height: 36px;
+  }
+  /* Mobile: banner floats above the card inside scene context */
+  .demo-banner {
+    position: absolute;
+    top: -44px;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    margin-top: 0;
+    align-self: unset;
+    background: rgba(255,255,255,0.08);
+  }
+  .demo-banner.show {
+    transform: translateX(-50%) translateY(0);
   }
 }
 .scroll-hint-line{
@@ -860,6 +870,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
   /* card — parent floater is scaled on mobile to preserve 1:1 ratio and avoid WebKit 3D glitches */
   .floater{
+    position: relative;
     transform: scale(0.88);
     transform-origin: center center;
     margin-top: 32px;
@@ -1004,11 +1015,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         <span>QR CODE VERIFIED &bull; CAR CARD UNLOCKED</span>
       </div>
-      <!-- Demonstration Warning Banner -->
-      <div class="demo-banner" id="demo-banner">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        <span>Demonstration Card</span>
-      </div>
+
       <div class="card" id="card">
         <!-- CARD FRONT -->
         <div class="face front" id="card-front">
@@ -1112,6 +1119,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       <div class="step step-2"></div>
       <div class="step step-3"></div>
       <div class="floor-pool"></div>
+    </div>
+
+    <!-- Demo Banner: desktop = below base in flow; mobile = absolute above card via CSS -->
+    <div class="demo-banner" id="demo-banner">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      <span>Demonstration Card</span>
     </div>
 
   </div>
@@ -1398,49 +1411,42 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   function playFlipSound(toBack) {
     try {
       var ac = new (window.AudioContext || window.webkitAudioContext)();
+      var now = ac.currentTime;
+      var dur = 0.18;
 
-      // -- Soft sine tone layer (gentle pitch glide) --
-      var osc = ac.createOscillator();
-      var oscGain = ac.createGain();
-      osc.connect(oscGain);
-      oscGain.connect(ac.destination);
-      osc.type = 'sine';
-      var startFreq = toBack ? 420 : 320;
-      var endFreq   = toBack ? 200 : 440;
-      osc.frequency.setValueAtTime(startFreq, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(endFreq, ac.currentTime + 0.28);
-      oscGain.gain.setValueAtTime(0.0, ac.currentTime);
-      oscGain.gain.linearRampToValueAtTime(0.07, ac.currentTime + 0.04);
-      oscGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.28);
-      osc.start(ac.currentTime);
-      osc.stop(ac.currentTime + 0.28);
+      // -- Premium soft click: a very short sine transient --
+      var click = ac.createOscillator();
+      var clickGain = ac.createGain();
+      click.connect(clickGain);
+      clickGain.connect(ac.destination);
+      click.type = 'sine';
+      click.frequency.setValueAtTime(toBack ? 1100 : 900, now);
+      click.frequency.exponentialRampToValueAtTime(toBack ? 380 : 520, now + 0.04);
+      clickGain.gain.setValueAtTime(0.0, now);
+      clickGain.gain.linearRampToValueAtTime(0.09, now + 0.005); // near-instant attack
+      clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+      click.start(now);
+      click.stop(now + 0.09);
 
-      // -- White noise swoosh layer (filtered to mid-range for softness) --
-      var bufferSize = ac.sampleRate * 0.3;
-      var noiseBuffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
-      var data = noiseBuffer.getChannelData(0);
-      for (var i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1);
-      }
-      var noiseSource = ac.createBufferSource();
-      noiseSource.buffer = noiseBuffer;
+      // -- Ultra-soft noise breath (barely audible texture) --
+      var nBuf = ac.createBuffer(1, ac.sampleRate * dur, ac.sampleRate);
+      var nd = nBuf.getChannelData(0);
+      for (var i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+      var ns = ac.createBufferSource();
+      ns.buffer = nBuf;
+      var lp = ac.createBiquadFilter();
+      lp.type = 'lowpass';
+      lp.frequency.value = 2200;
+      lp.Q.value = 0.5;
+      var ng = ac.createGain();
+      ns.connect(lp); lp.connect(ng); ng.connect(ac.destination);
+      ng.gain.setValueAtTime(0.0, now);
+      ng.gain.linearRampToValueAtTime(0.022, now + 0.01);
+      ng.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      ns.start(now);
+      ns.stop(now + dur);
 
-      var bandpass = ac.createBiquadFilter();
-      bandpass.type = 'bandpass';
-      bandpass.frequency.setValueAtTime(toBack ? 1800 : 1200, ac.currentTime);
-      bandpass.Q.value = 0.8;
-
-      var noiseGain = ac.createGain();
-      noiseSource.connect(bandpass);
-      bandpass.connect(noiseGain);
-      noiseGain.connect(ac.destination);
-      noiseGain.gain.setValueAtTime(0.0, ac.currentTime);
-      noiseGain.gain.linearRampToValueAtTime(0.055, ac.currentTime + 0.06);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.28);
-      noiseSource.start(ac.currentTime);
-      noiseSource.stop(ac.currentTime + 0.3);
-
-      setTimeout(function(){ ac.close(); }, 500);
+      setTimeout(function(){ ac.close(); }, 400);
     } catch(e) {}
   }
 
