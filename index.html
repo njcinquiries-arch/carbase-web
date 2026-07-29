@@ -53,13 +53,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   width:100%;height:100%;position:relative;
   transform-style:preserve-3d;border-radius:22px;
   will-change:transform;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 16px var(--card-glow-tight, rgba(255,255,255,0.65)), 0 0 45px var(--card-glow-wide, rgba(255,255,255,0.35));
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.95),
+    0 0 15px var(--card-glow-tight, rgba(255,255,255,0.30)),
+    0 0 40px var(--card-glow-wide, rgba(255,255,255,0.15));
   transition: box-shadow 0.25s ease;
 }
 
 .scene.is-interacting .card,
 .scene:active .card {
-  box-shadow: 0 26px 75px rgba(0,0,0,0.95), 0 0 28px var(--card-glow-tight-active, rgba(255,255,255,0.95)), 0 0 70px var(--card-glow-wide-active, rgba(255,255,255,0.65)) !important;
+  box-shadow:
+    0 26px 75px rgba(0,0,0,0.95),
+    0 0 20px var(--card-glow-tight-active, rgba(255,255,255,0.45)),
+    0 0 60px var(--card-glow-wide-active, rgba(255,255,255,0.25)) !important;
 }
 
 .face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
@@ -2049,7 +2055,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       powertrain: 'Combustion', drivetrain: 'RWD', engine: '4.0L Flat-6',
       photo: 'gt3rs_monaco.jpg',
       hp: 545, torque: 360, zeroToSixty: '2.8s',
-      rank: 'ADVANCED', rankColor: '#eab308', ovr: 92,
+      rank: 'ADVANCED', rankColor: '#eab308', ovr: 96,
       styleTag: 'Track Spec',
       role: 'Track Toy',
       mods: ['Akrapovič Titanium Exhaust', 'Eventuri Carbon Intake', 'BBS Magnesium Wheels'],
@@ -2268,15 +2274,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   document.getElementById('back-serial').textContent = car.serial;
 
   // Dynamic glow based on rank/score (Polar White for Signature/top tier)
+  // Exact match to CarCard.tsx getRankGlowColor()
   function getRankGlowColor(rank, overall) {
     var r = (rank || '').toUpperCase();
-    if (r === 'SIGNATURE') return '#ffffff';
-    if (overall >= 95) return '#ffffff';
-    if (overall >= 85) return '#EF4444';
-    if (overall >= 70) return '#F59E0B';
-    if (overall >= 55) return '#8B5CF6';
-    if (overall >= 40) return '#3B82F6';
-    return '#ffffff';
+    if (r === 'SIGNATURE') return '#D4A574'; // warm gold — matches app
+    if (overall >= 95) return '#10B981';     // emerald green
+    if (overall >= 85) return '#EF4444';     // red
+    if (overall >= 70) return '#F59E0B';     // amber
+    if (overall >= 55) return '#8B5CF6';     // purple
+    if (overall >= 40) return '#3B82F6';     // blue
+    return '#6B7280';                        // grey
   }
 
   function hexToRgba(hex, alpha) {
@@ -2294,10 +2301,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var cardEl = document.getElementById('card');
   var glowColor = getRankGlowColor(car.rank, car.ovr);
   
-  cardEl.style.setProperty('--card-glow-tight', hexToRgba(glowColor, 0.65));
-  cardEl.style.setProperty('--card-glow-wide', hexToRgba(glowColor, 0.35));
-  cardEl.style.setProperty('--card-glow-tight-active', hexToRgba(glowColor, 0.95));
-  cardEl.style.setProperty('--card-glow-wide-active', hexToRgba(glowColor, 0.65));
+  // Opacity ratios matched to app: shadowOpacity 0.30 base, 0.45 active
+  cardEl.style.setProperty('--card-glow-tight', hexToRgba(glowColor, 0.30));
+  cardEl.style.setProperty('--card-glow-wide', hexToRgba(glowColor, 0.15));
+  cardEl.style.setProperty('--card-glow-tight-active', hexToRgba(glowColor, 0.45));
+  cardEl.style.setProperty('--card-glow-wide-active', hexToRgba(glowColor, 0.25));
 
   // AUTOMATIC QR SCAN POP-UP ANIMATION & BANNER
   if (hasQrParams) {
