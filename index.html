@@ -470,6 +470,98 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   z-index:10;
 }
 
+/* DESKTOP-ONLY EXTRA FEATURES (PAGE 2) */
+.p2-desktop-features {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 580px;
+  z-index: 10;
+}
+
+@media(min-width: 769px) {
+  .p2-desktop-features {
+    display: flex;
+  }
+}
+
+.p2-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.p2-stat-card {
+  background: rgba(20, 20, 26, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+}
+
+.p2-stat-card:hover {
+  border-color: rgba(217, 150, 91, 0.4);
+  box-shadow: 0 0 16px rgba(217, 150, 91, 0.2);
+  transform: translateY(-2px);
+}
+
+.p2-stat-val {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #D9965B;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.p2-stat-lbl {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.p2-status-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.p2-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
 @media(max-height:680px){
   .p2-container{height:340px;}
   #p2-canvas{max-height:260px;}
@@ -691,6 +783,29 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     <!-- Description -->
     <div class="holo-description" id="holo-desc">
       Car Advisor: Not a generic model, but a comprehensive AI car assistant. Trained over 8 months to act as your expert co-pilot, helping you navigate repairs, track valuations, cross-reference parts, and manage your overall car ownership experience.
+    </div>
+
+    <!-- Desktop-Only Tech Specs & Ecosystem Matrix -->
+    <div class="p2-desktop-features">
+      <div class="p2-stats-grid">
+        <div class="p2-stat-card">
+          <div class="p2-stat-val">8+ Mo</div>
+          <div class="p2-stat-lbl">Domain AI Fine-Tuning</div>
+        </div>
+        <div class="p2-stat-card">
+          <div class="p2-stat-val">92%</div>
+          <div class="p2-stat-lbl">US Vehicle Asset Coverage</div>
+        </div>
+        <div class="p2-stat-card">
+          <div class="p2-stat-val">100%</div>
+          <div class="p2-stat-lbl">Verified Mod Ledger</div>
+        </div>
+      </div>
+      <div class="p2-status-row">
+        <div class="p2-status-pill"><span class="status-dot"></span> NEURAL ENGINE ONLINE</div>
+        <div class="p2-status-pill"><span class="status-dot"></span> VIN DECODER INSTANT-SYNC</div>
+        <div class="p2-status-pill"><span class="status-dot"></span> HARDWARE QR PASS READY</div>
+      </div>
     </div>
   </div>
 </div>
