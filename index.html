@@ -70,10 +70,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   transform: translateZ(1px);
 }
 
-.scene.is-interacting .card,
-.scene:active .card {
-  box-shadow: 0 24px 70px rgba(0,0,0,0.95), 0 0 18px rgba(217, 150, 91, 0.38) !important;
-}
+
 
 .front-hl{position:absolute;inset:0;border-radius:22px;pointer-events:none;background:linear-gradient(var(--rot, 105deg), transparent 35%, rgba(255,255,255,0.002) 47%, rgba(255,255,255,0.008) 50%, rgba(255,255,255,0.002) 53%, transparent 65%);opacity:0;transition:opacity .15s; mix-blend-mode: screen;}
 .scene:hover .front-hl{opacity:0.15}
