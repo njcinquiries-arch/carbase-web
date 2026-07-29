@@ -425,6 +425,25 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 #p2-canvas:active{cursor:grabbing;}
 
+/* SPEC CONTROLS */
+.holo-nav{
+  display:flex;
+  gap:12px;
+  z-index:10;
+  margin-top:10px;
+}
+.holo-btn{
+  background:rgba(18,18,24,0.75);
+  border:1px solid rgba(217,150,91,0.20);
+  color:rgba(255,255,255,0.60);
+  padding:8px 20px;
+  border-radius:24px;
+  font-family:system-ui, -apple-system, sans-serif;
+  font-weight:600;font-size:.72rem;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
 }
@@ -451,83 +470,88 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   z-index:10;
 }
 
-/* LIQUID GLASS FEATURE CARD (PAGE 2) */
-.p2-tab-feature-card {
+/* DESKTOP-ONLY EXTRA FEATURES (PAGE 2) */
+.p2-desktop-features {
   display: none;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
-  margin-top: 18px;
+  margin-top: 20px;
   width: 100%;
-  max-width: 540px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  padding: 14px 22px;
-  backdrop-filter: blur(20px) saturate(190%);
-  -webkit-backdrop-filter: blur(20px) saturate(190%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 12px 40px rgba(0,0,0,0.5);
+  max-width: 580px;
   z-index: 10;
-  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  transform: scale(0.95) translateY(6px);
-  opacity: 0;
-}
-
-.p2-tab-feature-card.pop-in {
-  transform: scale(1) translateY(0);
-  opacity: 1;
 }
 
 @media(min-width: 769px) {
-  .p2-tab-feature-card {
+  .p2-desktop-features {
     display: flex;
   }
 }
 
-.p2-feature-stat {
-  display: flex;
-  align-items: center;
+.p2-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+  width: 100%;
 }
 
-.p2-feature-val {
+.p2-stat-card {
+  background: rgba(20, 20, 26, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 12px 14px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+}
+
+.p2-stat-card:hover {
+  border-color: rgba(217, 150, 91, 0.4);
+  box-shadow: 0 0 16px rgba(217, 150, 91, 0.2);
+  transform: translateY(-2px);
+}
+
+.p2-stat-val {
   font-family: 'Exo 2', sans-serif;
   font-weight: 800;
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   color: #D9965B;
   letter-spacing: 0.04em;
-  white-space: nowrap;
+  margin-bottom: 2px;
 }
 
-.p2-feature-lbl {
+.p2-stat-lbl {
   font-family: system-ui, -apple-system, sans-serif;
   font-weight: 500;
-  font-size: 0.63rem;
-  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.45);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  line-height: 1.35;
-  max-width: 190px;
 }
 
-.p2-feature-divider {
-  width: 1px;
-  height: 26px;
-  background: rgba(255, 255, 255, 0.12);
+.p2-status-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.p2-feature-status {
+.p2-status-pill {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 5px 12px;
   font-family: system-ui, -apple-system, sans-serif;
   font-weight: 700;
   font-size: 0.58rem;
-  color: rgba(255, 255, 255, 0.75);
-  letter-spacing: 0.07em;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .status-dot {
@@ -749,28 +773,38 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     <!-- 3D Holographic Canvas -->
     <canvas id="p2-canvas"></canvas>
     
-    <!-- Holographic Nav (Liquid Glass Pills) -->
+    <!-- Holographic Nav -->
     <div class="holo-nav">
-      <button class="holo-btn active" data-shape="deck">3D Cards</button>
-      <button class="holo-btn" data-shape="globe">AI Advisor</button>
-      <button class="holo-btn" data-shape="dna">QR Hardware</button>
+      <button class="holo-btn active" data-shape="globe">Car Advisor</button>
+      <button class="holo-btn" data-shape="deck">Discovery Deck</button>
+      <button class="holo-btn" data-shape="dna">Mod Timeline</button>
     </div>
 
     <!-- Description -->
     <div class="holo-description" id="holo-desc">
-      Digital Vehicle Cards: Interactive 3D cards establishing digital identities for physical vehicles. 92% of US households own cars—valued at $25,000+—yet lack a structured digital profile.
+      Car Advisor: Not a generic model, but a comprehensive AI car assistant. Trained over 8 months to act as your expert co-pilot, helping you navigate repairs, track valuations, cross-reference parts, and manage your overall car ownership experience.
     </div>
 
-    <!-- Liquid Glass Feature Card (pops up in accordance to active tab) -->
-    <div class="p2-tab-feature-card pop-in" id="p2-tab-feature">
-      <div class="p2-feature-stat">
-        <div class="p2-feature-val" id="p2-feature-val">92%</div>
-        <div class="p2-feature-lbl" id="p2-feature-lbl">Undigitalized Physical Vehicles</div>
+    <!-- Desktop-Only Tech Specs & Ecosystem Matrix -->
+    <div class="p2-desktop-features">
+      <div class="p2-stats-grid">
+        <div class="p2-stat-card">
+          <div class="p2-stat-val">8+ Mo</div>
+          <div class="p2-stat-lbl">Domain AI Fine-Tuning</div>
+        </div>
+        <div class="p2-stat-card">
+          <div class="p2-stat-val">92%</div>
+          <div class="p2-stat-lbl">US Vehicle Asset Coverage</div>
+        </div>
+        <div class="p2-stat-card">
+          <div class="p2-stat-val">100%</div>
+          <div class="p2-stat-lbl">Verified Mod Ledger</div>
+        </div>
       </div>
-      <div class="p2-feature-divider"></div>
-      <div class="p2-feature-status">
-        <span class="status-dot"></span>
-        <span id="p2-status-text">DYNAMIC 3D CARD ENGINE ACTIVE</span>
+      <div class="p2-status-row">
+        <div class="p2-status-pill"><span class="status-dot"></span> NEURAL ENGINE ONLINE</div>
+        <div class="p2-status-pill"><span class="status-dot"></span> VIN DECODER INSTANT-SYNC</div>
+        <div class="p2-status-pill"><span class="status-dot"></span> HARDWARE QR PASS READY</div>
       </div>
     </div>
   </div>
@@ -1424,37 +1458,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
    ============================================= */
 (function(){
   var page2 = document.getElementById('page2');
-  // Tab Button Click Listeners
-  document.querySelectorAll('.holo-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.holo-btn').forEach(function(b){ b.classList.remove('active'); });
-      this.classList.add('active');
-      var shapeType = this.getAttribute('data-shape');
-      shape = shapeType;
-      generateShape(shape);
-
-      var descEl = document.getElementById('holo-desc');
-      if (descEl && descTexts[shapeType]) {
-        descEl.textContent = descTexts[shapeType];
-      }
-
-      // Update Desktop Dynamic Feature Card with 3D Pop-in Animation
-      var tabCard = document.getElementById('p2-tab-feature');
-      var valEl = document.getElementById('p2-feature-val');
-      var lblEl = document.getElementById('p2-feature-lbl');
-      var statusEl = document.getElementById('p2-status-text');
-
-      if (tabCard && tabFeatureData[shapeType]) {
-        tabCard.classList.remove('pop-in');
-        setTimeout(function() {
-          if (valEl) valEl.textContent = tabFeatureData[shapeType].val;
-          if (lblEl) lblEl.textContent = tabFeatureData[shapeType].lbl;
-          if (statusEl) statusEl.textContent = tabFeatureData[shapeType].status;
-          tabCard.classList.add('pop-in');
-        }, 120);
-      }
-    });
-  });
   var cv = document.getElementById('p2-canvas');
   var ctx = cv.getContext('2d');
   var desc = document.getElementById('holo-desc');
@@ -1463,30 +1466,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var W = 0, H = 0;
   var particles = [];
   var count = 350;
-  var shape = 'deck';
+  var shape = 'globe';
 
   var descTexts = {
-    deck: 'Digital Vehicle Cards: Interactive 3D cards establishing digital identities for physical vehicles. 92% of US households own cars—valued at $25,000+—yet lack a structured digital profile.',
-    globe: 'AI Car Assistant: Specialized automotive AI trained over 8 months on parts databases, repair manuals, and mod specs to act as your expert co-pilot.',
-    dna: 'QR Hardware & Mod Ledger: Assign custom QR stickers to physical vehicles. Scanning links directly to carbaseapp.com with verified mod timelines.'
-  };
-
-  var tabFeatureData = {
-    deck: {
-      val: '92%',
-      lbl: 'Undigitalized Physical Vehicles',
-      status: 'DYNAMIC 3D CARD ENGINE ACTIVE'
-    },
-    globe: {
-      val: '8+ Mo',
-      lbl: 'Automotive AI Fine-Tuning',
-      status: 'CAR ADVISOR NEURAL CO-PILOT'
-    },
-    dna: {
-      val: '100%',
-      lbl: 'Hardware QR Verification',
-      status: 'PRINTIFY STICKER SYNC ACTIVE'
-    }
+    globe: 'Car Advisor: Not a generic model, but a comprehensive AI car assistant. Trained over 8 months to act as your expert co-pilot, helping you navigate repairs, track valuations, cross-reference parts, and manage your overall car ownership experience.',
+    deck: 'Discovery Deck: Mapping the physical showroom. While 92% of American households own vehicles—valued at $25,000+ on average—this critical class of assets has historically lacked a structured digital footprint. The Discovery Deck bridges this gap, establishing a unified modern registry for custom builds.',
+    dna: 'Mod Timeline: The digital ledger for your build. Log parts, capture installation dates, and track performance changes chronologically to maintain a verified history of your vehicle\'s evolution.'
   };
 
   // Initialize Particles with coordinates
