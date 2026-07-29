@@ -1062,7 +1062,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     lastFlipTime = now;
 
     flipped = !flipped;
+    window.isCardFlippedState = flipped; // Global flag for scroll locking
     playFlipSound(flipped);
+
+    if (flipped) {
+      targetRx = 0;
+      targetRy = 0;
+    }
 
     // Spring scale recoil sequence matching CarCard.tsx (scale 0.94 -> spring scale 1.0 with overshoot)
     card.style.transition = 'transform 0.10s cubic-bezier(0.25, 1, 0.5, 1)';
@@ -1198,7 +1204,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
   // Gyroscope Device Orientation tilt listener
   function handleOrientation(event) {
-    if (isInteracting) return; // Touch drag takes priority
+    if (isInteracting || flipped) return; // Disable orientation tilt when touching or card is flipped
     if (event.gamma === null && event.beta === null) return;
 
     var gamma = event.gamma || 0; // roll: left/right tilt (-90 to 90)
@@ -1206,10 +1212,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
     // Normal phone holding pitch is roughly 60 degrees. Adjust offsets relative to it.
     var basePitch = 60;
-    var rx = (beta - basePitch) * 1.2; // Increased gyro sensitivity from 0.85 to 1.2
-    var ry = gamma * 1.2;              // Increased gyro sensitivity from 0.85 to 1.2
+    var rx = (beta - basePitch) * 1.2;
+    var ry = gamma * 1.2;
 
-    // Clamp gyro rotations to a max tilt of 30 degrees (increased from 22)
+    // Clamp gyro rotations to a max tilt of 30 degrees
     var maxGyro = 30;
     targetRx = Math.max(-maxGyro, Math.min(maxGyro, rx));
     targetRy = Math.max(-maxGyro, Math.min(maxGyro, ry));
@@ -1579,15 +1585,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
   /* wheel */
   window.addEventListener('wheel',function(e){
+    if (window.isCardFlippedState) return; // Lock page scroll if card is flipped
     if(e.deltaY>30) showPage2(); else if(e.deltaY<-30) hidePage2();
   },{passive:true});
 
   /* touch swipe */
   var ty0=0;
-  window.addEventListener('touchstart',function(e){ty0=e.touches[0].clientY;},{passive:true});
+  var touchStartedOnScene = false;
+
+  window.addEventListener('touchstart',function(e){
+    ty0=e.touches[0].clientY;
+    touchStartedOnScene = !!(e.target && e.target.closest && e.target.closest('#scene'));
+  },{passive:true});
+
   window.addEventListener('touchend',function(e){
+    if (window.isCardFlippedState || touchStartedOnScene) return; // Lock page swipe if card is flipped or touch started on card
     var dy=ty0-e.changedTouches[0].clientY;
-    if(dy>40) showPage2(); else if(dy<-40) hidePage2();
+    if(dy>60) showPage2(); else if(dy<-60) hidePage2();
   },{passive:true});
 })();
 /* =============================================
