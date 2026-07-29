@@ -1333,13 +1333,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     window.isCardFlippedState = flipped; // Global flag for scroll locking
     playFlipSound(flipped);
 
-    var appStoreBtn = document.getElementById('app-store-btn-bottom');
+    var downloadContainer = document.getElementById('download-container-bottom');
     if (flipped) {
       targetRx = 0;
       targetRy = 0;
-      if (appStoreBtn) appStoreBtn.classList.add('hidden');
+      if (downloadContainer) downloadContainer.classList.add('hidden');
     } else {
-      if (appStoreBtn) appStoreBtn.classList.remove('hidden');
+      if (downloadContainer) downloadContainer.classList.remove('hidden');
     }
 
     // Spring scale recoil sequence matching CarCard.tsx (scale 0.94 -> spring scale 1.0 with overshoot)
