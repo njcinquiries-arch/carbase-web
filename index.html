@@ -1398,15 +1398,49 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   function playFlipSound(toBack) {
     try {
       var ac = new (window.AudioContext || window.webkitAudioContext)();
-      var o = ac.createOscillator(), g = ac.createGain();
-      o.connect(g); g.connect(ac.destination);
-      o.type = 'sine';
-      o.frequency.setValueAtTime(toBack ? 680 : 480, ac.currentTime);
-      o.frequency.exponentialRampToValueAtTime(toBack ? 160 : 260, ac.currentTime + 0.12);
-      g.gain.setValueAtTime(0.12, ac.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.12);
-      o.start(ac.currentTime); o.stop(ac.currentTime + 0.12);
-      setTimeout(function(){ ac.close(); }, 300);
+
+      // -- Soft sine tone layer (gentle pitch glide) --
+      var osc = ac.createOscillator();
+      var oscGain = ac.createGain();
+      osc.connect(oscGain);
+      oscGain.connect(ac.destination);
+      osc.type = 'sine';
+      var startFreq = toBack ? 420 : 320;
+      var endFreq   = toBack ? 200 : 440;
+      osc.frequency.setValueAtTime(startFreq, ac.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(endFreq, ac.currentTime + 0.28);
+      oscGain.gain.setValueAtTime(0.0, ac.currentTime);
+      oscGain.gain.linearRampToValueAtTime(0.07, ac.currentTime + 0.04);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.28);
+      osc.start(ac.currentTime);
+      osc.stop(ac.currentTime + 0.28);
+
+      // -- White noise swoosh layer (filtered to mid-range for softness) --
+      var bufferSize = ac.sampleRate * 0.3;
+      var noiseBuffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+      var data = noiseBuffer.getChannelData(0);
+      for (var i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1);
+      }
+      var noiseSource = ac.createBufferSource();
+      noiseSource.buffer = noiseBuffer;
+
+      var bandpass = ac.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.setValueAtTime(toBack ? 1800 : 1200, ac.currentTime);
+      bandpass.Q.value = 0.8;
+
+      var noiseGain = ac.createGain();
+      noiseSource.connect(bandpass);
+      bandpass.connect(noiseGain);
+      noiseGain.connect(ac.destination);
+      noiseGain.gain.setValueAtTime(0.0, ac.currentTime);
+      noiseGain.gain.linearRampToValueAtTime(0.055, ac.currentTime + 0.06);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.28);
+      noiseSource.start(ac.currentTime);
+      noiseSource.stop(ac.currentTime + 0.3);
+
+      setTimeout(function(){ ac.close(); }, 500);
     } catch(e) {}
   }
 
