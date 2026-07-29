@@ -19,7 +19,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
 /* FLOATER — card bobs, base stays planted */
 .floater{display:flex;flex-direction:column;align-items:center;position:relative;}
+/* Desktop: subtle 5px bob; Mobile: fuller 14px bob */
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes bob-desktop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media(hover:hover) and (pointer:fine){
+  .scene{animation:bob-desktop 9s ease-in-out infinite;}
+}
 
 /* CARD */
 .scene{width:290px;height:406px;perspective:1100px;cursor:pointer!important;user-select:none;-webkit-user-select:none;touch-action:none;}
@@ -1487,7 +1492,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     x = Math.max(0, Math.min(1, x));
     y = Math.max(0, Math.min(1, y));
 
-    var maxTilt = 30; // Increased max tilt from 18 to 30 degrees
+    // Desktop: reduced tilt for subtlety. Mobile/touch: full 30deg range.
+    var maxTilt = window.matchMedia('(hover:hover) and (pointer:fine)').matches ? 12 : 30;
     targetRx = -(y - 0.5) * maxTilt;
     targetRy = (x - 0.5) * maxTilt;
   }
