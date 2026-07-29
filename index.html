@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;600;700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#0d0d12;touch-action:none;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0d0d12;}
 body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png') center/cover no-repeat;}
 #bg{position:fixed;inset:0;z-index:1;pointer-events:none}
 #wcur{display:none!important;}
@@ -2361,23 +2361,21 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }
   }
 
-  // TOGGLE DEMO WARNING BANNER — one popup at a time
+  // TOGGLE DEMO WARNING BANNER — one popup at a time (handles touch & click)
   var infoBtn = document.getElementById('info-btn');
   var demoBanner = document.getElementById('demo-banner');
   var dlContainer = document.getElementById('download-container-bottom');
   var qrPill = document.getElementById('qr-scanned-pill');
   var isDesktop = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
   if (infoBtn && demoBanner) {
-    infoBtn.addEventListener('click', function(e) {
+    function handleInfoToggle(e) {
+      e.preventDefault();
       e.stopPropagation();
       var opening = !demoBanner.classList.contains('show');
       demoBanner.classList.toggle('show');
       
       if (opening) {
-        // Hide other overlapping popups
         if (qrPill) qrPill.classList.remove('show');
-        
-        // Desktop only: hide download buttons when banner is shown
         if (isDesktop && dlContainer) {
           dlContainer.classList.add('hidden');
         }
@@ -2386,8 +2384,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
           dlContainer.classList.remove('hidden');
         }
       }
-    });
+    }
+    infoBtn.addEventListener('click', handleInfoToggle);
+    infoBtn.addEventListener('touchstart', handleInfoToggle, { passive: false });
   }
+
+  // Mobile scroll lock via touchmove prevention (prevents pull-to-refresh without breaking clicks)
+  window.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+  }, { passive: false });
 })();
 </script>
 </body>
