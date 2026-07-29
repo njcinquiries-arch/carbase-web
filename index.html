@@ -425,25 +425,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 #p2-canvas:active{cursor:grabbing;}
 
-/* SPEC CONTROLS */
-.holo-nav{
-  display:flex;
-  gap:12px;
-  z-index:10;
-  margin-top:10px;
-}
-.holo-btn{
-  background:rgba(18,18,24,0.75);
-  border:1px solid rgba(217,150,91,0.20);
-  color:rgba(255,255,255,0.60);
-  padding:8px 20px;
-  border-radius:24px;
-  font-family:system-ui, -apple-system, sans-serif;
-  font-weight:600;font-size:.72rem;
-  letter-spacing:0.06em;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
 }
@@ -470,7 +451,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   z-index:10;
 }
 
-/* DESKTOP DYNAMIC FEATURE CARD (PAGE 2) */
+/* LIQUID GLASS FEATURE CARD (PAGE 2) */
 .p2-tab-feature-card {
   display: none;
   flex-direction: row;
@@ -480,13 +461,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   margin-top: 18px;
   width: 100%;
   max-width: 540px;
-  background: rgba(20, 20, 26, 0.75);
-  border: 1px solid rgba(217, 150, 91, 0.25);
-  border-radius: 16px;
-  padding: 12px 20px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 14px 22px;
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 12px 40px rgba(0,0,0,0.5);
   z-index: 10;
   transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   transform: scale(0.95) translateY(6px);
@@ -768,28 +749,28 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     <!-- 3D Holographic Canvas -->
     <canvas id="p2-canvas"></canvas>
     
-    <!-- Holographic Nav -->
+    <!-- Holographic Nav (Liquid Glass Pills) -->
     <div class="holo-nav">
-      <button class="holo-btn active" data-shape="globe">Car Advisor</button>
-      <button class="holo-btn" data-shape="deck">Discovery Deck</button>
-      <button class="holo-btn" data-shape="dna">Mod Timeline</button>
+      <button class="holo-btn active" data-shape="deck">3D Cards</button>
+      <button class="holo-btn" data-shape="globe">AI Advisor</button>
+      <button class="holo-btn" data-shape="dna">QR Hardware</button>
     </div>
 
     <!-- Description -->
     <div class="holo-description" id="holo-desc">
-      Car Advisor: Not a generic model, but a comprehensive AI car assistant. Trained over 8 months to act as your expert co-pilot, helping you navigate repairs, track valuations, cross-reference parts, and manage your overall car ownership experience.
+      Digital Vehicle Cards: Interactive 3D cards establishing digital identities for physical vehicles. 92% of US households own cars—valued at $25,000+—yet lack a structured digital profile.
     </div>
 
-    <!-- Desktop Dynamic Hologram Feature Card (pops up in accordance to active tab) -->
+    <!-- Liquid Glass Feature Card (pops up in accordance to active tab) -->
     <div class="p2-tab-feature-card pop-in" id="p2-tab-feature">
       <div class="p2-feature-stat">
-        <div class="p2-feature-val" id="p2-feature-val">8+ Mo</div>
-        <div class="p2-feature-lbl" id="p2-feature-lbl">Neural Model Architecture Fine-Tuning</div>
+        <div class="p2-feature-val" id="p2-feature-val">92%</div>
+        <div class="p2-feature-lbl" id="p2-feature-lbl">Undigitalized Physical Vehicles</div>
       </div>
       <div class="p2-feature-divider"></div>
       <div class="p2-feature-status">
         <span class="status-dot"></span>
-        <span id="p2-status-text">AUTOMOTIVE REASONING ENGINE ONLINE</span>
+        <span id="p2-status-text">DYNAMIC 3D CARD ENGINE ACTIVE</span>
       </div>
     </div>
   </div>
@@ -1482,29 +1463,29 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var W = 0, H = 0;
   var particles = [];
   var count = 350;
-  var shape = 'globe';
+  var shape = 'deck';
 
   var descTexts = {
-    globe: 'Car Advisor: Not a generic model, but a comprehensive AI car assistant. Trained over 8 months to act as your expert co-pilot, helping you navigate repairs, track valuations, cross-reference parts, and manage your overall car ownership experience.',
-    deck: 'Discovery Deck: Mapping the physical showroom. While 92% of American households own vehicles—valued at $25,000+ on average—this critical class of assets has historically lacked a structured digital footprint. The Discovery Deck bridges this gap, establishing a unified modern registry for custom builds.',
-    dna: 'Mod Timeline: The digital ledger for your build. Log parts, capture installation dates, and track performance changes chronologically to maintain a verified history of your vehicle\'s evolution.'
+    deck: 'Digital Vehicle Cards: Interactive 3D cards establishing digital identities for physical vehicles. 92% of US households own cars—valued at $25,000+—yet lack a structured digital profile.',
+    globe: 'AI Car Assistant: Specialized automotive AI trained over 8 months on parts databases, repair manuals, and mod specs to act as your expert co-pilot.',
+    dna: 'QR Hardware & Mod Ledger: Assign custom QR stickers to physical vehicles. Scanning links directly to carbaseapp.com with verified mod timelines.'
   };
 
   var tabFeatureData = {
-    globe: {
-      val: '8+ Mo',
-      lbl: 'Neural Model Architecture Fine-Tuning',
-      status: 'AUTOMOTIVE REASONING ENGINE ONLINE'
-    },
     deck: {
       val: '92%',
-      lbl: 'Undigitalized Physical Asset Index',
-      status: 'VIN DECODER & REGISTRY SYNC'
+      lbl: 'Undigitalized Physical Vehicles',
+      status: 'DYNAMIC 3D CARD ENGINE ACTIVE'
+    },
+    globe: {
+      val: '8+ Mo',
+      lbl: 'Automotive AI Fine-Tuning',
+      status: 'CAR ADVISOR NEURAL CO-PILOT'
     },
     dna: {
       val: '100%',
-      lbl: 'Chronological Modification Provenance',
-      status: 'IMMUTABLE HARDWARE PASSPORT READY'
+      lbl: 'Hardware QR Verification',
+      status: 'PRINTIFY STICKER SYNC ACTIVE'
     }
   };
 
