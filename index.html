@@ -489,7 +489,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
   box-shadow:0 8px 24px rgba(0,0,0,0.5);
-  transition:all .25s ease;
+  transition:all .3s ease;
+}
+.app-store-btn-bottom.hidden{
+  opacity:0 !important;
+  pointer-events:none !important;
+  transform:translateY(10px) !important;
 }
 .app-store-btn-bottom:hover{
   border-color:#D9965B;
@@ -1065,9 +1070,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     window.isCardFlippedState = flipped; // Global flag for scroll locking
     playFlipSound(flipped);
 
+    var appStoreBtn = document.getElementById('app-store-btn-bottom');
     if (flipped) {
       targetRx = 0;
       targetRy = 0;
+      if (appStoreBtn) appStoreBtn.classList.add('hidden');
+    } else {
+      if (appStoreBtn) appStoreBtn.classList.remove('hidden');
     }
 
     // Spring scale recoil sequence matching CarCard.tsx (scale 0.94 -> spring scale 1.0 with overshoot)
