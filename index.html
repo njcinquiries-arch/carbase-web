@@ -17,15 +17,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 
 /* FLOATER — card bobs, base stays planted */
 .floater{display:flex;flex-direction:column;align-items:center;position:relative;}
-/* Mobile: gentle, slow 11s bob; floats up (-7px) more than down (+2px) */
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+/* Mobile: ultra-gentle elevated hover (stays between -6px and -12px elevated, never dips low) */
+@keyframes bob{0%,100%{transform:translateY(-6px)}50%{transform:translateY(-12px)}}
 @keyframes bob-desktop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media(hover:hover) and (pointer:fine){
   .scene{animation:bob-desktop 9s ease-in-out infinite;}
 }
 
 /* CARD */
-.scene{width:290px;height:406px;perspective:1100px;cursor:pointer!important;user-select:none;-webkit-user-select:none;touch-action:none;animation:bob 11s ease-in-out infinite;}
+.scene{width:290px;height:406px;perspective:1100px;cursor:pointer!important;user-select:none;-webkit-user-select:none;touch-action:none;animation:bob 14s ease-in-out infinite;}
 .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;border-radius:22px;will-change:transform;-webkit-transform:translateZ(0);}
 .face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
 .front{background:#1c1c1f;border:1px solid rgba(255,255,255,0.07);box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 50px 130px rgba(0,0,0,0.95);}
@@ -1445,19 +1445,34 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   function playFlipSound() {
     try {
       var ac = new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
       var now = ac.currentTime;
-      // Short low-frequency sine burst — like a quiet mouse click
-      var o = ac.createOscillator();
-      var g = ac.createGain();
-      o.connect(g); g.connect(ac.destination);
-      o.type = 'sine';
-      o.frequency.setValueAtTime(180, now);
-      o.frequency.exponentialRampToValueAtTime(60, now + 0.035);
-      g.gain.setValueAtTime(0.0, now);
-      g.gain.linearRampToValueAtTime(0.06, now + 0.003);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
-      o.start(now); o.stop(now + 0.035);
-      setTimeout(function(){ ac.close(); }, 150);
+
+      // Low frequency tactile punch
+      var o1 = ac.createOscillator();
+      var g1 = ac.createGain();
+      o1.connect(g1); g1.connect(ac.destination);
+      o1.type = 'triangle';
+      o1.frequency.setValueAtTime(320, now);
+      o1.frequency.exponentialRampToValueAtTime(70, now + 0.09);
+      g1.gain.setValueAtTime(0.0, now);
+      g1.gain.linearRampToValueAtTime(0.35, now + 0.005);
+      g1.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+      o1.start(now); o1.stop(now + 0.09);
+
+      // High frequency mechanical snap
+      var o2 = ac.createOscillator();
+      var g2 = ac.createGain();
+      o2.connect(g2); g2.connect(ac.destination);
+      o2.type = 'sine';
+      o2.frequency.setValueAtTime(850, now);
+      o2.frequency.exponentialRampToValueAtTime(150, now + 0.04);
+      g2.gain.setValueAtTime(0.0, now);
+      g2.gain.linearRampToValueAtTime(0.22, now + 0.002);
+      g2.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      o2.start(now); o2.stop(now + 0.04);
+
+      setTimeout(function(){ ac.close(); }, 250);
     } catch(e) {}
   }
 
