@@ -780,7 +780,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   position: fixed;
   top: 24px;
   left: 24px;
-  z-index: 50;
+  z-index: 1000;
   background: rgba(20,20,26,0.82);
   border: 1px solid rgba(217,150,91,0.22);
   border-radius: 50%;
@@ -1448,7 +1448,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       if (ac.state === 'suspended') ac.resume();
       var now = ac.currentTime;
 
-      // Low frequency tactile punch
+      // Low frequency tactile punch (balanced level)
       var o1 = ac.createOscillator();
       var g1 = ac.createGain();
       o1.connect(g1); g1.connect(ac.destination);
@@ -1456,11 +1456,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       o1.frequency.setValueAtTime(320, now);
       o1.frequency.exponentialRampToValueAtTime(70, now + 0.09);
       g1.gain.setValueAtTime(0.0, now);
-      g1.gain.linearRampToValueAtTime(0.35, now + 0.005);
+      g1.gain.linearRampToValueAtTime(0.12, now + 0.005);
       g1.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
       o1.start(now); o1.stop(now + 0.09);
 
-      // High frequency mechanical snap
+      // High frequency mechanical snap (balanced level)
       var o2 = ac.createOscillator();
       var g2 = ac.createGain();
       o2.connect(g2); g2.connect(ac.destination);
@@ -1468,7 +1468,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       o2.frequency.setValueAtTime(850, now);
       o2.frequency.exponentialRampToValueAtTime(150, now + 0.04);
       g2.gain.setValueAtTime(0.0, now);
-      g2.gain.linearRampToValueAtTime(0.22, now + 0.002);
+      g2.gain.linearRampToValueAtTime(0.08, now + 0.002);
       g2.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
       o2.start(now); o2.stop(now + 0.04);
 
