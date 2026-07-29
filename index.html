@@ -1030,12 +1030,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   </div>
 </div>
 
-<div class="stage">
-  <!-- Info / Demonstration Button -->
-  <button class="info-btn" id="info-btn" title="Information">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-  </button>
+<!-- Info / Demonstration Button (Direct child of body for global top-layer interactivity) -->
+<button class="info-btn" id="info-btn" title="Information" onclick="toggleDemoBanner(event)">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+</button>
 
+<div class="stage">
   <div class="brand"><span>Car</span>base</div>
   <div class="brand-rule"></div>
   <div class="floater">
@@ -2337,19 +2337,26 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   }
 
   // TOGGLE DEMO WARNING BANNER — strictly toggle liquid glass Demonstration Card
-  var infoBtn = document.getElementById('info-btn');
-  var demoBanner = document.getElementById('demo-banner');
-  var qrPill = document.getElementById('qr-scanned-pill');
-  if (infoBtn && demoBanner) {
-    function handleInfoToggle(e) {
-      if (e) e.stopPropagation();
+  window.toggleDemoBanner = function(e) {
+    if (e) {
+      if (e.stopPropagation) e.stopPropagation();
+      if (e.preventDefault && e.type === 'touchstart') e.preventDefault();
+    }
+    var demoBanner = document.getElementById('demo-banner');
+    var qrPill = document.getElementById('qr-scanned-pill');
+    if (demoBanner) {
       var opening = !demoBanner.classList.contains('show');
       demoBanner.classList.toggle('show');
       if (opening && qrPill) {
         qrPill.classList.remove('show');
       }
     }
-    infoBtn.addEventListener('click', handleInfoToggle);
+  };
+
+  var infoBtn = document.getElementById('info-btn');
+  if (infoBtn) {
+    infoBtn.addEventListener('click', window.toggleDemoBanner);
+    infoBtn.addEventListener('touchstart', window.toggleDemoBanner, { passive: false });
   }
 
   // Mobile scroll lock via touchmove prevention (prevents pull-to-refresh without breaking clicks)
