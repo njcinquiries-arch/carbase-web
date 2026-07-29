@@ -786,9 +786,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   transform: scale(1.05);
 }
 
-/* Demo Banner — liquid glass, desktop below base, mobile above card */
+/* Demo Banner — liquid glass, desktop below base (absolute), mobile above card */
 .demo-banner {
-  display: none; /* hidden until .show toggled */
+  /* Base shared styles */
+  display: flex;
   align-items: center;
   gap: 8px;
   background: rgba(255,255,255,0.07);
@@ -804,20 +805,22 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   box-shadow: 0 2px 16px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.12);
-  pointer-events: none;
   white-space: nowrap;
+  /* Hidden by default — no layout shift (position absolute, out of flow) */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  pointer-events: none;
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.4s cubic-bezier(0.22,1,0.36,1), transform 0.4s cubic-bezier(0.22,1,0.36,1);
-  /* Desktop: sit below the base steps, centered in floater flow */
-  margin-top: 18px;
-  align-self: center;
+  transition: opacity 0.35s cubic-bezier(0.22,1,0.36,1), transform 0.35s cubic-bezier(0.22,1,0.36,1);
+  /* Desktop: anchor below the base (floater is position:relative) */
+  bottom: -52px;
+  top: auto;
 }
 .demo-banner.show {
-  display: flex;
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 @media(max-width:480px){
@@ -827,15 +830,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     width: 36px;
     height: 36px;
   }
-  /* Mobile: banner floats above the card inside scene context */
+  /* Mobile: banner floats above the card, clear of the card top edge */
   .demo-banner {
     position: absolute;
-    top: -44px;
+    top: -68px;
+    bottom: auto;
     left: 50%;
-    transform: translateX(-50%) translateY(6px);
+    transform: translateX(-50%) translateY(8px);
     margin-top: 0;
     align-self: unset;
     background: rgba(255,255,255,0.08);
+    z-index: 30;
   }
   .demo-banner.show {
     transform: translateX(-50%) translateY(0);
@@ -1412,43 +1417,35 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     try {
       var ac = new (window.AudioContext || window.webkitAudioContext)();
       var now = ac.currentTime;
-      var dur = 0.18;
 
-      // -- Premium soft click: a very short sine transient --
-      var click = ac.createOscillator();
-      var clickGain = ac.createGain();
-      click.connect(clickGain);
-      clickGain.connect(ac.destination);
-      click.type = 'sine';
-      click.frequency.setValueAtTime(toBack ? 1100 : 900, now);
-      click.frequency.exponentialRampToValueAtTime(toBack ? 380 : 520, now + 0.04);
-      clickGain.gain.setValueAtTime(0.0, now);
-      clickGain.gain.linearRampToValueAtTime(0.09, now + 0.005); // near-instant attack
-      clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
-      click.start(now);
-      click.stop(now + 0.09);
+      // -- Primary feather tone: silky sine glide, barely there --
+      var o1 = ac.createOscillator();
+      var g1 = ac.createGain();
+      o1.connect(g1); g1.connect(ac.destination);
+      o1.type = 'sine';
+      o1.frequency.setValueAtTime(toBack ? 1100 : 920, now);
+      o1.frequency.exponentialRampToValueAtTime(toBack ? 560 : 740, now + 0.38);
+      g1.gain.setValueAtTime(0.0, now);
+      g1.gain.linearRampToValueAtTime(0.038, now + 0.022); // feather-soft attack
+      g1.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+      o1.start(now); o1.stop(now + 0.38);
 
-      // -- Ultra-soft noise breath (barely audible texture) --
-      var nBuf = ac.createBuffer(1, ac.sampleRate * dur, ac.sampleRate);
-      var nd = nBuf.getChannelData(0);
-      for (var i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
-      var ns = ac.createBufferSource();
-      ns.buffer = nBuf;
-      var lp = ac.createBiquadFilter();
-      lp.type = 'lowpass';
-      lp.frequency.value = 2200;
-      lp.Q.value = 0.5;
-      var ng = ac.createGain();
-      ns.connect(lp); lp.connect(ng); ng.connect(ac.destination);
-      ng.gain.setValueAtTime(0.0, now);
-      ng.gain.linearRampToValueAtTime(0.022, now + 0.01);
-      ng.gain.exponentialRampToValueAtTime(0.001, now + dur);
-      ns.start(now);
-      ns.stop(now + dur);
+      // -- Harmonic overtone: octave up, even softer, fades first --
+      var o2 = ac.createOscillator();
+      var g2 = ac.createGain();
+      o2.connect(g2); g2.connect(ac.destination);
+      o2.type = 'sine';
+      o2.frequency.setValueAtTime(toBack ? 2200 : 1840, now);
+      o2.frequency.exponentialRampToValueAtTime(toBack ? 1120 : 1480, now + 0.22);
+      g2.gain.setValueAtTime(0.0, now);
+      g2.gain.linearRampToValueAtTime(0.016, now + 0.018);
+      g2.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      o2.start(now); o2.stop(now + 0.22);
 
-      setTimeout(function(){ ac.close(); }, 400);
+      setTimeout(function(){ ac.close(); }, 550);
     } catch(e) {}
   }
+
 
   function flipCard() {
     var now = Date.now();
@@ -1460,10 +1457,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     playFlipSound(flipped);
 
     var downloadContainer = document.getElementById('download-container-bottom');
+    var demoBanner = document.getElementById('demo-banner');
     if (flipped) {
       targetRx = 0;
       targetRy = 0;
       if (downloadContainer) downloadContainer.classList.add('hidden');
+      // Always hide demo banner on flip — no overlap with card back
+      if (demoBanner) demoBanner.classList.remove('show');
     } else {
       if (downloadContainer) downloadContainer.classList.remove('hidden');
     }
