@@ -835,6 +835,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   /* Desktop: anchor below the base (floater is position:relative) */
   bottom: -52px;
   top: auto;
+  z-index: 10;
 }
 .demo-banner.show {
   opacity: 1;
@@ -2296,11 +2297,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var cardEl = document.getElementById('card');
   var glowColor = getRankGlowColor(car.rank, car.ovr);
   
-  // Opacity ratios matched to app: shadowOpacity 0.30 base, 0.45 active
-  cardEl.style.setProperty('--card-glow-tight', hexToRgba(glowColor, 0.30));
-  cardEl.style.setProperty('--card-glow-wide', hexToRgba(glowColor, 0.15));
-  cardEl.style.setProperty('--card-glow-tight-active', hexToRgba(glowColor, 0.45));
-  cardEl.style.setProperty('--card-glow-wide-active', hexToRgba(glowColor, 0.25));
+  // High-visibility opacity values matching original design
+  cardEl.style.setProperty('--card-glow-tight', hexToRgba(glowColor, 0.65));
+  cardEl.style.setProperty('--card-glow-wide', hexToRgba(glowColor, 0.35));
+  cardEl.style.setProperty('--card-glow-tight-active', hexToRgba(glowColor, 0.95));
+  cardEl.style.setProperty('--card-glow-wide-active', hexToRgba(glowColor, 0.65));
 
   // AUTOMATIC QR SCAN POP-UP ANIMATION & BANNER
   if (hasQrParams) {
