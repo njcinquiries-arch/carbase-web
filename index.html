@@ -1684,7 +1684,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       powertrain: 'Combustion', drivetrain: 'RWD', engine: '4.0L Flat-6',
       photo: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80',
       hp: 545, torque: 360, zeroToSixty: '2.8s',
-      rank: 'SIGNATURE', rankColor: '#a855f7', ovr: 98,
+      rank: 'SIGNATURE', rankColor: '#ffffff', ovr: 98,
       styleTag: 'Track Spec',
       role: 'Track Toy',
       mods: ['Akrapovič Titanium Exhaust', 'Eventuri Carbon Intake', 'BBS Magnesium Wheels'],
@@ -1892,15 +1892,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   
   document.getElementById('back-serial').textContent = car.serial;
 
-  // Dynamic glow based on rank/score
+  // Dynamic glow based on rank/score (Polar White for Signature/top tier)
   function getRankGlowColor(rank, overall) {
-    if (rank === 'Signature') return '#D4A574';
-    if (overall >= 95) return '#10B981';
+    var r = (rank || '').toUpperCase();
+    if (r === 'SIGNATURE') return '#ffffff';
+    if (overall >= 95) return '#ffffff';
     if (overall >= 85) return '#EF4444';
     if (overall >= 70) return '#F59E0B';
     if (overall >= 55) return '#8B5CF6';
     if (overall >= 40) return '#3B82F6';
-    return '#6B7280';
+    return '#ffffff';
   }
 
   function hexToRgba(hex, alpha) {
