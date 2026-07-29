@@ -93,7 +93,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 .card-img {
   width: 100%; height: 100%;
-  object-fit: cover; object-position: center;
+  object-fit: cover; object-position: center 65%;
   pointer-events: none;
 }
 .card-photo-gradient {
@@ -1026,13 +1026,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
         <div class="face front" id="card-front">
           <div class="front-hl" id="hl"></div>
           <div class="card-photo-zone">
-            <img id="card-img" class="card-img" src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80" alt="Car">
+            <img id="card-img" class="card-img" src="gt3rs_monaco.jpg" alt="Car">
             <div class="card-photo-gradient"></div>
           </div>
 
           <!-- Blurred Photo Backfill Overlay (matching CarCard.tsx) -->
           <div class="blurred-backfill">
-            <img id="blurred-bg-img" class="blurred-img" src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80" alt="">
+            <img id="blurred-bg-img" class="blurred-img" src="gt3rs_monaco.jpg" alt="">
             <div class="blur-glass-overlay"></div>
           </div>
 
@@ -2047,9 +2047,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       customName: 'Nürburgring Spec',
       make: 'Porsche', model: '911 GT3 RS', year: 2023, trim: 'GT3 RS',
       powertrain: 'Combustion', drivetrain: 'RWD', engine: '4.0L Flat-6',
-      photo: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80',
+      photo: 'gt3rs_monaco.jpg',
       hp: 545, torque: 360, zeroToSixty: '2.8s',
-      rank: 'SIGNATURE', rankColor: '#ffffff', ovr: 98,
+      rank: 'ADVANCED', rankColor: '#eab308', ovr: 92,
       styleTag: 'Track Spec',
       role: 'Track Toy',
       mods: ['Akrapovič Titanium Exhaust', 'Eventuri Carbon Intake', 'BBS Magnesium Wheels'],
@@ -2113,7 +2113,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
         powertrain: searchParams.get('powertrain') || 'Combustion',
         drivetrain: searchParams.get('drivetrain') || 'RWD',
         engine: searchParams.get('engine') || 'High-Performance Engine',
-        photo: searchParams.get('photo') || 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80',
+        photo: searchParams.get('photo') || 'gt3rs_monaco.jpg',
         hp: parseInt(searchParams.get('hp') || '350', 10),
         torque: parseInt(searchParams.get('tq') || '320', 10),
         zeroToSixty: searchParams.get('zeroToSixty') || '4.0s',
@@ -2151,7 +2151,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80'
+      'gt3rs_monaco.jpg'
     ];
 
     var make = makes[hash % makes.length];
@@ -2201,10 +2201,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     'ROOKIE': 'ranks/rank_rookie_native.png'
   };
 
-  var photoUrl = car.photo;
-  if (!photoUrl || (!photoUrl.startsWith('http://') && !photoUrl.startsWith('https://'))) {
-    photoUrl = 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80';
-  }
+  var photoUrl = car.photo || 'gt3rs_monaco.jpg';
   document.getElementById('card-img').src = photoUrl;
   if (document.getElementById('blurred-bg-img')) {
     document.getElementById('blurred-bg-img').src = photoUrl;
