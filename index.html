@@ -2321,28 +2321,18 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }
   }
 
-  // TOGGLE DEMO WARNING BANNER — one popup at a time (handles touch & click)
+  // TOGGLE DEMO WARNING BANNER — strictly toggle liquid glass Demonstration Card
   var infoBtn = document.getElementById('info-btn');
   var demoBanner = document.getElementById('demo-banner');
-  var dlContainer = document.getElementById('download-container-bottom');
   var qrPill = document.getElementById('qr-scanned-pill');
-  var isDesktop = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
   if (infoBtn && demoBanner) {
     function handleInfoToggle(e) {
       e.preventDefault();
       e.stopPropagation();
       var opening = !demoBanner.classList.contains('show');
       demoBanner.classList.toggle('show');
-      
-      if (opening) {
-        if (qrPill) qrPill.classList.remove('show');
-        if (isDesktop && dlContainer) {
-          dlContainer.classList.add('hidden');
-        }
-      } else {
-        if (isDesktop && dlContainer && !flipped) {
-          dlContainer.classList.remove('hidden');
-        }
+      if (opening && qrPill) {
+        qrPill.classList.remove('show');
       }
     }
     infoBtn.addEventListener('click', handleInfoToggle);
