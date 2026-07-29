@@ -755,6 +755,82 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* Info Button (Top Left) */
+.info-btn {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 50;
+  background: rgba(20,20,26,0.82);
+  border: 1px solid rgba(217,150,91,0.22);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 10px rgba(217,150,91,0.12);
+  transition: all .3s ease;
+  outline: none;
+  padding: 0;
+}
+.info-btn:hover {
+  border-color: #D9965B;
+  color: #D9965B;
+  box-shadow: 0 0 16px rgba(217,150,91,0.3);
+  transform: scale(1.05);
+}
+
+/* Demo Warning Banner */
+.demo-banner {
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(217, 150, 91, 0.15);
+  border: 1px solid rgba(217, 150, 91, 0.35);
+  border-radius: 20px;
+  padding: 6px 14px;
+  color: #D9965B;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(217, 150, 91, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+}
+.demo-banner.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.qr-scanned-pill.show ~ .demo-banner {
+  top: -85px;
+}
+
+@media(max-width:480px){
+  .info-btn {
+    top: calc(20px + env(safe-area-inset-top, 0px));
+    left: 16px;
+    width: 36px;
+    height: 36px;
+  }
+}
 .scroll-hint-line{
   width:1px;height:28px;
   background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.30));
@@ -913,6 +989,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 </div>
 
 <div class="stage">
+  <!-- Info / Demonstration Button -->
+  <button class="info-btn" id="info-btn" title="Information">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+  </button>
+
   <div class="brand"><span>Car</span>base</div>
   <div class="brand-rule"></div>
   <div class="floater">
@@ -922,6 +1003,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       <div class="qr-scanned-pill" id="qr-scanned-pill">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         <span>QR CODE VERIFIED &bull; CAR CARD UNLOCKED</span>
+      </div>
+      <!-- Demonstration Warning Banner -->
+      <div class="demo-banner" id="demo-banner">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>Demonstration Card</span>
       </div>
       <div class="card" id="card">
         <!-- CARD FRONT -->
@@ -2207,6 +2293,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
         cardEl.style.transform = 'scale(1) rotateY(0deg)';
       }, 150);
     }
+  }
+
+  // TOGGLE DEMO WARNING BANNER CLICK LISTENER
+  var infoBtn = document.getElementById('info-btn');
+  var demoBanner = document.getElementById('demo-banner');
+  if (infoBtn && demoBanner) {
+    infoBtn.addEventListener('click', function(e) {
+      e.stopPropagation(); // Avoid triggering card rotation if clicked
+      demoBanner.classList.toggle('show');
+    });
   }
 })();
 </script>
