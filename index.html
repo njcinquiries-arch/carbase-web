@@ -546,12 +546,38 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   }
 }
 
-/* SCROLL HINT */
-.scroll-hint{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  z-index:3;pointer-events:none;
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  padding-bottom:14px;
+/* QR CODE SCANNED POPUP PILL */
+.qr-scanned-pill {
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 20px;
+  padding: 6px 14px;
+  color: #10b981;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+}
+
+.qr-scanned-pill.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 .scroll-hint-line{
   width:1px;height:28px;
@@ -700,6 +726,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   <div class="floater">
 
     <div class="scene" id="scene">
+      <!-- QR Scanned Verification Popup Pill -->
+      <div class="qr-scanned-pill" id="qr-scanned-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>QR CODE VERIFIED &bull; CAR CARD UNLOCKED</span>
+      </div>
       <div class="card-radiance-aura" id="card-aura"></div>
       <div class="card" id="card">
         <!-- CARD FRONT -->
@@ -1757,7 +1788,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       };
     }
 
-    if(!code) return CAR_DATABASE['quattro-beast'];
+    if(!code) return CAR_DATABASE['porsche-gt3rs'];
     var cleanCode = code.toLowerCase().trim();
     if(CAR_DATABASE[cleanCode]) return CAR_DATABASE[cleanCode];
 
@@ -1817,7 +1848,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var path = window.location.pathname;
   var parts = path.split('/c/');
   var searchParams = new URLSearchParams(window.location.search);
-  var carCode = (parts.length > 1 && parts[1]) ? parts[1] : (searchParams.get('code') || searchParams.get('c') || searchParams.get('car') || '');
+  var hasQrParams = !!(parts.length > 1 && parts[1]) || searchParams.has('code') || searchParams.has('c') || searchParams.has('car') || searchParams.has('card') || searchParams.has('id') || searchParams.has('make') || searchParams.has('model');
+  var carCode = (parts.length > 1 && parts[1]) ? parts[1] : (searchParams.get('code') || searchParams.get('c') || searchParams.get('car') || searchParams.get('card') || searchParams.get('id') || '');
 
   var car = getCarByCode(carCode);
 
@@ -1913,6 +1945,28 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     cardEl.style.boxShadow = '0 20px 60px rgba(0,0,0,0.95), 0 0 12px ' + tightGlow + ', 0 0 45px ' + wideGlow;
   } else {
     cardEl.style.boxShadow = '0 20px 60px rgba(0,0,0,0.95)';
+  }
+
+  // AUTOMATIC QR SCAN POP-UP ANIMATION & BANNER
+  if (hasQrParams) {
+    var qrPill = document.getElementById('qr-scanned-pill');
+    var sceneEl = document.getElementById('scene');
+    
+    if (qrPill) {
+      setTimeout(function() { qrPill.classList.add('show'); }, 300);
+    }
+    
+    if (cardEl && sceneEl) {
+      cardEl.style.transform = 'scale(0.7) rotateY(0deg)';
+      sceneEl.classList.add('radiate-pulse');
+      setTimeout(function() {
+        cardEl.style.transition = 'transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        cardEl.style.transform = 'scale(1) rotateY(0deg)';
+      }, 150);
+      setTimeout(function() {
+        sceneEl.classList.remove('radiate-pulse');
+      }, 2000);
+    }
   }
 })();
 </script>
