@@ -63,38 +63,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   transform: translateZ(1px);
 }
 
-/* MINIMAL RADIATING AURA RING */
-.card-radiance-aura {
-  position: absolute;
-  inset: -6px;
-  border-radius: 26px;
-  background: radial-gradient(circle, rgba(217, 150, 91, 0.18) 0%, rgba(217, 150, 91, 0) 70%);
-  pointer-events: none;
-  opacity: 0;
-  transform: scale(0.98);
-  transition: all 0.3s ease;
-  z-index: -1;
-  filter: blur(2px);
-}
-
-.scene.is-interacting .card-radiance-aura,
-.scene:active .card-radiance-aura,
-.scene.radiate-pulse .card-radiance-aura {
-  opacity: 0.55;
-  transform: scale(1.02);
-  box-shadow: 0 0 16px rgba(217, 150, 91, 0.3), 0 0 32px rgba(217, 150, 91, 0.15);
-  animation: auraRadiate 2.0s ease-in-out infinite alternate;
-}
-
-@keyframes auraRadiate {
-  0% {
-    box-shadow: 0 0 12px rgba(217, 150, 91, 0.22), 0 0 24px rgba(217, 150, 91, 0.1);
-    transform: scale(1.01);
-  }
-  100% {
-    box-shadow: 0 0 20px rgba(217, 150, 91, 0.38), 0 0 40px rgba(217, 150, 91, 0.18);
-    transform: scale(1.025);
-  }
+.scene.is-interacting .card,
+.scene:active .card {
+  box-shadow: 0 24px 70px rgba(0,0,0,0.95), 0 0 18px rgba(217, 150, 91, 0.38) !important;
 }
 
 .front-hl{position:absolute;inset:0;border-radius:22px;pointer-events:none;background:linear-gradient(var(--rot, 105deg), transparent 35%, rgba(255,255,255,0.002) 47%, rgba(255,255,255,0.008) 50%, rgba(255,255,255,0.002) 53%, transparent 65%);opacity:0;transition:opacity .15s; mix-blend-mode: screen;}
@@ -731,7 +702,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         <span>QR CODE VERIFIED &bull; CAR CARD UNLOCKED</span>
       </div>
-      <div class="card-radiance-aura" id="card-aura"></div>
       <div class="card" id="card">
         <!-- CARD FRONT -->
         <div class="face front" id="card-front">
@@ -1135,10 +1105,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     flipped = !flipped;
     window.isCardFlippedState = flipped; // Global flag for scroll locking
     playFlipSound(flipped);
-
-    // Trigger radiating aura pulse
-    scene.classList.add('radiate-pulse');
-    setTimeout(function() { scene.classList.remove('radiate-pulse'); }, 1200);
 
     var appStoreBtn = document.getElementById('app-store-btn-bottom');
     if (flipped) {
@@ -1958,14 +1924,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     
     if (cardEl && sceneEl) {
       cardEl.style.transform = 'scale(0.7) rotateY(0deg)';
-      sceneEl.classList.add('radiate-pulse');
       setTimeout(function() {
         cardEl.style.transition = 'transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1)';
         cardEl.style.transform = 'scale(1) rotateY(0deg)';
       }, 150);
-      setTimeout(function() {
-        sceneEl.classList.remove('radiate-pulse');
-      }, 2000);
     }
   }
 })();
