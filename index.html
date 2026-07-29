@@ -1071,10 +1071,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
               <span id="card-mods-count" class="card-stat-mods">1 mod</span>
             </div>
           </div>
-          <!-- Unique serial number (matching CarCard.tsx) -->
-          <div class="front-serial-container" style="position: absolute; bottom: 8px; right: 12px; z-index: 99;">
-            <span id="front-serial" class="front-serial-text" style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 0.5rem; font-weight: 800; color: rgba(255, 255, 255, 0.35); letter-spacing: 0.08em; text-transform: uppercase;"></span>
-          </div>
+
           <div class="front-hint">tap to reveal</div>
         </div>
 
@@ -2061,7 +2058,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       powertrain: 'Combustion', drivetrain: 'RWD', engine: '4.0L Flat-6',
       photo: 'gt3rs_monaco.jpg',
       hp: 545, torque: 360, zeroToSixty: '2.8s',
-      rank: 'ADVANCED', rankColor: '#eab308', ovr: 96,
+      rank: 'SIGNATURE', rankColor: '#D4A574', ovr: 96,
       styleTag: 'Track Spec',
       role: 'Track Toy',
       mods: ['Akrapovič Titanium Exhaust', 'Eventuri Carbon Intake', 'BBS Magnesium Wheels'],
@@ -2277,7 +2274,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     document.getElementById('back-role-section').style.display = 'none';
   }
   
-  document.getElementById('back-serial').textContent = car.serial;
+  // Realistic serial: make initials + model slug + year + 6-char hex uid
+  (function() {
+    var s = car.serial || '';
+    if (!s) return;
+    // Format: [MAKE2]-[MODEL4]-[YEAR4]-[UID6] e.g. P9-GT3R-2K23-A7F3C1
+    var makeCode = (car.make || 'XX').replace(/[^A-Z0-9]/gi,'').slice(0,2).toUpperCase();
+    var modelCode = (car.model || 'XXXX').replace(/[^A-Z0-9]/gi,'').slice(0,4).toUpperCase();
+    var yr = String(car.year || 2023);
+    var yearCode = yr.slice(0,1) + 'K' + yr.slice(2);
+    var uid = s.replace(/[^A-Z0-9]/gi,'').slice(-6).toUpperCase().padStart(6,'0');
+    var formatted = makeCode + '-' + modelCode + '-' + yearCode + '-' + uid;
+    document.getElementById('back-serial').textContent = formatted;
+  })();
 
   // Dynamic glow based on rank/score (Polar White for Signature/top tier)
   // Exact match to CarCard.tsx getRankGlowColor()
@@ -2331,13 +2340,24 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }
   }
 
-  // TOGGLE DEMO WARNING BANNER CLICK LISTENER
+  // TOGGLE DEMO WARNING BANNER — one popup at a time on desktop
   var infoBtn = document.getElementById('info-btn');
   var demoBanner = document.getElementById('demo-banner');
+  var dlContainer = document.getElementById('download-container-bottom');
+  var isDesktop = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
   if (infoBtn && demoBanner) {
     infoBtn.addEventListener('click', function(e) {
-      e.stopPropagation(); // Avoid triggering card rotation if clicked
+      e.stopPropagation();
+      var opening = !demoBanner.classList.contains('show');
       demoBanner.classList.toggle('show');
+      // Desktop only: hide/restore download buttons when banner is shown
+      if (isDesktop && dlContainer) {
+        if (opening) {
+          dlContainer.classList.add('hidden');
+        } else {
+          if (!flipped) dlContainer.classList.remove('hidden');
+        }
+      }
     });
   }
 })();
