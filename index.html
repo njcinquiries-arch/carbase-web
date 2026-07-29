@@ -58,8 +58,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   will-change:transform;
   box-shadow:
     0 20px 60px rgba(0,0,0,0.95),
-    0 0 15px var(--card-glow-tight, rgba(255,255,255,0.30)),
-    0 0 40px var(--card-glow-wide, rgba(255,255,255,0.15));
+    0 0 25px var(--card-glow-tight, rgba(16,185,129,0.85)),
+    0 0 75px var(--card-glow-wide, rgba(16,185,129,0.50));
   transition: box-shadow 0.25s ease;
 }
 
@@ -2297,11 +2297,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var cardEl = document.getElementById('card');
   var glowColor = getRankGlowColor(car.rank, car.ovr);
   
-  // High-visibility opacity values matching original design
-  cardEl.style.setProperty('--card-glow-tight', hexToRgba(glowColor, 0.65));
-  cardEl.style.setProperty('--card-glow-wide', hexToRgba(glowColor, 0.35));
-  cardEl.style.setProperty('--card-glow-tight-active', hexToRgba(glowColor, 0.95));
-  cardEl.style.setProperty('--card-glow-wide-active', hexToRgba(glowColor, 0.65));
+  // High-intensity green glow values
+  cardEl.style.setProperty('--card-glow-tight', hexToRgba(glowColor, 0.85));
+  cardEl.style.setProperty('--card-glow-wide', hexToRgba(glowColor, 0.50));
+  cardEl.style.setProperty('--card-glow-tight-active', hexToRgba(glowColor, 1.0));
+  cardEl.style.setProperty('--card-glow-wide-active', hexToRgba(glowColor, 0.75));
 
   // AUTOMATIC QR SCAN POP-UP ANIMATION & BANNER
   if (hasQrParams) {
