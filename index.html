@@ -63,6 +63,40 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   transform: translateZ(1px);
 }
 
+/* RADIATING AURA RING */
+.card-radiance-aura {
+  position: absolute;
+  inset: -14px;
+  border-radius: 34px;
+  background: radial-gradient(circle, rgba(217, 150, 91, 0.35) 0%, rgba(217, 150, 91, 0) 70%);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.scene.is-interacting .card-radiance-aura,
+.scene:active .card-radiance-aura,
+.scene.radiate-pulse .card-radiance-aura {
+  opacity: 1;
+  transform: scale(1.08);
+  box-shadow: 0 0 35px rgba(217, 150, 91, 0.65), 0 0 95px rgba(217, 150, 91, 0.4);
+  animation: auraRadiate 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes auraRadiate {
+  0% {
+    box-shadow: 0 0 25px rgba(217, 150, 91, 0.5), 0 0 60px rgba(217, 150, 91, 0.25);
+    transform: scale(1.04);
+  }
+  100% {
+    box-shadow: 0 0 50px rgba(217, 150, 91, 0.9), 0 0 120px rgba(217, 150, 91, 0.5);
+    transform: scale(1.10);
+  }
+}
+
 .front-hl{position:absolute;inset:0;border-radius:22px;pointer-events:none;background:linear-gradient(var(--rot, 105deg), transparent 35%, rgba(255,255,255,0.002) 47%, rgba(255,255,255,0.008) 50%, rgba(255,255,255,0.002) 53%, transparent 65%);opacity:0;transition:opacity .15s; mix-blend-mode: screen;}
 .scene:hover .front-hl{opacity:0.15}
 
@@ -666,6 +700,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   <div class="floater">
 
     <div class="scene" id="scene">
+      <div class="card-radiance-aura" id="card-aura"></div>
       <div class="card" id="card">
         <!-- CARD FRONT -->
         <div class="face front" id="card-front">
@@ -1070,6 +1105,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     window.isCardFlippedState = flipped; // Global flag for scroll locking
     playFlipSound(flipped);
 
+    // Trigger radiating aura pulse
+    scene.classList.add('radiate-pulse');
+    setTimeout(function() { scene.classList.remove('radiate-pulse'); }, 1200);
+
     var appStoreBtn = document.getElementById('app-store-btn-bottom');
     if (flipped) {
       targetRx = 0;
@@ -1123,6 +1162,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     hasDragged = false;
     startX = e.clientX;
     startY = e.clientY;
+    scene.classList.add('is-interacting');
   });
 
   window.addEventListener('mousemove', function(e) {
@@ -1138,6 +1178,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     if (isInteracting) {
       isInteracting = false;
       targetRx = 0; targetRy = 0;
+      scene.classList.remove('is-interacting');
     }
   });
 
@@ -1164,6 +1205,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     startX = t.clientX;
     startY = t.clientY;
     handleMove(t.clientX, t.clientY);
+    scene.classList.add('is-interacting');
   }, { passive: true });
 
   scene.addEventListener('touchmove', function(e) {
