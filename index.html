@@ -470,88 +470,83 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   z-index:10;
 }
 
-/* DESKTOP-ONLY EXTRA FEATURES (PAGE 2) */
-.p2-desktop-features {
+/* DESKTOP DYNAMIC FEATURE CARD (PAGE 2) */
+.p2-tab-feature-card {
   display: none;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 18px;
   width: 100%;
-  max-width: 580px;
+  max-width: 540px;
+  background: rgba(20, 20, 26, 0.75);
+  border: 1px solid rgba(217, 150, 91, 0.25);
+  border-radius: 16px;
+  padding: 12px 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
   z-index: 10;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scale(0.95) translateY(6px);
+  opacity: 0;
+}
+
+.p2-tab-feature-card.pop-in {
+  transform: scale(1) translateY(0);
+  opacity: 1;
 }
 
 @media(min-width: 769px) {
-  .p2-desktop-features {
+  .p2-tab-feature-card {
     display: flex;
   }
 }
 
-.p2-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.p2-feature-stat {
+  display: flex;
+  align-items: center;
   gap: 12px;
-  width: 100%;
 }
 
-.p2-stat-card {
-  background: rgba(20, 20, 26, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 12px 14px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.25s ease;
-}
-
-.p2-stat-card:hover {
-  border-color: rgba(217, 150, 91, 0.4);
-  box-shadow: 0 0 16px rgba(217, 150, 91, 0.2);
-  transform: translateY(-2px);
-}
-
-.p2-stat-val {
+.p2-feature-val {
   font-family: 'Exo 2', sans-serif;
   font-weight: 800;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   color: #D9965B;
   letter-spacing: 0.04em;
-  margin-bottom: 2px;
+  white-space: nowrap;
 }
 
-.p2-stat-lbl {
+.p2-feature-lbl {
   font-family: system-ui, -apple-system, sans-serif;
   font-weight: 500;
-  font-size: 0.62rem;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.63rem;
+  color: rgba(255, 255, 255, 0.55);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  line-height: 1.35;
+  max-width: 190px;
 }
 
-.p2-status-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+.p2-feature-divider {
+  width: 1px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.p2-status-pill {
+.p2-feature-status {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 5px 12px;
+  gap: 8px;
   font-family: system-ui, -apple-system, sans-serif;
   font-weight: 700;
   font-size: 0.58rem;
-  color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.07em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .status-dot {
@@ -785,26 +780,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       Car Advisor: Not a generic model, but a comprehensive AI car assistant. Trained over 8 months to act as your expert co-pilot, helping you navigate repairs, track valuations, cross-reference parts, and manage your overall car ownership experience.
     </div>
 
-    <!-- Desktop-Only Tech Specs & Ecosystem Matrix -->
-    <div class="p2-desktop-features">
-      <div class="p2-stats-grid">
-        <div class="p2-stat-card">
-          <div class="p2-stat-val">8+ Mo</div>
-          <div class="p2-stat-lbl">Domain AI Fine-Tuning</div>
-        </div>
-        <div class="p2-stat-card">
-          <div class="p2-stat-val">92%</div>
-          <div class="p2-stat-lbl">US Vehicle Asset Coverage</div>
-        </div>
-        <div class="p2-stat-card">
-          <div class="p2-stat-val">100%</div>
-          <div class="p2-stat-lbl">Verified Mod Ledger</div>
-        </div>
+    <!-- Desktop Dynamic Hologram Feature Card (pops up in accordance to active tab) -->
+    <div class="p2-tab-feature-card pop-in" id="p2-tab-feature">
+      <div class="p2-feature-stat">
+        <div class="p2-feature-val" id="p2-feature-val">8+ Mo</div>
+        <div class="p2-feature-lbl" id="p2-feature-lbl">Neural Model Architecture Fine-Tuning</div>
       </div>
-      <div class="p2-status-row">
-        <div class="p2-status-pill"><span class="status-dot"></span> NEURAL ENGINE ONLINE</div>
-        <div class="p2-status-pill"><span class="status-dot"></span> VIN DECODER INSTANT-SYNC</div>
-        <div class="p2-status-pill"><span class="status-dot"></span> HARDWARE QR PASS READY</div>
+      <div class="p2-feature-divider"></div>
+      <div class="p2-feature-status">
+        <span class="status-dot"></span>
+        <span id="p2-status-text">AUTOMOTIVE REASONING ENGINE ONLINE</span>
       </div>
     </div>
   </div>
@@ -1458,6 +1443,37 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
    ============================================= */
 (function(){
   var page2 = document.getElementById('page2');
+  // Tab Button Click Listeners
+  document.querySelectorAll('.holo-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.holo-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      var shapeType = this.getAttribute('data-shape');
+      shape = shapeType;
+      generateShape(shape);
+
+      var descEl = document.getElementById('holo-desc');
+      if (descEl && descTexts[shapeType]) {
+        descEl.textContent = descTexts[shapeType];
+      }
+
+      // Update Desktop Dynamic Feature Card with 3D Pop-in Animation
+      var tabCard = document.getElementById('p2-tab-feature');
+      var valEl = document.getElementById('p2-feature-val');
+      var lblEl = document.getElementById('p2-feature-lbl');
+      var statusEl = document.getElementById('p2-status-text');
+
+      if (tabCard && tabFeatureData[shapeType]) {
+        tabCard.classList.remove('pop-in');
+        setTimeout(function() {
+          if (valEl) valEl.textContent = tabFeatureData[shapeType].val;
+          if (lblEl) lblEl.textContent = tabFeatureData[shapeType].lbl;
+          if (statusEl) statusEl.textContent = tabFeatureData[shapeType].status;
+          tabCard.classList.add('pop-in');
+        }, 120);
+      }
+    });
+  });
   var cv = document.getElementById('p2-canvas');
   var ctx = cv.getContext('2d');
   var desc = document.getElementById('holo-desc');
@@ -1472,6 +1488,24 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     globe: 'Car Advisor: Not a generic model, but a comprehensive AI car assistant. Trained over 8 months to act as your expert co-pilot, helping you navigate repairs, track valuations, cross-reference parts, and manage your overall car ownership experience.',
     deck: 'Discovery Deck: Mapping the physical showroom. While 92% of American households own vehicles—valued at $25,000+ on average—this critical class of assets has historically lacked a structured digital footprint. The Discovery Deck bridges this gap, establishing a unified modern registry for custom builds.',
     dna: 'Mod Timeline: The digital ledger for your build. Log parts, capture installation dates, and track performance changes chronologically to maintain a verified history of your vehicle\'s evolution.'
+  };
+
+  var tabFeatureData = {
+    globe: {
+      val: '8+ Mo',
+      lbl: 'Neural Model Architecture Fine-Tuning',
+      status: 'AUTOMOTIVE REASONING ENGINE ONLINE'
+    },
+    deck: {
+      val: '92%',
+      lbl: 'Undigitalized Physical Asset Index',
+      status: 'VIN DECODER & REGISTRY SYNC'
+    },
+    dna: {
+      val: '100%',
+      lbl: 'Chronological Modification Provenance',
+      status: 'IMMUTABLE HARDWARE PASSPORT READY'
+    }
   };
 
   // Initialize Particles with coordinates
