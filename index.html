@@ -2272,8 +2272,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   // Exact match to CarCard.tsx getRankGlowColor()
   function getRankGlowColor(rank, overall) {
     var r = (rank || '').toUpperCase();
-    if (r === 'SIGNATURE') return '#D4A574'; // warm gold — matches app
     if (overall >= 95) return '#10B981';     // emerald green
+    if (r === 'SIGNATURE') return '#D4A574'; // warm gold — matches app
     if (overall >= 85) return '#EF4444';     // red
     if (overall >= 70) return '#F59E0B';     // amber
     if (overall >= 55) return '#8B5CF6';     // purple
