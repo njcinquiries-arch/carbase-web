@@ -420,22 +420,32 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 #page2.visible{opacity:1;pointer-events:auto;}
 
 .p2-header{
-  text-align:center;
-  margin-bottom:20px;
+  position:relative;
   z-index:10;
+  margin-bottom:20px;
+  user-select:none;
 }
 .p2-logo{
-  font-family:'Exo 2',sans-serif;font-weight:700;font-size:1.8rem;
-  letter-spacing:.38em;text-indent:.38em;text-transform:uppercase;color:#fff;
-  text-shadow:0 0 12px rgba(255,255,255,0.25);
-  margin-bottom:6px;
+  font-family:'Exo 2',sans-serif;
+  font-weight:200;
+  font-size:clamp(1.5rem, 3.4vw, 2.6rem);
+  letter-spacing:0.45em;
+  text-indent:0.45em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.92);
+  text-shadow:0 0 12px rgba(255,255,255,0.18), 0 0 30px rgba(255,255,255,0.08);
 }
-.p2-logo span{font-weight:200;opacity:0.65;}
+.p2-logo span{
+  font-weight:600;
+  color:#ffffff;
+}
 .p2-tagline{
-  font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-weight:400;font-size:.78rem;
+  font-family:system-ui, -apple-system, sans-serif;
+  font-size:0.68rem;
   color:rgba(255,255,255,0.40);
-  letter-spacing:0.04em;
+  margin-top:6px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
 }
 
 .p2-container{
@@ -851,7 +861,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 <div id="page2">
   <!-- Brand logo header -->
   <div class="p2-header">
-    <div class="p2-logo"><span>Car</span>base App</div>
+    <div class="p2-logo"><span>CAR</span>BASE</div>
     <div class="p2-tagline">The ultimate automotive tracking ecosystem.</div>
   </div>
 
