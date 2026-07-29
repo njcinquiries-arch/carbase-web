@@ -779,7 +779,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .info-btn {
   position: fixed;
   top: 24px;
-  right: 24px;
+  left: 24px;
   z-index: 50;
   background: rgba(20,20,26,0.82);
   border: 1px solid rgba(217,150,91,0.22);
@@ -845,8 +845,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 @media(max-width:480px){
   .info-btn {
     top: calc(20px + env(safe-area-inset-top, 0px));
-    right: 16px;
-    left: auto;
+    left: 16px;
+    right: auto;
     width: 36px;
     height: 36px;
   }
@@ -2361,22 +2361,29 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }
   }
 
-  // TOGGLE DEMO WARNING BANNER — one popup at a time on desktop
+  // TOGGLE DEMO WARNING BANNER — one popup at a time
   var infoBtn = document.getElementById('info-btn');
   var demoBanner = document.getElementById('demo-banner');
   var dlContainer = document.getElementById('download-container-bottom');
+  var qrPill = document.getElementById('qr-scanned-pill');
   var isDesktop = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
   if (infoBtn && demoBanner) {
     infoBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       var opening = !demoBanner.classList.contains('show');
       demoBanner.classList.toggle('show');
-      // Desktop only: hide/restore download buttons when banner is shown
-      if (isDesktop && dlContainer) {
-        if (opening) {
+      
+      if (opening) {
+        // Hide other overlapping popups
+        if (qrPill) qrPill.classList.remove('show');
+        
+        // Desktop only: hide download buttons when banner is shown
+        if (isDesktop && dlContainer) {
           dlContainer.classList.add('hidden');
-        } else {
-          if (!flipped) dlContainer.classList.remove('hidden');
+        }
+      } else {
+        if (isDesktop && dlContainer && !flipped) {
+          dlContainer.classList.remove('hidden');
         }
       }
     });
