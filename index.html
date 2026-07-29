@@ -510,17 +510,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
   margin-top: 18px;
   width: 100%;
-  max-width: 560px;
-  background: linear-gradient(135deg, rgba(25, 23, 34, 0.88) 0%, rgba(14, 13, 20, 0.95) 100%);
-  border: 1px solid rgba(217, 150, 91, 0.35);
-  border-radius: 18px;
-  padding: 12px 20px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 12px 35px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 20px rgba(217, 150, 91, 0.12);
+  max-width: 680px;
+  background: linear-gradient(135deg, rgba(25, 23, 34, 0.92) 0%, rgba(14, 13, 20, 0.96) 100%);
+  border: 1px solid rgba(217, 150, 91, 0.38);
+  border-radius: 20px;
+  padding: 14px 26px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 24px rgba(217, 150, 91, 0.15);
   z-index: 10;
   position: relative;
   overflow: hidden;
@@ -560,31 +560,31 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .pill-left-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   text-align: left;
 }
 
 .pill-metric-tag {
   font-family: 'Exo 2', sans-serif;
   font-weight: 800;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   color: #D9965B;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
 .pill-main-msg {
   font-family: system-ui, -apple-system, sans-serif;
   font-weight: 600;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.88);
-  line-height: 1.35;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.4;
 }
 
 .pill-divider {
   width: 1px;
-  height: 30px;
-  background: rgba(255, 255, 255, 0.14);
+  height: 34px;
+  background: rgba(255, 255, 255, 0.16);
   flex-shrink: 0;
 }
 
@@ -594,29 +594,29 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   gap: 8px;
   font-family: system-ui, -apple-system, sans-serif;
   font-weight: 700;
-  font-size: 0.58rem;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.80);
   letter-spacing: 0.07em;
   text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-@media(max-width: 580px) {
+@media(max-width: 640px) {
   .p2-info-pill-3d {
-    max-width: 340px;
-    padding: 10px 14px;
-    gap: 10px;
+    max-width: 360px;
+    padding: 12px 16px;
+    gap: 12px;
     margin-top: 12px;
   }
   .pill-metric-tag {
-    font-size: 0.60rem !important;
+    font-size: 0.62rem !important;
   }
   .pill-main-msg {
-    font-size: 0.64rem !important;
+    font-size: 0.68rem !important;
   }
   .pill-right-status {
-    font-size: 0.50rem !important;
+    font-size: 0.52rem !important;
   }
 }
 
@@ -866,7 +866,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       <div class="pill-3d-glare"></div>
       <div class="pill-left-content">
         <span class="pill-metric-tag" id="pill-metric-tag">8+ Months Fine-Tuned</span>
-        <span class="pill-main-msg" id="pill-main-msg">Tethered to your vehicle for best possible assistance</span>
+        <span class="pill-main-msg" id="pill-main-msg">Tethered directly to your vehicle for instant AI diagnostics & spec assistance.</span>
       </div>
       <div class="pill-divider"></div>
       <div class="pill-right-status">
@@ -1546,17 +1546,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   var categoryPillData = {
     globe: {
       tag: '8+ Months Fine-Tuned',
-      msg: 'Tethered to your vehicle for best possible assistance',
+      msg: 'Tethered directly to your vehicle for instant AI diagnostics & spec assistance.',
       status: 'NEURAL ENGINE ONLINE'
     },
     deck: {
-      tag: '92% US Asset Index',
-      msg: 'Synchronized with your VIN for instant spec mapping & discovery',
-      status: 'VIN DECODER INSTANT-SYNC'
+      tag: '92% US Vehicle Index',
+      msg: 'Every car card gets a unique 6-character Car Code & QR passport for instant VIN discovery.',
+      status: 'VIN DECODER & CAR CODE SYNCED'
     },
     dna: {
       tag: '100% Verified Ledger',
-      msg: 'Linked to your physical build history with verified mod logging',
+      msg: 'Track your physical build history with verified mod logging linked to your Car Code.',
       status: 'HARDWARE QR PASS READY'
     }
   };
