@@ -18,7 +18,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 .stage{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;}
 
 /* FLOATER — card bobs, base stays planted */
-.floater{display:flex;flex-direction:column;align-items:center;}
+.floater{display:flex;flex-direction:column;align-items:center;position:relative;}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 
 /* CARD */
@@ -1413,39 +1413,24 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }
   }
 
-  function playFlipSound(toBack) {
+  function playFlipSound() {
     try {
       var ac = new (window.AudioContext || window.webkitAudioContext)();
       var now = ac.currentTime;
-
-      // -- Primary feather tone: silky sine glide, barely there --
-      var o1 = ac.createOscillator();
-      var g1 = ac.createGain();
-      o1.connect(g1); g1.connect(ac.destination);
-      o1.type = 'sine';
-      o1.frequency.setValueAtTime(toBack ? 1100 : 920, now);
-      o1.frequency.exponentialRampToValueAtTime(toBack ? 560 : 740, now + 0.38);
-      g1.gain.setValueAtTime(0.0, now);
-      g1.gain.linearRampToValueAtTime(0.038, now + 0.022); // feather-soft attack
-      g1.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
-      o1.start(now); o1.stop(now + 0.38);
-
-      // -- Harmonic overtone: octave up, even softer, fades first --
-      var o2 = ac.createOscillator();
-      var g2 = ac.createGain();
-      o2.connect(g2); g2.connect(ac.destination);
-      o2.type = 'sine';
-      o2.frequency.setValueAtTime(toBack ? 2200 : 1840, now);
-      o2.frequency.exponentialRampToValueAtTime(toBack ? 1120 : 1480, now + 0.22);
-      g2.gain.setValueAtTime(0.0, now);
-      g2.gain.linearRampToValueAtTime(0.016, now + 0.018);
-      g2.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-      o2.start(now); o2.stop(now + 0.22);
-
-      setTimeout(function(){ ac.close(); }, 550);
+      // Short low-frequency sine burst — like a quiet mouse click
+      var o = ac.createOscillator();
+      var g = ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(180, now);
+      o.frequency.exponentialRampToValueAtTime(60, now + 0.035);
+      g.gain.setValueAtTime(0.0, now);
+      g.gain.linearRampToValueAtTime(0.06, now + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      o.start(now); o.stop(now + 0.035);
+      setTimeout(function(){ ac.close(); }, 150);
     } catch(e) {}
   }
-
 
   function flipCard() {
     var now = Date.now();
