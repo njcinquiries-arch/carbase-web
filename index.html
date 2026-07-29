@@ -504,96 +504,120 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   z-index:10;
 }
 
-/* CATEGORY POPUP CARD (PAGE 2) */
-.p2-category-popup {
+/* 3D INTERACTIVE CATEGORY INFO PILL */
+.p2-info-pill-3d {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 16px;
+  margin-top: 18px;
   width: 100%;
-  max-width: 520px;
-  background: rgba(20, 20, 26, 0.85);
-  border: 1px solid rgba(217, 150, 91, 0.3);
-  border-radius: 16px;
-  padding: 10px 20px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 10px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12);
+  max-width: 560px;
+  background: linear-gradient(135deg, rgba(25, 23, 34, 0.88) 0%, rgba(14, 13, 20, 0.95) 100%);
+  border: 1px solid rgba(217, 150, 91, 0.35);
+  border-radius: 18px;
+  padding: 12px 20px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15), 0 0 20px rgba(217, 150, 91, 0.12);
   z-index: 10;
-  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  transform: scale(0.92) translateY(8px);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.35s ease;
+  transform: scale(0.94) translateY(10px);
   opacity: 0;
 }
 
-.p2-category-popup.show {
+.p2-info-pill-3d.show {
   transform: scale(1) translateY(0);
   opacity: 1;
 }
 
-@media(max-width: 560px) {
-  .p2-category-popup {
-    max-width: 330px;
-    padding: 8px 12px;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .p2-popup-val {
-    font-size: 1.05rem !important;
-  }
-  .p2-popup-lbl {
-    font-size: 0.52rem !important;
-    max-width: 100px !important;
-  }
-  .p2-popup-status {
-    font-size: 0.48rem !important;
-  }
+.p2-info-pill-3d:hover {
+  border-color: rgba(217, 150, 91, 0.65);
+  box-shadow: 0 16px 45px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.25), 0 0 30px rgba(217, 150, 91, 0.25);
+  transform: perspective(800px) rotateX(2deg) rotateY(-2deg) scale(1.02);
 }
 
-.p2-popup-metric {
+.p2-info-pill-3d:active {
+  transform: perspective(800px) rotateX(-2deg) scale(0.97) translateZ(-10px);
+}
+
+.pill-3d-glare {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.pill-left-content {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
 }
 
-.p2-popup-val {
+.pill-metric-tag {
   font-family: 'Exo 2', sans-serif;
   font-weight: 800;
-  font-size: 1.3rem;
+  font-size: 0.68rem;
   color: #D9965B;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.p2-popup-lbl {
+.pill-main-msg {
   font-family: system-ui, -apple-system, sans-serif;
   font-weight: 600;
-  font-size: 0.62rem;
-  color: rgba(255, 255, 255, 0.65);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  line-height: 1.3;
-  max-width: 160px;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.35;
 }
 
-.p2-popup-divider {
+.pill-divider {
   width: 1px;
-  height: 24px;
+  height: 30px;
   background: rgba(255, 255, 255, 0.14);
+  flex-shrink: 0;
 }
 
-.p2-popup-status {
+.pill-right-status {
   display: flex;
   align-items: center;
   gap: 8px;
   font-family: system-ui, -apple-system, sans-serif;
   font-weight: 700;
-  font-size: 0.56rem;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.75);
   letter-spacing: 0.07em;
   text-transform: uppercase;
   white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media(max-width: 580px) {
+  .p2-info-pill-3d {
+    max-width: 340px;
+    padding: 10px 14px;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .pill-metric-tag {
+    font-size: 0.60rem !important;
+  }
+  .pill-main-msg {
+    font-size: 0.64rem !important;
+  }
+  .pill-right-status {
+    font-size: 0.50rem !important;
+  }
 }
 
 .status-dot {
@@ -837,16 +861,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       Car Advisor: Not a generic model, but a comprehensive AI car assistant. Trained over 8 months to act as your expert co-pilot, helping you navigate repairs, track valuations, cross-reference parts, and manage your overall car ownership experience.
     </div>
 
-    <!-- Category Pop-Up Feature Card (Pops up in accordance to active category pill) -->
-    <div class="p2-category-popup show" id="p2-category-popup">
-      <div class="p2-popup-metric">
-        <div class="p2-popup-val" id="p2-popup-val">8+ Mo</div>
-        <div class="p2-popup-lbl" id="p2-popup-lbl">Domain AI Fine-Tuning</div>
+    <!-- 3D Interactive Category Info Pill -->
+    <div class="p2-info-pill-3d show" id="p2-info-pill">
+      <div class="pill-3d-glare"></div>
+      <div class="pill-left-content">
+        <span class="pill-metric-tag" id="pill-metric-tag">8+ Months Fine-Tuned</span>
+        <span class="pill-main-msg" id="pill-main-msg">Tethered to your vehicle for best possible assistance</span>
       </div>
-      <div class="p2-popup-divider"></div>
-      <div class="p2-popup-status">
+      <div class="pill-divider"></div>
+      <div class="pill-right-status">
         <span class="status-dot"></span>
-        <span id="p2-popup-status-text">NEURAL ENGINE ONLINE</span>
+        <span id="pill-status-text">NEURAL ENGINE ONLINE</span>
       </div>
     </div>
 
@@ -1518,20 +1543,20 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     dna: 'Mod Timeline: The digital ledger for your build. Log parts, capture installation dates, and track performance changes chronologically to maintain a verified history of your vehicle\'s evolution.'
   };
 
-  var categoryPopupData = {
+  var categoryPillData = {
     globe: {
-      val: '8+ Mo',
-      lbl: 'Domain AI Fine-Tuning',
+      tag: '8+ Months Fine-Tuned',
+      msg: 'Tethered to your vehicle for best possible assistance',
       status: 'NEURAL ENGINE ONLINE'
     },
     deck: {
-      val: '92%',
-      lbl: 'US Vehicle Asset Coverage',
+      tag: '92% US Asset Index',
+      msg: 'Synchronized with your VIN for instant spec mapping & discovery',
       status: 'VIN DECODER INSTANT-SYNC'
     },
     dna: {
-      val: '100%',
-      lbl: 'Verified Mod Ledger',
+      tag: '100% Verified Ledger',
+      msg: 'Linked to your physical build history with verified mod logging',
       status: 'HARDWARE QR PASS READY'
     }
   };
@@ -1633,19 +1658,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       generateShape(shape);
       desc.innerText = descTexts[shape];
 
-      // Pop up category feature card matching selected tab
-      var popupCard = document.getElementById('p2-category-popup');
-      var valEl = document.getElementById('p2-popup-val');
-      var lblEl = document.getElementById('p2-popup-lbl');
-      var statusEl = document.getElementById('p2-popup-status-text');
+      // Pop up 3D category info pill matching selected tab
+      var pillCard = document.getElementById('p2-info-pill');
+      var tagEl = document.getElementById('pill-metric-tag');
+      var msgEl = document.getElementById('pill-main-msg');
+      var statusEl = document.getElementById('pill-status-text');
 
-      if (popupCard && categoryPopupData[shape]) {
-        popupCard.classList.remove('show');
+      if (pillCard && categoryPillData[shape]) {
+        pillCard.classList.remove('show');
         setTimeout(function() {
-          if (valEl) valEl.textContent = categoryPopupData[shape].val;
-          if (lblEl) lblEl.textContent = categoryPopupData[shape].lbl;
-          if (statusEl) statusEl.textContent = categoryPopupData[shape].status;
-          popupCard.classList.add('show');
+          if (tagEl) tagEl.textContent = categoryPillData[shape].tag;
+          if (msgEl) msgEl.textContent = categoryPillData[shape].msg;
+          if (statusEl) statusEl.textContent = categoryPillData[shape].status;
+          pillCard.classList.add('show');
         }, 110);
       }
 
