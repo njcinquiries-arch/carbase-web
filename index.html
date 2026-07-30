@@ -1054,19 +1054,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
         <div class="face front" id="card-front">
           <div class="front-hl" id="hl"></div>
           <div class="card-photo-zone">
-            <img id="card-img" class="card-img" src="gt3rs_monaco.jpg" alt="Car">
+            <img id="card-img" class="card-img" src="/gt3rs_monaco.jpg" alt="Car">
             <div class="card-photo-gradient"></div>
           </div>
 
           <!-- Blurred Photo Backfill Overlay (matching CarCard.tsx) -->
           <div class="blurred-backfill">
-            <img id="blurred-bg-img" class="blurred-img" src="gt3rs_monaco.jpg" alt="">
+            <img id="blurred-bg-img" class="blurred-img" src="/gt3rs_monaco.jpg" alt="">
             <div class="blur-glass-overlay"></div>
           </div>
 
           <div class="card-top-badges">
             <div class="top-left-badges" style="display:flex; align-items:center; gap:8px;">
-              <img id="card-rank-icon" class="card-rank-icon-img" style="width:42px;height:42px;object-fit:contain;background:transparent;border:none;outline:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));" src="ranks/rank_signature_native.png" alt="Rank">
+              <img id="card-rank-icon" class="card-rank-icon-img" style="width:42px;height:42px;object-fit:contain;background:transparent;border:none;outline:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));" src="/ranks/rank_signature_native.png" alt="Rank">
               <div class="powertrain-badge" style="width:22px;height:22px;border-radius:11px;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;">
                 <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.44 0C5.44 0 6.64 2.8 8.84 4.8C10.64 6.44 9.8 9.2 8.44 10.4C6.8 11.84 3.72 12.08 1.8 10.56C-0.319999 8.88 -0.0799988 5.76 1.48 4C1.04 5.36 1.76 6.8 3 7.52C2.72 6.08 3.56 4.32 4.4 3.2C4.76 2.68 5.44 0 5.44 0Z" fill="#F97316"/></svg>
               </div>
@@ -2074,7 +2074,7 @@ window.toggleDemoBanner = function(e) {
       customName: 'Quattro Beast',
       make: 'Audi', model: 'S4', year: 2021, trim: 'Premium Plus',
       powertrain: 'Combustion', drivetrain: 'AWD', engine: '3.0L Turbo V6',
-      photo: 'audi_s4.jpg',
+      photo: '/audi_s4.jpg',
       hp: 420, torque: 440, zeroToSixty: '3.9s',
       rank: 'ADVANCED', rankColor: '#eab308', ovr: 75,
       styleTag: 'OEM+',
@@ -2088,7 +2088,7 @@ window.toggleDemoBanner = function(e) {
       customName: 'Nürburgring Spec',
       make: 'Porsche', model: '911 GT3 RS', year: 2023, trim: 'GT3 RS',
       powertrain: 'Combustion', drivetrain: 'RWD', engine: '4.0L Flat-6',
-      photo: 'gt3rs_monaco.jpg',
+      photo: '/gt3rs_monaco.jpg',
       hp: 545, torque: 360, zeroToSixty: '2.8s',
       rank: 'SIGNATURE', rankColor: '#D4A574', ovr: 96,
       styleTag: 'Track Spec',
@@ -2233,16 +2233,16 @@ window.toggleDemoBanner = function(e) {
   var car = getCarByCode(carCode);
 
   var RANK_PNGS = {
-    'SIGNATURE': 'ranks/rank_signature_native.png',
-    'CHAMPION': 'ranks/rank_champion_native.png',
-    'ELITE': 'ranks/rank_elite_native.png',
-    'ADVANCED': 'ranks/rank_advanced_native.png',
-    'CONTENDER': 'ranks/rank_contender_native.png',
-    'AMATEUR': 'ranks/rank_amateur_native.png',
-    'ROOKIE': 'ranks/rank_rookie_native.png'
+    'SIGNATURE': '/ranks/rank_signature_native.png',
+    'CHAMPION': '/ranks/rank_champion_native.png',
+    'ELITE': '/ranks/rank_elite_native.png',
+    'ADVANCED': '/ranks/rank_advanced_native.png',
+    'CONTENDER': '/ranks/rank_contender_native.png',
+    'AMATEUR': '/ranks/rank_amateur_native.png',
+    'ROOKIE': '/ranks/rank_rookie_native.png'
   };
 
-  var photoUrl = car.photo || 'gt3rs_monaco.jpg';
+  var photoUrl = car.photo || '/gt3rs_monaco.jpg';
   document.getElementById('card-img').src = photoUrl;
   if (document.getElementById('blurred-bg-img')) {
     document.getElementById('blurred-bg-img').src = photoUrl;
@@ -2260,7 +2260,7 @@ window.toggleDemoBanner = function(e) {
     }
   }
   if (document.getElementById('card-rank-icon')) {
-    document.getElementById('card-rank-icon').src = RANK_PNGS[car.rank] || 'ranks/rank_contender_native.png';
+    document.getElementById('card-rank-icon').src = RANK_PNGS[car.rank] || '/ranks/rank_contender_native.png';
   }
   if (document.getElementById('card-ovr-val')) {
     document.getElementById('card-ovr-val').textContent = car.ovr;
