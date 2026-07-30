@@ -425,6 +425,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   opacity:0;pointer-events:none;
   transition:opacity .7s cubic-bezier(.4,0,.2,1);
   overflow:hidden;
+  touch-action:none;
 }
 #page2.visible{opacity:1;pointer-events:auto;}
 
@@ -1493,8 +1494,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       if (downloadContainer) downloadContainer.classList.add('hidden');
       // Always hide demo banner on flip — no overlap with card back
       if (demoBanner) demoBanner.classList.remove('show');
+      var infoBtn = document.getElementById('info-btn');
+      if (infoBtn) infoBtn.style.display = 'none';
     } else {
       if (downloadContainer) downloadContainer.classList.remove('hidden');
+      var page2 = document.getElementById('page2');
+      var isPage2Visible = page2 && page2.classList.contains('visible');
+      if (!isPage2Visible) {
+        var infoBtn = document.getElementById('info-btn');
+        if (infoBtn) infoBtn.style.display = 'flex';
+      }
     }
 
     // Clean rotateY flip without spring scale / zoom-in
@@ -1998,10 +2007,26 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     }
   })();
 
-  /* swipe / scroll to reveal page 2 */
   var shown = false;
-  function showPage2(){if(shown)return;shown=true;page2.classList.add('visible');resize();}
-  function hidePage2(){if(!shown)return;shown=false;page2.classList.remove('visible');}
+  function showPage2(){
+    if(shown)return;
+    shown=true;
+    page2.classList.add('visible');
+    resize();
+    var infoBtn = document.getElementById('info-btn');
+    if (infoBtn) infoBtn.style.display = 'none';
+    var demoBanner = document.getElementById('demo-banner');
+    if (demoBanner) demoBanner.classList.remove('show');
+  }
+  function hidePage2(){
+    if(!shown)return;
+    shown=false;
+    page2.classList.remove('visible');
+    if (!window.isCardFlippedState) {
+      var infoBtn = document.getElementById('info-btn');
+      if (infoBtn) infoBtn.style.display = 'flex';
+    }
+  }
 
   /* wheel */
   window.addEventListener('wheel',function(e){
@@ -2353,6 +2378,11 @@ window.toggleDemoBanner = function(e) {
   window.addEventListener('touchmove', function(e) {
     e.preventDefault();
   }, { passive: false });
+
+  // Prevent browser pinch-to-zoom gestures globally (especially iOS Safari)
+  document.addEventListener('gesturestart', function(e) {
+    e.preventDefault();
+  });
 })();
 </script>
 </body>
