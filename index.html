@@ -775,34 +775,42 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   transform: translateX(-50%) translateY(0);
 }
 
-/* Info Button (Top Left) */
-.info-btn {
-  position: fixed;
-  top: 24px;
-  left: 24px;
-  z-index: 1000;
-  background: rgba(20,20,26,0.82);
-  border: 1px solid rgba(217,150,91,0.22);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+/* Demonstration Display Button (Liquid Glass) */
+.demo-trigger-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #fff;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 8px 18px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 10px rgba(217,150,91,0.12);
-  transition: all .3s ease;
+  transition: all 0.3s ease;
+  margin-top: 24px;
+  z-index: 100;
   outline: none;
-  padding: 0;
 }
-.info-btn:hover {
-  border-color: #D9965B;
-  color: #D9965B;
-  box-shadow: 0 0 16px rgba(217,150,91,0.3);
-  transform: scale(1.05);
+.demo-trigger-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.08);
+}
+.demo-trigger-btn svg {
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+.demo-trigger-btn:hover svg {
+  opacity: 1;
 }
 
 /* Demo Banner — liquid glass, desktop below base (absolute), mobile above card */
@@ -832,8 +840,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.35s cubic-bezier(0.22,1,0.36,1), transform 0.35s cubic-bezier(0.22,1,0.36,1);
-  /* Desktop: anchor below the base (floater is position:relative) */
-  bottom: -52px;
+  /* Desktop: anchor below the trigger button (floater is position:relative) */
+  bottom: -96px;
   top: auto;
   z-index: 10;
 }
@@ -844,17 +852,21 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 }
 
 @media(max-width:480px){
-  .info-btn {
-    top: calc(20px + env(safe-area-inset-top, 0px));
-    left: 16px;
-    right: auto;
-    width: 36px;
-    height: 36px;
+  .demo-trigger-btn {
+    order: -1;
+    margin-top: 0;
+    margin-bottom: 12px;
+    padding: 5px 14px;
+    font-size: 0.62rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
   }
-  /* Mobile: banner floats above the card, clear of the card top edge */
+  /* Mobile: banner floats above the card and trigger button */
   .demo-banner {
     position: absolute;
-    top: -68px;
+    top: -108px;
     bottom: auto;
     left: 50%;
     transform: translateX(-50%) translateY(8px);
@@ -917,7 +929,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   .flip-cta{
     position:fixed;
     top:auto;
-    bottom:72px;
+    bottom:56px;
     left:50%;
     transform:translateX(-50%) translateY(12px);
     width:88vw;
@@ -938,7 +950,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     transform-origin: center center;
     margin-top: 24px;
   }
-  .flip-cta{bottom:42px;} /* Lowered from 62px to 42px */
+  .flip-cta{bottom:34px;} /* Lowered from 42px to 34px */
 }
 
 /* short phones (landscape or small height) */
@@ -1029,11 +1041,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     </div>
   </div>
 </div>
-
-<!-- Info / Demonstration Button (Direct child of body for global top-layer interactivity) -->
-<button class="info-btn" id="info-btn" title="Information" onclick="toggleDemoBanner(event)">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-</button>
 
 <div class="stage">
   <div class="brand"><span>Car</span>base</div>
@@ -1149,6 +1156,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       <div class="floor-pool"></div>
     </div>
 
+    <!-- Demonstration Display Trigger Button -->
+    <button class="demo-trigger-btn" id="info-btn" onclick="toggleDemoBanner(event)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      <span>Demonstration Display</span>
+    </button>
+
     <!-- Demo Banner: desktop = below base in flow; mobile = absolute above card via CSS -->
     <div class="demo-banner" id="demo-banner">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
@@ -1161,7 +1174,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   <div class="flip-cta" id="flip-cta">
     <div class="flip-cta-line"></div>
     <p>For more features, verified build specs, and full vehicle intelligence — <strong>download the Carbase app.</strong></p>
-    <a class="flip-cta-badge" href="#" target="_blank" id="cta-link">↗ carbaseapp.com</a>
   </div>
 
   <!-- Download Links (Bottom Right) -->
@@ -1456,7 +1468,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       o1.frequency.setValueAtTime(320, now);
       o1.frequency.exponentialRampToValueAtTime(70, now + 0.09);
       g1.gain.setValueAtTime(0.0, now);
-      g1.gain.linearRampToValueAtTime(0.03, now + 0.005);
+      g1.gain.linearRampToValueAtTime(0.015, now + 0.005);
       g1.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
       o1.start(now); o1.stop(now + 0.09);
 
@@ -1468,7 +1480,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       o2.frequency.setValueAtTime(850, now);
       o2.frequency.exponentialRampToValueAtTime(150, now + 0.04);
       g2.gain.setValueAtTime(0.0, now);
-      g2.gain.linearRampToValueAtTime(0.02, now + 0.002);
+      g2.gain.linearRampToValueAtTime(0.01, now + 0.002);
       g2.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
       o2.start(now); o2.stop(now + 0.04);
 
@@ -1497,15 +1509,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       if (downloadContainer) downloadContainer.classList.remove('hidden');
     }
 
-    // Spring scale recoil sequence matching CarCard.tsx (scale 0.94 -> spring scale 1.0 with overshoot)
-    card.style.transition = 'transform 0.10s cubic-bezier(0.25, 1, 0.5, 1)';
+    // Clean rotateY flip without spring scale / zoom-in
+    card.style.transition = 'transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)';
     var baseRotY = flipped ? 180 : 0;
-    card.style.transform = 'scale(0.94) rotateY(' + baseRotY + 'deg)';
-
-    setTimeout(function() {
-      card.style.transition = 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      card.style.transform = 'scale(1) rotateY(' + baseRotY + 'deg)';
-    }, 100);
+    card.style.transform = 'rotateY(' + baseRotY + 'deg)';
 
     scene.classList.toggle('is-flipped', flipped);
     if (flipped) {
