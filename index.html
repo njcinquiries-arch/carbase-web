@@ -833,17 +833,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   box-shadow: 0 2px 16px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.12);
   white-space: nowrap;
-  /* Hidden by default — no layout shift (position absolute, out of flow) */
+  
   position: absolute;
   left: 50%;
-  transform: translateX(-50%) translateY(6px);
+  transform: translateX(-50%) translateY(-8px);
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.35s cubic-bezier(0.22,1,0.36,1), transform 0.35s cubic-bezier(0.22,1,0.36,1);
-  /* Desktop: anchor below the trigger button (floater is position:relative) */
-  bottom: -96px;
-  top: auto;
-  z-index: 10;
+  transition: opacity 0.3s cubic-bezier(0.22,1,0.36,1), transform 0.3s cubic-bezier(0.22,1,0.36,1);
+  
+  /* Desktop: directly below the floater bottom boundary */
+  top: 100%;
+  bottom: auto;
+  margin-top: 12px;
+  z-index: 100;
 }
 .demo-banner.show {
   opacity: 1;
@@ -863,17 +865,18 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow: 0 2px 10px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
   }
-  /* Mobile: banner floats above the card and trigger button */
+  /* Mobile: banner sits above the floater top boundary */
   .demo-banner {
     position: absolute;
-    top: -108px;
-    bottom: auto;
+    bottom: 100%;
+    top: auto;
     left: 50%;
     transform: translateX(-50%) translateY(8px);
+    margin-bottom: 12px;
     margin-top: 0;
     align-self: unset;
     background: rgba(255,255,255,0.08);
-    z-index: 30;
+    z-index: 100;
   }
   .demo-banner.show {
     transform: translateX(-50%) translateY(0);
@@ -1550,6 +1553,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     startX = e.clientX;
     startY = e.clientY;
     scene.classList.add('is-interacting');
+    var db = document.getElementById('demo-banner');
+    if (db) db.classList.remove('show');
   });
 
   window.addEventListener('mousemove', function(e) {
@@ -1593,6 +1598,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     startY = t.clientY;
     handleMove(t.clientX, t.clientY);
     scene.classList.add('is-interacting');
+    var db = document.getElementById('demo-banner');
+    if (db) db.classList.remove('show');
   }, { passive: true });
 
   scene.addEventListener('touchmove', function(e) {
@@ -2344,6 +2351,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   }
 
   // TOGGLE DEMO WARNING BANNER — strictly toggle liquid glass Demonstration Card
+  var demoTimeout = null;
   window.toggleDemoBanner = function(e) {
     if (e) {
       if (e.stopPropagation) e.stopPropagation();
@@ -2357,6 +2365,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
       if (opening && qrPill) {
         qrPill.classList.remove('show');
       }
+      
+      // Auto-dismiss after 4.5 seconds to keep the viewport clean
+      if (demoTimeout) clearTimeout(demoTimeout);
+      if (opening) {
+        demoTimeout = setTimeout(function() {
+          demoBanner.classList.remove('show');
+        }, 4500);
+      }
     }
   };
 
@@ -2365,6 +2381,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
     infoBtn.addEventListener('click', window.toggleDemoBanner);
     infoBtn.addEventListener('touchstart', window.toggleDemoBanner, { passive: false });
   }
+
+  // Dismiss banner when clicking outside of it
+  document.addEventListener('click', function(e) {
+    var demoBanner = document.getElementById('demo-banner');
+    var infoBtn = document.getElementById('info-btn');
+    if (demoBanner && demoBanner.classList.contains('show')) {
+      if (infoBtn && !infoBtn.contains(e.target) && !demoBanner.contains(e.target)) {
+        demoBanner.classList.remove('show');
+        if (demoTimeout) clearTimeout(demoTimeout);
+      }
+    }
+  });
+
+  document.addEventListener('touchstart', function(e) {
+    var demoBanner = document.getElementById('demo-banner');
+    var infoBtn = document.getElementById('info-btn');
+    if (demoBanner && demoBanner.classList.contains('show') && e.touches.length > 0) {
+      var target = e.touches[0].target;
+      if (infoBtn && !infoBtn.contains(target) && !demoBanner.contains(target)) {
+        demoBanner.classList.remove('show');
+        if (demoTimeout) clearTimeout(demoTimeout);
+      }
+    }
+  }, { passive: true });
 
   // Mobile scroll lock via touchmove prevention (prevents pull-to-refresh without breaking clicks)
   window.addEventListener('touchmove', function(e) {
