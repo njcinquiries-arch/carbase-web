@@ -775,11 +775,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
   transform: translateX(-50%) translateY(0);
 }
 
-/* Info Button (Top Left) */
+/* Info Button (Top Right) */
 .info-btn {
   position: fixed;
   top: 24px;
-  left: 24px;
+  right: 24px;
   z-index: 1000;
   background: rgba(20,20,26,0.82);
   border: 1px solid rgba(217,150,91,0.22);
@@ -846,8 +846,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('bg.png'
 @media(max-width:480px){
   .info-btn {
     top: calc(20px + env(safe-area-inset-top, 0px));
-    left: 16px;
-    right: auto;
+    right: 16px;
+    left: auto;
     width: 36px;
     height: 36px;
     z-index: 1000;
