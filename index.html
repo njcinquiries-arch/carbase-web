@@ -1778,7 +1778,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         p.ty = y;
         p.tz = zOffset;
       } else if (type === 'dna') {
-        // 3D Intricate Timeline Geometry (Central Spine + Connected Branches + Circular Nodes)
+        // 3D Geometric Timeline Geometry (Central Spine + 5 Connected Branches, No Circles)
         var progress = i / count;
         var partition = i % 10;
         
@@ -1787,41 +1787,21 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
           p.tx = 0;
           p.ty = 0;
           p.tz = (progress * 260) - 130;
-        } else if (partition < 6) {
-          // 30% of particles: Horizontal connector branches
+        } else {
+          // 70% of particles: Horizontal connector branches (extending out to 50px)
           var numBranches = 5;
           var branchIdx = i % numBranches;
           var branchZ = -100 + (branchIdx * 50);
           var branchAngle = branchIdx * (Math.PI * 0.45);
           
-          // Evenly distribute particles from center out to node center (45px) to prevent gaps
-          var steps = Math.floor(count * 0.3 / numBranches);
+          // Evenly distribute particles from center out to branch end (50px) to prevent gaps
+          var steps = Math.floor(count * 0.7 / numBranches);
           var stepIdx = Math.floor(i / numBranches) % steps;
-          var branchLen = (stepIdx / (steps - 1)) * 45;
+          var branchLen = (stepIdx / (steps - 1)) * 50;
           
           p.tx = branchLen * Math.cos(branchAngle);
           p.ty = branchLen * Math.sin(branchAngle);
           p.tz = branchZ;
-        } else {
-          // 40% of particles: Clean circular nodes at the tip of each branch
-          var numNodes = 5;
-          var nodeIdx = i % numNodes;
-          var nodeZ = -100 + (nodeIdx * 50);
-          var nodeAngle = nodeIdx * (Math.PI * 0.45);
-          
-          // Center tip coordinate
-          var centerX = 45 * Math.cos(nodeAngle);
-          var centerY = 45 * Math.sin(nodeAngle);
-          
-          // Perfect circle distribution for seamless vector loop rendering
-          var nodeSteps = Math.floor(count * 0.4 / numNodes);
-          var circleIdx = Math.floor(i / numNodes) % nodeSteps;
-          var circleAngle = (circleIdx / nodeSteps) * Math.PI * 2;
-          var nodeR = 11;
-          
-          p.tx = centerX + nodeR * Math.cos(circleAngle);
-          p.ty = centerY + nodeR * Math.sin(circleAngle);
-          p.tz = nodeZ;
         }
       }
     }
@@ -2033,14 +2013,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
       }
       ctx.stroke();
 
-      // Draw horizontal branches and node rings
+      // Draw horizontal branches (no circle outlines)
       for (var m = 0; m < numMilestones; m++) {
         var mZ = -100 + (m * 50);
         var mAngle = m * (Math.PI * 0.45);
         
-        // Node Center Coordinate
-        var nX = 45 * Math.cos(mAngle);
-        var nY = 45 * Math.sin(mAngle);
+        // Branch End Coordinate (50px distance)
+        var nX = 50 * Math.cos(mAngle);
+        var nY = 50 * Math.sin(mAngle);
         var nZ = mZ;
 
         // Project Spine Point
@@ -2052,7 +2032,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         var s_sx = cx + s_x1 * s_scale;
         var s_sy = cy + s_y2 * s_scale;
 
-        // Project Node Center
+        // Project Branch End Point
         var n_x1 = nX * cosY - nZ * sinY;
         var n_z1 = nZ * cosY + nX * sinY;
         var n_y2 = nY * cosX - n_z1 * sinX;
@@ -2062,18 +2042,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         var n_sy = cy + n_y2 * n_scale;
 
         // Draw Branch stem line
-        ctx.strokeStyle = 'rgba(217, 150, 91, 0.50)';
-        ctx.lineWidth = 1.8 * n_scale;
+        ctx.strokeStyle = 'rgba(217, 150, 91, 0.55)';
+        ctx.lineWidth = 2.0 * n_scale;
         ctx.beginPath();
         ctx.moveTo(s_sx, s_sy);
         ctx.lineTo(n_sx, n_sy);
-        ctx.stroke();
-
-        // Draw Node Circle Outline
-        ctx.strokeStyle = 'rgba(217, 150, 91, 0.70)';
-        ctx.lineWidth = 1.2 * n_scale;
-        ctx.beginPath();
-        ctx.arc(n_sx, n_sy, 11 * n_scale, 0, Math.PI * 2);
         ctx.stroke();
       }
     }
