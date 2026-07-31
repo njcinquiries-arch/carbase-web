@@ -1778,31 +1778,31 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         p.ty = y;
         p.tz = zOffset;
       } else if (type === 'dna') {
-        // 3D Chronological Timeline Math (Spine + Milestone Nodes)
+        // 3D Chronological Timeline Math (Spine + Milestone Nodes) - Enlarged
         var progress = i / count;
         
         // Partition particles: 30% form the central spine, 70% form the milestone nodes
         if (i % 10 < 3) {
-          // Spine: A central wavy line stretching along the Z axis
-          var spineZ = (progress * 240) - 120;
-          var wave = Math.sin(progress * Math.PI * 4) * 15;
+          // Spine: A central wavy line stretching along the Z axis (taller & wider)
+          var spineZ = (progress * 290) - 145;
+          var wave = Math.sin(progress * Math.PI * 4) * 20;
           p.tx = wave;
-          p.ty = Math.cos(progress * Math.PI * 4) * 5;
+          p.ty = Math.cos(progress * Math.PI * 4) * 6;
           p.tz = spineZ;
         } else {
-          // Milestones: 5 spherical nodes representing events/mods along the timeline
+          // Milestones: 5 spherical nodes representing events/mods along the timeline (larger and further spaced)
           var numMilestones = 5;
           var milestoneIndex = i % numMilestones;
-          var milestoneZ = -90 + (milestoneIndex * 45); // spaced out along Z
+          var milestoneZ = -110 + (milestoneIndex * 55); // spaced out further along Z
           
-          // Center coordinate for this node (offset slightly in X/Y to branch off)
-          var centerX = Math.sin(milestoneIndex * 2.5) * 35;
-          var centerY = Math.cos(milestoneIndex * 2.5) * 15;
+          // Center coordinate for this node (further offset in X/Y to branch off wider)
+          var centerX = Math.sin(milestoneIndex * 2.5) * 48;
+          var centerY = Math.cos(milestoneIndex * 2.5) * 20;
           
           // Spherical distribution around the center
           var theta = Math.random() * Math.PI * 2;
           var phi = Math.acos((Math.random() * 2) - 1);
-          var nodeR = 12; // compact node radius
+          var nodeR = 15; // slightly larger, more defined node radius
           
           p.tx = centerX + nodeR * Math.sin(phi) * Math.cos(theta);
           p.ty = centerY + nodeR * Math.sin(phi) * Math.sin(theta);
@@ -1961,7 +1961,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
       var dz = p.z;
       
       if (shape === 'globe') {
-        var wave = Math.sin(localTime * 1.5 + dx * 0.02) * 2;
+        var pulse = 1.0 + 0.12 * Math.sin(localTime * 4.5);
+        dx *= pulse; dy *= pulse; dz *= pulse;
+        
+        var wave = Math.sin(localTime * 3.0 + (dx + dy + dz) * 0.035) * 5;
         dx += wave; dy += wave; dz += wave;
       }
 
@@ -2017,9 +2020,16 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
     for (var j = 0; j < projected.length; j++) {
       var pt = projected[j];
       var size = Math.max(0.8, pt.scale * 2.2);
+      var isFiring = false;
+
+      // In globe (Car Advisor) mode, fire random nodes as bright white glowing neurons
+      if (shape === 'globe' && (j + Math.floor(localTime * 25)) % 32 === 0) {
+        isFiring = true;
+        size = Math.max(2.8, pt.scale * 5.0);
+      }
 
       // Depth fading opacity
-      ctx.fillStyle = pt.color;
+      ctx.fillStyle = isFiring ? '#ffffff' : pt.color;
       ctx.beginPath();
       ctx.arc(pt.sx, pt.sy, size, 0, Math.PI * 2);
       ctx.fill();
@@ -2377,6 +2387,11 @@ window.toggleDemoBanner = function(e) {
   if (hasQrParams) {
     var qrPill = document.getElementById('qr-scanned-pill');
     var sceneEl = document.getElementById('scene');
+    var demoBanner = document.getElementById('demo-banner');
+    
+    if (demoBanner) {
+      demoBanner.classList.remove('show');
+    }
     
     if (qrPill) {
       setTimeout(function() { qrPill.classList.add('show'); }, 300);
