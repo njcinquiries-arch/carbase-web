@@ -2013,14 +2013,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
       var size = Math.max(0.8, pt.scale * 2.2);
       var isFiring = false;
 
-      // In globe (Car Advisor) mode, fire random nodes as subtle neon blue glowing neurons
-      if (shape === 'globe' && (j + Math.floor(localTime * 20)) % 48 === 0) {
+      // In globe (Car Advisor) mode, fire random nodes as extremely subtle neon blue neurons (less frequent, smaller)
+      if (shape === 'globe' && (j + Math.floor(localTime * 12)) % 64 === 0) {
         isFiring = true;
-        size = Math.max(1.8, pt.scale * 3.2);
+        size = Math.max(1.3, pt.scale * 2.6);
       }
 
-      // Depth fading opacity
-      ctx.fillStyle = isFiring ? '#00e5ff' : pt.color;
+      // Depth fading opacity & custom shimmers
+      var finalColor = pt.color;
+      if (isFiring) {
+        finalColor = '#00e5ff';
+      } else if (shape === 'globe') {
+        // Softer, slower breathing shimmer for the orange base particles
+        var slowShimmer = 0.70 + 0.30 * Math.sin(localTime * 0.8 + j * 0.04);
+        finalColor = 'rgba(217, 150, 91, ' + (0.2 + 0.45 * slowShimmer) + ')';
+      }
+
+      ctx.fillStyle = finalColor;
       ctx.beginPath();
       ctx.arc(pt.sx, pt.sy, size, 0, Math.PI * 2);
       ctx.fill();
