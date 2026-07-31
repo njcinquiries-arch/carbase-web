@@ -1778,7 +1778,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         p.ty = y;
         p.tz = zOffset;
       } else if (type === 'dna') {
-        // 3D Centered Complex Timeline Geometry (Central Spine + 6 branches + Concentric Double-Ring Nodes)
+        // 3D Centered Complex Timeline Geometry (Central Spine + 6 Wiggly Branches + Concentric Double-Ring Nodes)
         var progress = i / count;
         var partition = i % 10;
         
@@ -1788,7 +1788,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
           p.ty = 0;
           p.tz = (progress * 260) - 130;
         } else if (partition < 6) {
-          // 30% of particles: Horizontal connector branches
+          // 30% of particles: Wiggly connector branches (wavy in X/Y/Z)
           var numBranches = 6;
           var branchIdx = i % numBranches;
           var branchZ = -100 + (branchIdx * 40);
@@ -1796,18 +1796,24 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
           
           var steps = Math.floor(count * 0.3 / numBranches);
           var stepIdx = Math.floor(i / numBranches) % steps;
-          var branchLen = (stepIdx / (steps - 1)) * 45;
+          var t = stepIdx / (steps - 1);
+          var branchLen = t * 45;
           
-          p.tx = branchLen * Math.cos(branchAngle);
-          p.ty = branchLen * Math.sin(branchAngle);
-          p.tz = branchZ;
+          // Apply sinusoidal wiggle to the branch angle and vertical depth offset
+          var wiggleAngle = branchAngle + 0.35 * Math.sin(t * Math.PI * 3);
+          var wiggleZ = branchZ + 3 * Math.sin(t * Math.PI * 2);
+          
+          p.tx = branchLen * Math.cos(wiggleAngle);
+          p.ty = branchLen * Math.sin(wiggleAngle);
+          p.tz = wiggleZ;
         } else {
-          // 40% of particles: Double-ring concentric milestone nodes (representing complex branches)
+          // 40% of particles: Double-ring concentric milestone nodes at the tips
           var numNodes = 6;
           var nodeIdx = i % numNodes;
           var nodeZ = -100 + (nodeIdx * 40);
           var nodeAngle = nodeIdx * (Math.PI * 0.35);
           
+          // Tip coordinate matches the end of the wavy branch (where t = 1, sin(3*pi) = 0, sin(2*pi) = 0)
           var centerX = 45 * Math.cos(nodeAngle);
           var centerY = 45 * Math.sin(nodeAngle);
           
@@ -1815,7 +1821,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
           var circleIdx = Math.floor(i / numNodes) % nodeSteps;
           var circleAngle = (circleIdx / nodeSteps) * Math.PI * 2;
           
-          // Alternate between inner ring (radius 7) and outer ring (radius 13)
           var isOuter = (i % 2 === 0);
           var nodeR = isOuter ? 13 : 7;
           
@@ -2030,54 +2035,63 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
       }
       ctx.stroke();
 
-      // Draw horizontal branches and concentric double rings
+      // Draw horizontal branches (wavy/wiggly curves) and concentric double rings
       for (var m = 0; m < numMilestones; m++) {
         var mZ = -100 + (m * 40);
         var mAngle = m * (Math.PI * 0.35);
-        
-        // Node Center Coordinate
-        var nX = 45 * Math.cos(mAngle);
-        var nY = 45 * Math.sin(mAngle);
-        var nZ = mZ;
 
-        // Project Spine Point
-        var s_x1 = 0 * cosY - mZ * sinY;
-        var s_z1 = mZ * cosY + 0 * sinY;
-        var s_y2 = 0 * cosX - s_z1 * sinX;
-        var s_z2 = s_z1 * cosX + 0 * sinX;
-        var s_scale = focalLength / (focalLength + s_z2 + 150);
-        var s_sx = cx + s_x1 * s_scale;
-        var s_sy = cy + s_y2 * s_scale;
-
-        // Project Node Center
-        var n_x1 = nX * cosY - nZ * sinY;
-        var n_z1 = nZ * cosY + nX * sinY;
-        var n_y2 = nY * cosX - n_z1 * sinX;
-        var n_z2 = n_z1 * cosX + nY * sinX;
-        var n_scale = focalLength / (focalLength + n_z2 + 150);
-        var n_sx = cx + n_x1 * n_scale;
-        var n_sy = cy + n_y2 * n_scale;
-
-        // Draw Branch stem line
+        // Draw Branch stem curve segment by segment
         ctx.strokeStyle = 'rgba(217, 150, 91, 0.50)';
-        ctx.lineWidth = 1.8 * n_scale;
+        ctx.lineWidth = 1.8;
         ctx.beginPath();
-        ctx.moveTo(s_sx, s_sy);
-        ctx.lineTo(n_sx, n_sy);
+        
+        var branchSteps = 15;
+        var last_sx = 0, last_sy = 0;
+        var last_scale = 1;
+        
+        for (var b = 0; b <= branchSteps; b++) {
+          var t = b / branchSteps;
+          var branchLen = t * 45;
+          
+          // Apply same wiggle mathematics as shape generator
+          var wAngle = mAngle + 0.35 * Math.sin(t * Math.PI * 3);
+          var wZ = mZ + 3 * Math.sin(t * Math.PI * 2);
+          
+          var bx = branchLen * Math.cos(wAngle);
+          var by = branchLen * Math.sin(wAngle);
+          var bz = wZ;
+
+          var x1 = bx * cosY - bz * sinY;
+          var z1 = bz * cosY + bx * sinY;
+          var y2 = by * cosX - z1 * sinX;
+          var z2 = z1 * cosX + by * sinX;
+          var scale = focalLength / (focalLength + z2 + 150);
+          var sx = cx + x1 * scale;
+          var sy = cy + y2 * scale;
+          
+          if (b === 0) ctx.moveTo(sx, sy);
+          else ctx.lineTo(sx, sy);
+          
+          if (b === branchSteps) {
+            last_sx = sx;
+            last_sy = sy;
+            last_scale = scale;
+          }
+        }
         ctx.stroke();
 
-        // Draw Inner Circle Outline (radius 7)
+        // Draw Inner Circle Outline (radius 7) centered at the wavy branch end
         ctx.strokeStyle = 'rgba(217, 150, 91, 0.55)';
-        ctx.lineWidth = 1.0 * n_scale;
+        ctx.lineWidth = 1.0 * last_scale;
         ctx.beginPath();
-        ctx.arc(n_sx, n_sy, 7 * n_scale, 0, Math.PI * 2);
+        ctx.arc(last_sx, last_sy, 7 * last_scale, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Draw Outer Circle Outline (radius 13)
+        // Draw Outer Circle Outline (radius 13) centered at the wavy branch end
         ctx.strokeStyle = 'rgba(217, 150, 91, 0.65)';
-        ctx.lineWidth = 1.2 * n_scale;
+        ctx.lineWidth = 1.2 * last_scale;
         ctx.beginPath();
-        ctx.arc(n_sx, n_sy, 13 * n_scale, 0, Math.PI * 2);
+        ctx.arc(last_sx, last_sy, 13 * last_scale, 0, Math.PI * 2);
         ctx.stroke();
       }
     }
