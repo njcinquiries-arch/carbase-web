@@ -1778,26 +1778,46 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         p.ty = y;
         p.tz = zOffset;
       } else if (type === 'dna') {
-        // 3D Geometric Timeline Math (Straight central spine + 5 horizontal rings)
+        // 3D Intricate Timeline Geometry (Central Spine + 5 Spiraling Branches + Milestone Nodes)
         var progress = i / count;
+        var partition = i % 10;
         
-        // 30% of particles form the central spine
-        if (i % 10 < 3) {
+        if (partition < 3) {
+          // 30% of particles: Central straight timeline spine/axis
           p.tx = 0;
           p.ty = 0;
           p.tz = (progress * 260) - 130;
+        } else if (partition < 6) {
+          // 30% of particles: Horizontal connector branches extending from the spine
+          var numBranches = 5;
+          var branchIdx = i % numBranches;
+          var branchZ = -100 + (branchIdx * 50);
+          
+          // Spiral angle for each branch level
+          var branchAngle = branchIdx * (Math.PI * 0.45);
+          var branchLen = Math.random() * 42; // random distance along the branch
+          
+          p.tx = branchLen * Math.cos(branchAngle);
+          p.ty = branchLen * Math.sin(branchAngle);
+          p.tz = branchZ;
         } else {
-          // 70% of particles form 5 horizontal milestone rings
-          var numMilestones = 5;
-          var milestoneIndex = i % numMilestones;
-          var milestoneZ = -100 + (milestoneIndex * 50); // spaced out along Z
+          // 40% of particles: Circular milestone nodes at the tip of each branch
+          var numNodes = 5;
+          var nodeIdx = i % numNodes;
+          var nodeZ = -100 + (nodeIdx * 50);
           
-          var angle = Math.random() * Math.PI * 2;
-          var ringRadius = 32;
+          var nodeAngle = nodeIdx * (Math.PI * 0.45);
+          var centerX = 42 * Math.cos(nodeAngle);
+          var centerY = 42 * Math.sin(nodeAngle);
           
-          p.tx = ringRadius * Math.cos(angle);
-          p.ty = ringRadius * Math.sin(angle);
-          p.tz = milestoneZ;
+          // Form a small compact node ball at the tip
+          var theta = Math.random() * Math.PI * 2;
+          var phi = Math.acos((Math.random() * 2) - 1);
+          var nodeR = 9;
+          
+          p.tx = centerX + nodeR * Math.sin(phi) * Math.cos(theta);
+          p.ty = centerY + nodeR * Math.sin(phi) * Math.sin(theta);
+          p.tz = nodeZ + nodeR * Math.cos(phi);
         }
       }
     }
