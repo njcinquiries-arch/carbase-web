@@ -1778,30 +1778,62 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         p.ty = y;
         p.tz = zOffset;
       } else if (type === 'dna') {
-        // 3D Geometric Timeline Geometry (Central Spine + 5 Connected Branches, No Circles)
+        // 3D Loki-style TVA Branching Timeline Geometry (Sacred Timeline + Winding Primary & Secondary Branches)
         var progress = i / count;
         var partition = i % 10;
         
         if (partition < 3) {
-          // 30% of particles: Central straight timeline spine
-          p.tx = 0;
-          p.ty = 0;
-          p.tz = (progress * 260) - 130;
-        } else {
-          // 70% of particles: Horizontal connector branches (extending out to 50px)
-          var numBranches = 5;
+          // 30% of particles: Wavy, organic Central Sacred Timeline
+          var t = (i / (count * 0.3));
+          p.tx = 8 * Math.sin(t * Math.PI * 2.5);
+          p.ty = 8 * Math.cos(t * Math.PI * 2.5);
+          p.tz = t * 260 - 130;
+        } else if (partition < 8) {
+          // 50% of particles: 6 Wavy primary branches sprouting off the main timeline
+          var numBranches = 6;
           var branchIdx = i % numBranches;
-          var branchZ = -100 + (branchIdx * 50);
-          var branchAngle = branchIdx * (Math.PI * 0.45);
+          var t0 = 0.15 + (branchIdx * 0.15); // sprout point along the timeline (0 to 1)
           
-          // Evenly distribute particles from center out to branch end (50px) to prevent gaps
-          var steps = Math.floor(count * 0.7 / numBranches);
+          var x0 = 8 * Math.sin(t0 * Math.PI * 2.5);
+          var y0 = 8 * Math.cos(t0 * Math.PI * 2.5);
+          var z0 = -130 + (t0 * 260);
+          
+          var branchAngle = branchIdx * (Math.PI * 0.35);
+          var steps = Math.floor(count * 0.5 / numBranches);
           var stepIdx = Math.floor(i / numBranches) % steps;
-          var branchLen = (stepIdx / (steps - 1)) * 50;
+          var tBranch = stepIdx / (steps - 1); // progress along branch (0 to 1)
+          var branchLen = tBranch * 55;
           
-          p.tx = branchLen * Math.cos(branchAngle);
-          p.ty = branchLen * Math.sin(branchAngle);
-          p.tz = branchZ;
+          // Organic curved branch path
+          p.tx = x0 + branchLen * Math.cos(branchAngle + 0.6 * Math.sin(tBranch * Math.PI));
+          p.ty = y0 + branchLen * Math.sin(branchAngle + 0.6 * Math.sin(tBranch * Math.PI));
+          p.tz = z0 + tBranch * 30;
+        } else {
+          // 20% of particles: 5 Secondary sub-branches sprouting off the primary branches
+          var numSubBranches = 5;
+          var subIdx = i % numSubBranches;
+          
+          // Starts from primary branch subIdx at tBranch = 0.5
+          var t0_parent = 0.15 + (subIdx * 0.15);
+          var px0 = 8 * Math.sin(t0_parent * Math.PI * 2.5);
+          var py0 = 8 * Math.cos(t0_parent * Math.PI * 2.5);
+          var pz0 = -130 + (t0_parent * 260);
+          var parentAngle = subIdx * (Math.PI * 0.35);
+          
+          // Coordinates at half-way along primary parent branch
+          var xs = px0 + 27.5 * Math.cos(parentAngle + 0.6 * Math.sin(0.5 * Math.PI));
+          var ys = py0 + 27.5 * Math.sin(parentAngle + 0.6 * Math.sin(0.5 * Math.PI));
+          var zs = pz0 + 15;
+          
+          var subAngle = parentAngle + Math.PI / 3; // split angle
+          var subSteps = Math.floor(count * 0.2 / numSubBranches);
+          var subStepIdx = Math.floor(i / numSubBranches) % subSteps;
+          var tSub = subStepIdx / (subSteps - 1);
+          var subLen = tSub * 25;
+          
+          p.tx = xs + subLen * Math.cos(subAngle + 0.4 * Math.sin(tSub * Math.PI));
+          p.ty = ys + subLen * Math.sin(subAngle + 0.4 * Math.sin(tSub * Math.PI));
+          p.tz = zs + tSub * 15;
         }
       }
     }
@@ -1991,62 +2023,106 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
     // Depth Sorting (painter's algorithm)
     projected.sort(function(a, b) { return b.z - a.z; });
 
-    // Explicit 3D Vector Timeline Drawing (Spine, branches, and circle outlines)
+    // Explicit 3D Vector Timeline Drawing (Loki TVA Sacred Timeline & branches)
     if (shape === 'dna') {
-      var numMilestones = 5;
-      
-      // Draw Central Spine Axis line
-      ctx.strokeStyle = 'rgba(217, 150, 91, 0.35)';
-      ctx.lineWidth = 1.5;
+      // 1. Draw Sacred Timeline (Central Winding Axis)
+      ctx.strokeStyle = 'rgba(217, 150, 91, 0.50)';
+      ctx.lineWidth = 2.0;
       ctx.beginPath();
-      for (var m = 0; m < numMilestones; m++) {
-        var mZ = -100 + (m * 50);
-        var s_x1 = 0 * cosY - mZ * sinY;
-        var s_z1 = mZ * cosY + 0 * sinY;
-        var s_y2 = 0 * cosX - s_z1 * sinX;
-        var s_z2 = s_z1 * cosX + 0 * sinX;
-        var s_scale = focalLength / (focalLength + s_z2 + 150);
-        var s_sx = cx + s_x1 * s_scale;
-        var s_sy = cy + s_y2 * s_scale;
-        if (m === 0) ctx.moveTo(s_sx, s_sy);
-        else ctx.lineTo(s_sx, s_sy);
+      var spineSteps = 30;
+      for (var s = 0; s <= spineSteps; s++) {
+        var t = s / spineSteps;
+        var tZ = t * 260 - 130;
+        var tX = 8 * Math.sin(t * Math.PI * 2.5);
+        var tY = 8 * Math.cos(t * Math.PI * 2.5);
+        
+        var x1 = tX * cosY - tZ * sinY;
+        var z1 = tZ * cosY + tX * sinY;
+        var y2 = tY * cosX - z1 * sinX;
+        var z2 = z1 * cosX + tY * sinX;
+        var scale = focalLength / (focalLength + z2 + 150);
+        var sx = cx + x1 * scale;
+        var sy = cy + y2 * scale;
+        
+        if (s === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
       }
       ctx.stroke();
 
-      // Draw horizontal branches (no circle outlines)
-      for (var m = 0; m < numMilestones; m++) {
-        var mZ = -100 + (m * 50);
-        var mAngle = m * (Math.PI * 0.45);
-        
-        // Branch End Coordinate (50px distance)
-        var nX = 50 * Math.cos(mAngle);
-        var nY = 50 * Math.sin(mAngle);
-        var nZ = mZ;
-
-        // Project Spine Point
-        var s_x1 = 0 * cosY - mZ * sinY;
-        var s_z1 = mZ * cosY + 0 * sinY;
-        var s_y2 = 0 * cosX - s_z1 * sinX;
-        var s_z2 = s_z1 * cosX + 0 * sinX;
-        var s_scale = focalLength / (focalLength + s_z2 + 150);
-        var s_sx = cx + s_x1 * s_scale;
-        var s_sy = cy + s_y2 * s_scale;
-
-        // Project Branch End Point
-        var n_x1 = nX * cosY - nZ * sinY;
-        var n_z1 = nZ * cosY + nX * sinY;
-        var n_y2 = nY * cosX - n_z1 * sinX;
-        var n_z2 = n_z1 * cosX + nY * sinX;
-        var n_scale = focalLength / (focalLength + n_z2 + 150);
-        var n_sx = cx + n_x1 * n_scale;
-        var n_sy = cy + n_y2 * n_scale;
-
-        // Draw Branch stem line
-        ctx.strokeStyle = 'rgba(217, 150, 91, 0.55)';
-        ctx.lineWidth = 2.0 * n_scale;
+      // 2. Draw 6 Primary branches sprouting off the Sacred Timeline
+      var numBranches = 6;
+      for (var k = 0; k < numBranches; k++) {
+        ctx.strokeStyle = 'rgba(217, 150, 91, 0.45)';
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.moveTo(s_sx, s_sy);
-        ctx.lineTo(n_sx, n_sy);
+        
+        var t0 = 0.15 + (k * 0.15); // parent sprout point
+        var x0 = 8 * Math.sin(t0 * Math.PI * 2.5);
+        var y0 = 8 * Math.cos(t0 * Math.PI * 2.5);
+        var z0 = -130 + (t0 * 260);
+        var branchAngle = k * (Math.PI * 0.35);
+        
+        var branchSteps = 15;
+        for (var b = 0; b <= branchSteps; b++) {
+          var tBranch = b / branchSteps;
+          var branchLen = tBranch * 55;
+          
+          var bx = x0 + branchLen * Math.cos(branchAngle + 0.6 * Math.sin(tBranch * Math.PI));
+          var by = y0 + branchLen * Math.sin(branchAngle + 0.6 * Math.sin(tBranch * Math.PI));
+          var bz = z0 + tBranch * 30;
+          
+          var x1 = bx * cosY - bz * sinY;
+          var z1 = bz * cosY + bx * sinY;
+          var y2 = by * cosX - z1 * sinX;
+          var z2 = z1 * cosX + by * sinX;
+          var scale = focalLength / (focalLength + z2 + 150);
+          var sx = cx + x1 * scale;
+          var sy = cy + y2 * scale;
+          
+          if (b === 0) ctx.moveTo(sx, sy);
+          else ctx.lineTo(sx, sy);
+        }
+        ctx.stroke();
+      }
+
+      // 3. Draw 5 Secondary sub-branches sprouting off the primary branches
+      var numSubBranches = 5;
+      for (var s = 0; s < numSubBranches; s++) {
+        ctx.strokeStyle = 'rgba(217, 150, 91, 0.35)';
+        ctx.lineWidth = 1.0;
+        ctx.beginPath();
+        
+        var t0_parent = 0.15 + (s * 0.15);
+        var px0 = 8 * Math.sin(t0_parent * Math.PI * 2.5);
+        var py0 = 8 * Math.cos(t0_parent * Math.PI * 2.5);
+        var pz0 = -130 + (t0_parent * 260);
+        var parentAngle = s * (Math.PI * 0.35);
+        
+        var xs = px0 + 27.5 * Math.cos(parentAngle + 0.6 * Math.sin(0.5 * Math.PI));
+        var ys = py0 + 27.5 * Math.sin(parentAngle + 0.6 * Math.sin(0.5 * Math.PI));
+        var zs = pz0 + 15;
+        
+        var subAngle = parentAngle + Math.PI / 3;
+        var subSteps = 10;
+        for (var sb = 0; sb <= subSteps; sb++) {
+          var tSub = sb / subSteps;
+          var subLen = tSub * 25;
+          
+          var sbx = xs + subLen * Math.cos(subAngle + 0.4 * Math.sin(tSub * Math.PI));
+          var sby = ys + subLen * Math.sin(subAngle + 0.4 * Math.sin(tSub * Math.PI));
+          var sbz = zs + tSub * 15;
+          
+          var x1 = sbx * cosY - sbz * sinY;
+          var z1 = sbz * cosY + sbx * sinY;
+          var y2 = sby * cosX - z1 * sinX;
+          var z2 = z1 * cosX + sby * sinX;
+          var scale = focalLength / (focalLength + z2 + 150);
+          var sx = cx + x1 * scale;
+          var sy = cy + y2 * scale;
+          
+          if (sb === 0) ctx.moveTo(sx, sy);
+          else ctx.lineTo(sx, sy);
+        }
         ctx.stroke();
       }
     }
