@@ -2020,9 +2020,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         var pB = projected[b];
         var dist = Math.hypot(pA.sx - pB.sx, pA.sy - pB.sy);
 
-        // Connect if visually close and not too far in depth Z
-        var maxConnectDist = 28 * pA.scale;
-        if (dist < maxConnectDist && Math.abs(pA.z - pB.z) < 40 && connections < 3) {
+        // Connect if visually close and not too far in depth Z (expanded for timeline connectivity)
+        var maxConnectDist = (shape === 'dna') ? 38 * pA.scale : 28 * pA.scale;
+        var maxDepthDiff = (shape === 'dna') ? 60 : 40;
+        var maxLimit = (shape === 'dna') ? 5 : 3;
+        if (dist < maxConnectDist && Math.abs(pA.z - pB.z) < maxDepthDiff && connections < maxLimit) {
           connections++;
           var lineOpacity = (1 - (dist / maxConnectDist)) * 0.14 * (pA.scale * 0.8);
           ctx.strokeStyle = 'rgba(217, 150, 91, ' + lineOpacity + ')';
