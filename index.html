@@ -2013,7 +2013,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
     // Depth Sorting (painter's algorithm)
     projected.sort(function(a, b) { return b.z - a.z; });
 
-    // Explicit 3D Vector Timeline Drawing (Centered Spine + 6 branches + Concentric Double-Rings)
+    // Explicit 3D Vector Timeline Drawing (Centered Spine + Tick Marks + Wavy Branches + Chronological Connectors + Double Concentric Rings)
     if (shape === 'dna') {
       var numMilestones = 6;
       
@@ -2034,6 +2034,35 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         else ctx.lineTo(s_sx, s_sy);
       }
       ctx.stroke();
+
+      // Draw horizontal time tick marks along the spine (like a ruler scale)
+      ctx.strokeStyle = 'rgba(217, 150, 91, 0.35)';
+      ctx.lineWidth = 1.0;
+      for (var zVal = -120; zVal <= 120; zVal += 15) {
+        var s_x1 = -4 * cosY - zVal * sinY;
+        var s_z1 = zVal * cosY - 4 * sinY;
+        var s_y2 = 0 * cosX - s_z1 * sinX;
+        var s_z2 = s_z1 * cosX + 0 * sinX;
+        var s_scale = focalLength / (focalLength + s_z2 + 150);
+        var sx1 = cx + s_x1 * s_scale;
+        var sy1 = cy + s_y2 * s_scale;
+
+        var e_x1 = 4 * cosY - zVal * sinY;
+        var e_z1 = zVal * cosY + 4 * sinY;
+        var e_y2 = 0 * cosX - e_z1 * sinX;
+        var e_z2 = e_z1 * cosX + 0 * sinX;
+        var e_scale = focalLength / (focalLength + e_z2 + 150);
+        var sx2 = cx + e_x1 * e_scale;
+        var sy2 = cy + e_y2 * e_scale;
+
+        ctx.beginPath();
+        ctx.moveTo(sx1, sy1);
+        ctx.lineTo(sx2, sy2);
+        ctx.stroke();
+      }
+
+      // Collect projected branch ends to draw the chronological sequential winding thread
+      var branchEnds = [];
 
       // Draw horizontal branches (wavy/wiggly curves) and concentric double rings
       for (var m = 0; m < numMilestones; m++) {
@@ -2080,6 +2109,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         }
         ctx.stroke();
 
+        branchEnds.push({ sx: last_sx, sy: last_sy, scale: last_scale });
+
         // Draw Inner Circle Outline (radius 7) centered at the wavy branch end
         ctx.strokeStyle = 'rgba(217, 150, 91, 0.55)';
         ctx.lineWidth = 1.0 * last_scale;
@@ -2094,6 +2125,18 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:url('/bg.png
         ctx.arc(last_sx, last_sy, 13 * last_scale, 0, Math.PI * 2);
         ctx.stroke();
       }
+
+      // Draw chronological sequential line connecting the branch ends in order
+      ctx.strokeStyle = 'rgba(217, 150, 91, 0.22)';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      for (var k = 0; k < branchEnds.length; k++) {
+        var endPt = branchEnds[k];
+        if (k === 0) ctx.moveTo(endPt.sx, endPt.sy);
+        else ctx.lineTo(endPt.sx, endPt.sy);
+      }
+      ctx.stroke();
+    }
     }
 
     // Draw Connector Lines between close particles (for wiremesh look)
